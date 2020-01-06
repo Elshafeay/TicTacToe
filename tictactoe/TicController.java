@@ -34,7 +34,7 @@ public class TicController implements Initializable {
     public void paneAction1 (){
         System.out.println(GridPane.getColumnIndex(p1));
         System.out.println(GridPane.getRowIndex(p1));
-        im1.setImage("x-pink.png");
+        
 
     }
     @FXML
