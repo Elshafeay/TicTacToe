@@ -53,9 +53,11 @@ public class NewServer {
     //inner class for connection handling
     class ConnectionHandler extends Thread
     {
-        Socket clientSocket;
-        DataInputStream clientDataInputStream;
-        PrintStream clientPrintStream;
+        private Socket clientSocket;
+        private DataInputStream clientDataInputStream;
+        private PrintStream clientPrintStream;
+        private JSONObject Rjson; //for receiving
+        private JSONObject Sjson; //for sending
         
         public ConnectionHandler(Socket s)
         {
@@ -75,17 +77,55 @@ public class NewServer {
             super.run();
             while(true){
                 try {
-                    JSONObject obj = new JSONObject(clientDataInputStream.readLine());
-                    switch(obj.getString("code")){
+                    Rjson = new JSONObject(clientDataInputStream.readLine());
+                    switch(Rjson.getString("code")){
                         case "LOGIN":
+                            Sjson = new JSONObject();
+                            Sjson.put("code", "LOGIN");
+                            if(acceptLogin(Rjson.getString("username"),
+                                        Rjson.getString("username"))){
+                                Sjson.put("response", 1); //successful login
+                            }else{
+                                Sjson.put("response", 0); //unsuccessful login
+                            }
+                            clientPrintStream.print(Sjson);
                             break;
                         case "SIGNUP":
+                            Sjson = new JSONObject();
+                            Sjson.put("code", "SIGNUP");
+                            if(acceptSignUp(new Player(Rjson.getString("firstname"),
+                                    Rjson.getString("lastname"),
+                                    Rjson.getString("username"),
+                                    Rjson.getString("password"))
+                                    )){
+                                Sjson.put("response", 1); //successful signup
+                            }else{
+                                Sjson.put("response", 0); //unsuccessful signup
+                            }
+                            clientPrintStream.print(Sjson);
                             break;
                         case "LOGOUT":
+                            Sjson = new JSONObject();
+                            Sjson.put("code", "LOGOUT");
+                            if(acceptLogOut()){
+                                Sjson.put("response", 1); //successful signup
+                            }else{
+                                Sjson.put("response", 0); //unsuccessful signup
+                            }
+                            clientPrintStream.print(Sjson);
                             break;
                         case "INVITATION":
-                            switch(obj.getString("type")){
+                            switch(Rjson.getString("type")){
                                 case "SEND":
+                                    Sjson = new JSONObject();
+                                    Sjson.put("code", "INVITATION");
+                                    Sjson.put("type", "SEND");
+                                    if(sendInvitation(Rjson.getString("username"))){
+                                        Sjson.put("response", 1); //successful sending
+                                    }else{
+                                        Sjson.put("response", 0); //unsuccessful sending
+                                    }
+                                    clientPrintStream.print(Sjson);
                                     break;
                                 case "ACCEPT":
                                     break;
@@ -186,8 +226,9 @@ public class NewServer {
             try {
                 player2PS = new PrintStream(secondPlayerSocket.getOutputStream());
                 JSONObject invitationObject = new JSONObject();
-                invitationObject.append("type", "Invitation");
-                invitationObject.append("message", invitationMessage);
+                invitationObject.put("code", "INVITATION");
+                invitationObject.put("type", "RECEIVE");
+                invitationObject.put("message", invitationMessage);
                 player2PS.print(invitationObject.toString());
                 
                 player2DIS = new DataInputStream(secondPlayerSocket.getInputStream());

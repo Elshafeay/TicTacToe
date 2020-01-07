@@ -7,10 +7,7 @@ public class Player {
     private String password;
     private int points;
     
-    public Player(){}
-
-    public Player(String username) {
-        this.username = username;
+    public Player(){
     }
     
     public Player(String fName, String lName, String Uname, String pass){
