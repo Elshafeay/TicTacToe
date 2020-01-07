@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.util.Pair;
-import playerpckg.*;
+import Player.*;
 
 /**
  *
@@ -88,7 +88,7 @@ public class Server {
                             ObjectInputStream playerStream = new ObjectInputStream(clientSocket.getInputStream());
                             Player p = (Player) playerStream.readObject();
                             activePlayersSockets.add(new Pair<Socket, Player>(clientSocket, p));
-                            allPlayers.get(allPlayers.indexOf(p.getUsername())).getValue().setIsOnline(true);
+//                            allPlayers.get(allPlayers.indexOf(p.getUsername())).getValue().setIsOnline(true);
                             playerStream.close();
                             break;
                             
@@ -116,7 +116,7 @@ public class Server {
                         case LOGOUT:
                             Player pTemp = activePlayersSockets.get(activePlayersSockets.indexOf(clientSocket)).getValue();
                             activePlayersSockets.remove(activePlayersSockets.indexOf(clientSocket));
-                            allPlayers.get(allPlayers.indexOf(pTemp.getUsername())).getValue().setIsOnline(false);
+//                            allPlayers.get(allPlayers.indexOf(pTemp.getUsername())).getValue().setIsOnline(false);
                             dis.close();
                             clientSocket.close();
                             break;
@@ -145,11 +145,11 @@ public class Server {
             try {
                 dis = new DataInputStream(p2Socket.getInputStream());
                 ps = new PrintStream(p2Socket.getOutputStream());
-                String message = activePlayersSockets.get(activePlayersSockets.indexOf(p1Socket)).getValue().getFirstName() + " "
-                        + activePlayersSockets.get(activePlayersSockets.indexOf(p1Socket)).getValue().getLastName()
-                        + " has invited you to play. What do you think?";
+//                String message = activePlayersSockets.get(activePlayersSockets.indexOf(p1Socket)).getValue().getFirstName() + " "
+//                        + activePlayersSockets.get(activePlayersSockets.indexOf(p1Socket)).getValue().getLastName()
+//                        + " has invited you to play. What do you think?";
 
-                ps.println(message);
+//                ps.println(message);
                 invitationResponse = dis.readBoolean(); //player 2 either accepts or declines it
 
                 dis.close();
@@ -168,11 +168,11 @@ public class Server {
             PrintStream ps;
             try {
                 ps = new PrintStream(p1Socket.getOutputStream());
-                String message = activePlayersSockets.get(activePlayersSockets.indexOf(p2Socket)).getValue().getFirstName() + " "
-                        + activePlayersSockets.get(activePlayersSockets.indexOf(p2Socket)).getValue().getLastName()
-                        + " has rejected your invitation.";
-
-                ps.println(message);
+//                String message = activePlayersSockets.get(activePlayersSockets.indexOf(p2Socket)).getValue().getFirstName() + " "
+//                        + activePlayersSockets.get(activePlayersSockets.indexOf(p2Socket)).getValue().getLastName()
+//                        + " has rejected your invitation.";
+//
+//                ps.println(message);
 
                 ps.close();
 

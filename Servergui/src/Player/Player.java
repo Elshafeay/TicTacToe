@@ -8,6 +8,10 @@ public class Player {
     private int points;
     
     public Player(){}
+
+    public Player(String username) {
+        this.username = username;
+    }
     
     public Player(String fName, String lName, String Uname, String pass){
         FN = fName;

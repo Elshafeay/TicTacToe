@@ -101,6 +101,12 @@ public class DBManager {
     public static Vector<Game> getAllGames(){
         return allSavedGames;
     }
+    
+    public static Vector<String> getplayersIndexes()
+    {
+        return playersIndexes;
+    }
+    
     public void closeConn() throws SQLException{
         pst.close();
         conn.close();
