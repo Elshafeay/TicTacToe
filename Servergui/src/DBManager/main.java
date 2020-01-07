@@ -20,27 +20,15 @@ public class main {
         DBManager.getAllGames().stream().forEach((g) -> {
             g.print();
         });
-        Player t = db.getPlayer("Tefa");
-        System.out.println("============");
-        t.setPoints(100);
-        DBManager.getAllPlayers().stream().forEach((p) -> {
-            p.print();
-        });
-        System.out.println("============");
-        db.addingBouns("Tefa");
-        DBManager.getAllPlayers().stream().forEach((p) -> {
-            p.print();
-        });
-        Game k = DBManager.getAllGames().get(1); //game must be gotten from the vector
+        Game k = db.getGame(3); //game must be gotten from the vector
+        k.print();
+        db.editGame(k.getID(), "XOX__X_XO");
+        System.out.println("======================");
         DBManager.getAllGames().stream().forEach((g) -> {
             g.print();
         });
-        db.editGame(k, "xoo--x-o-"); 
-        DBManager.getAllGames().stream().forEach((g) -> {
-            g.print();
-        });
-        db.deleteGame(k);
-        DBManager.getAllGames().stream().forEach((g) -> {
+        System.out.println("======================");
+        db.getPlayerSavedGames("Tefa").stream().forEach((g) ->{
             g.print();
         });
     }

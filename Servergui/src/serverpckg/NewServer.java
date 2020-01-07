@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package serverpckg;
 
 import java.io.IOException;
@@ -18,13 +13,9 @@ import GameClass.Game;
 import java.io.DataInputStream;
 import java.io.PrintStream;
 import java.sql.SQLException;
-import org.json.*;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-
-/**
- *
- * @author Rehab
- */
 public class NewServer {
     
     DBManager dBManager;
@@ -41,15 +32,13 @@ public class NewServer {
         try {
             serverSocket = new ServerSocket(5005);
             dBManager = new DBManager();
-            offlinePlayers = DBManager.getplayersIndexes();
+            offlinePlayers = DBManager.getPlayersIndexes();
             while (runServer) 
             {                
                 Socket s = serverSocket.accept();
                 new ConnectionHandler(s);
             }
-            
             serverSocket.close();
-            
         } catch (IOException | SQLException | ClassNotFoundException ex) {
             Logger.getLogger(NewServer.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -60,7 +49,6 @@ public class NewServer {
         //Not Yet fully Implemented
         runServer = false;
     }
-    
     
     //inner class for connection handling
     class ConnectionHandler extends Thread
@@ -85,8 +73,41 @@ public class NewServer {
         @Override
         public void run() {
             super.run();
-            
-            //here will be the switch case
+            while(true){
+                try {
+                    JSONObject obj = new JSONObject(clientDataInputStream.readLine());
+                    switch(obj.getString("code")){
+                        case "LOGIN":
+                            break;
+                        case "SIGNUP":
+                            break;
+                        case "LOGOUT":
+                            break;
+                        case "INVITATION":
+                            switch(obj.getString("type")){
+                                case "SEND":
+                                    break;
+                                case "ACCEPT":
+                                    break;
+                                case "REJECT":
+                                    break;
+                            }
+                            break;
+                        case "MOVE":
+                            break;
+                        case "WINNING":
+                            break;
+                        case "SAVING":
+                            break;
+                        case "RESUME":
+                            break;
+                        case "CLOSING":
+                            break;
+                    }
+                } catch (IOException ex) {
+                    Logger.getLogger(NewServer.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
         }
         
         public boolean acceptLogin(String username, String password)
@@ -237,21 +258,16 @@ public class NewServer {
         public void saveGame(String p1Username, String p2Username, String board)
         {
             //use the database function to save the game
-            Player player1 = new Player(p1Username);
-            Player player2 = new Player(p2Username);
-            Game savedGame = new Game(player1, player2, board);
             try {
-                dBManager.addGame(savedGame);
+                dBManager.addGame(new Game(p1Username, p2Username, board));
             } catch (SQLException ex) {
                 Logger.getLogger(NewServer.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
         
-        public String resumeGame(int gameID)
+        public String resumeGame(int gameID) throws SQLException
         {
-            String board = "";
-            //use the database function to save the game
-            return board;
+            return dBManager.getGame(gameID).getBoard();
         }
         
         //public JSONObject getPlayers(){}
@@ -278,11 +294,11 @@ public class NewServer {
         
         public void informSaving(String p2Username)
         {
-            String savingMessage = activePlayersSockets.get(activePlayersSockets.indexOf(clientSocket)).getValue()
+        String savingMessage = activePlayersSockets.get(activePlayersSockets.indexOf(clientSocket)).getValue()
                     + " has saved the game.";
-            
+
             Socket secondPlayerSocket = activePlayersSockets.get(activePlayersSockets.indexOf(p2Username)).getKey();
-            
+
             JSONObject savingObj = new JSONObject();
             try {
                 savingObj.append("type", "Save");
@@ -295,5 +311,4 @@ public class NewServer {
             }   
         }
     }
-    
 }

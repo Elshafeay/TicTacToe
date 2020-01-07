@@ -3,21 +3,29 @@ import Player.Player;
 import java.sql.Timestamp;
 
 public class Game {
-    private final Player p1;
-    private final Player p2;
+    private int id;
+    private final String p1Username;
+    private final String p2Username;
     private Timestamp ts;
     private String board;
+    private static int counter=0;
     
-    public Game(Player first, Player second, String b){
-        p1 = first;
-        p2 = second;
+    public Game(String first, String second, String b){
+        p1Username = first;
+        p2Username = second;
         board = b;
+        id = counter++;
     }
-    public Player getP1(){
-        return p1;
+    
+    //getters
+    public int getID(){
+        return id;
     }
-    public Player getP2(){
-        return p2;
+    public String getP1(){
+        return p1Username;
+    }
+    public String getP2(){
+        return p2Username;
     }
     public String getBoard(){
         return board;
@@ -25,6 +33,8 @@ public class Game {
     public Timestamp getTS(){
         return ts;
     }
+    
+    //setters
     public void setBoard(String cells){
         board = cells;
     }
@@ -35,6 +45,6 @@ public class Game {
         ts = t;
     }
     public void print(){
-        System.out.println(p1.getUsername() +" "+p2.getUsername()+" "+ts+" "+board);
+        System.out.println(getID()+" "+getP1() +" "+getP2()+" "+ts+" "+board);
     }
 }

@@ -8,18 +8,17 @@ import java.sql.SQLException;
 import java.util.Vector;
 import Player.Player;
 import GameClass.Game;
-import java.sql.Timestamp;
 
 public class DBManager {
     private Player currPlayer;
     private Game currGame;
     private PreparedStatement pst;
-//    private final ResultSet pRS, gRS;
     private ResultSet rs;
     private final Connection conn;
     private static final Vector<Player> allPlayers = new Vector<>();
     private static final Vector<String> playersIndexes = new Vector<>();
     private static final Vector<Game> allSavedGames = new Vector<>();
+    private static final Vector<Integer> gamesIndexes = new Vector<>();
 
     public DBManager() throws SQLException, ClassNotFoundException{
         Class.forName("com.mysql.jdbc.Driver");
@@ -36,10 +35,10 @@ public class DBManager {
         pst= conn.prepareStatement("select * from savedgames");
         rs = pst.executeQuery();
         while(rs.next()){
-            currGame = new Game(getPlayer(rs.getString(1)), getPlayer(rs.getString(2)), rs.getString(4));
-//            System.out.print(rs.getTimestamp(3));
-            currGame.setTS(rs.getTimestamp(3));
+            currGame = new Game(rs.getString(2),rs.getString(3), rs.getString(5));
+            currGame.setTS(rs.getTimestamp(4));
             allSavedGames.add(currGame);
+            gamesIndexes.add(currGame.getID());
         }
     }
 
@@ -68,45 +67,55 @@ public class DBManager {
     }
     
     //Game Functions
+    public Game getGame(int id) throws SQLException{
+        return allSavedGames.get(gamesIndexes.indexOf(id));
+    }
     public void addGame(Game g) throws SQLException{
-        pst= conn.prepareStatement("insert into savedgames (PLAYER1, PLAYER2, BOARD) VALUES (?, ?, ?)");
-        pst.setString(1, g.getP1().getUsername());
-        pst.setString(2, g.getP2().getUsername());
-        pst.setString(3, g.getBoard());
+        pst= conn.prepareStatement("insert into savedgames (ID, PLAYER1, PLAYER2, BOARD) VALUES (?, ?, ?, ?)");
+        pst.setInt(1, g.getID());
+        pst.setString(2, g.getP1());
+        pst.setString(3, g.getP2());
+        pst.setString(4, g.getBoard());
         pst.executeUpdate();
         allSavedGames.add(g);
     }
-    public void editGame(Game g, String cells) throws SQLException{
-        pst= conn.prepareStatement("update savedgames set BOARD = ? where Player1 = ? and Player2 = ? and Date = ?");
+    public void editGame(int id, String cells) throws SQLException{
+        pst= conn.prepareStatement("update savedgames set BOARD = ? where ID =?");
         pst.setString(1, cells);
-        pst.setString(2, g.getP1().getUsername());
-        pst.setString(3, g.getP2().getUsername());
-        pst.setTimestamp(4, g.getTS());
+        pst.setInt(2, id);
         pst.executeUpdate();
-        g.setTS();
-        g.setBoard(cells);
+        getGame(id).setTS();
+        getGame(id).setBoard(cells);
     }
-    public void deleteGame(Game g) throws SQLException, ClassNotFoundException{
-        pst= conn.prepareStatement("Delete from savedgames where Player1 = ? and Player2 = ? and Date = ?");
-        pst.setString(1, g.getP1().getUsername());
-        pst.setString(2, g.getP2().getUsername());
-        pst.setTimestamp(3, g.getTS());
+    public void deleteGame(int id) throws SQLException, ClassNotFoundException{
+        pst= conn.prepareStatement("Delete from savedgames where ID =?");
+        pst.setInt(1, id);
         pst.executeUpdate();
-        allSavedGames.remove(g);
+        allSavedGames.remove(getGame(id));
+        gamesIndexes.remove(id);
     }
-            
+    public Vector<Game> getPlayerSavedGames(String username){
+        Vector<Game> savedGames = new Vector<>();
+        for(Game g:allSavedGames){
+            if(g.getP1().equals(username) || g.getP2().equals(username)){
+                savedGames.add(g);
+            }
+        }
+        return savedGames;
+    }
+    
+    //db vector getters
     public static Vector<Player> getAllPlayers(){
         return allPlayers;
+    }
+    public static Vector<String> getPlayersIndexes(){
+        return playersIndexes;
     }
     public static Vector<Game> getAllGames(){
         return allSavedGames;
     }
     
-    public static Vector<String> getplayersIndexes()
-    {
-        return playersIndexes;
-    }
-    
+    //for closing connection
     public void closeConn() throws SQLException{
         pst.close();
         conn.close();
