@@ -1,17 +1,23 @@
 package tictactoe;
 
+import static java.awt.Color.pink;
+import static java.awt.Color.red;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Background;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
+import javafx.stage.Stage;
 
 
 public class TicController implements Initializable {
@@ -25,72 +31,87 @@ public class TicController implements Initializable {
 //Fxml objects
     @FXML private GridPane p;
 
-    @FXML private Pane p1,p2,p3,p4,p5,p6,p7,p8,p9;
-    @FXML private ImageView im1,im2,im3;
+    @FXML private Pane p2,p3,p4,p5,p6,p7,p8,p9;
+    @FXML public Button b1, b2,b3,b4,b5,b6,b7,b8,b9;
     
+    public Stage myStage;
+    public Scene myScene;
+   
+public void setStage(Stage stage , Scene scene)
+{
+    myStage=stage;
+    myScene=scene;
+}
     
 //Fxml Action pane 1 cell 1
-    @FXML
-    public void paneAction1 (){
-        System.out.println(GridPane.getColumnIndex(p1));
-        System.out.println(GridPane.getRowIndex(p1));
+@FXML
+    public void paneAction1 (ActionEvent event){
         
+        
+        b1.setStyle("-fx-background-image: url('/tictactoe/PINK.png')");       
+        myStage.setScene(myScene);
+        myStage.show();
+        
+             
 
     }
     @FXML
     public void paneAction2 (){
-        System.out.println(GridPane.getColumnIndex(p2));
-        System.out.println(GridPane.getRowIndex(p2));
+     
+        b2.setStyle("-fx-background-image: url('/tictactoe/phone-icon-png-letter-o-7.png')");
+        myStage.setScene(myScene);
+        myStage.show();
+        
     }
     @FXML
     public void paneAction3 () {
-        System.out.println(GridPane.getColumnIndex(p3));
-        System.out.println(GridPane.getRowIndex(p3));
+       b3.setStyle("-fx-background-image: url('/tictactoe/phone-icon-png-letter-o-7.png')");
+        myStage.setScene(myScene);
+        myStage.show(); 
 
     }
     @FXML
     public void paneAction4 (){
-        System.out.println(GridPane.getColumnIndex(p4));
-        System.out.println(GridPane.getRowIndex(p4));
+        b4.setStyle("-fx-background-image: url('/tictactoe/PINK.png')");       
+        myStage.setScene(myScene);
+        myStage.show();
     }
     @FXML
     public void paneAction5 (){
-        System.out.println(GridPane.getColumnIndex(p5));
-        System.out.println(GridPane.getRowIndex(p5));
+        b5.setStyle("-fx-background-image: url('/tictactoe/PINK.png')");       
+        myStage.setScene(myScene);
+        myStage.show();
     }
     @FXML
     public void paneAction6 (){
-        System.out.println(GridPane.getColumnIndex(p6));
-        System.out.println(GridPane.getRowIndex(p6));
+        b6.setStyle("-fx-background-image: url('/tictactoe/phone-icon-png-letter-o-7.png')");
+        myStage.setScene(myScene);
+        myStage.show();
     }
     @FXML
     public void paneAction7 (){
-        System.out.println(GridPane.getColumnIndex(p7));
-        System.out.println(GridPane.getRowIndex(p7));  
+         b7.setStyle("-fx-background-image: url('/tictactoe/phone-icon-png-letter-o-7.png')");
+        myStage.setScene(myScene);
+        myStage.show();
     }
     @FXML
     public void paneAction8 (){
-        System.out.println(GridPane.getColumnIndex(p8));
-        System.out.println(GridPane.getRowIndex(p8));
+         b8.setStyle("-fx-background-image: url('/tictactoe/phone-icon-png-letter-o-7.png')");
+        myStage.setScene(myScene);
+        myStage.show();
     }
     @FXML
     public void paneAction9 (){
-        System.out.println(GridPane.getColumnIndex(p9));
-        System.out.println(GridPane.getRowIndex(p9));
+        b9.setStyle("-fx-background-image: url('/tictactoe/PINK.png')");       
+        myStage.setScene(myScene);
+        myStage.show();
     }
-//    public void p1Info() {
-//        System.out.println(p1.getId());
-//
-//        System.out.println();
-//    }
-//    public void getInfo () {
-////        System.out.println(p1.getId());
-//        System.out.println(this.getId());
-//    }
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
     }
+
+  
 
 }

@@ -23,18 +23,14 @@ public class Tic extends Application {
     }
 
     @Override
-    public void start(Stage primaryStage)  {
-        Parent root;
-        try {
-            //rote Node
-            root= FXMLLoader.load(getClass().getResource("TicTac.fxml"));
-             Scene scene =new Scene(root);
-        primaryStage.setScene(scene);
-        //primaryStage.setResizable(false);
-        } catch (IOException ex) {
-            Logger.getLogger(Tic.class.getName()).log(Level.SEVERE, null, ex);
-        }
-          
+    public void start(Stage primaryStage) throws IOException  {
+        FXMLLoader fxmlloader= new FXMLLoader(getClass().getResource("TicTac.fxml"));
+        Parent root=(Parent) fxmlloader.load();
+        Scene scene=new Scene(root);
+     
+        ((TicController) fxmlloader.getController()).setStage(primaryStage,scene);
+        
+         primaryStage.setScene(scene);
         primaryStage.show();
 
 
