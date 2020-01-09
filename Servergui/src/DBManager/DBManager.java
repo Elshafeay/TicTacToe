@@ -8,6 +8,8 @@ import java.sql.SQLException;
 import java.util.Vector;
 import Player.Player;
 import GameClass.Game;
+import java.util.HashMap;
+import java.util.Map;
 
 public class DBManager {
     private Player currPlayer;
@@ -19,6 +21,10 @@ public class DBManager {
     private static final Vector<String> playersIndexes = new Vector<>();
     private static final Vector<Game> allSavedGames = new Vector<>();
     private static final Vector<Integer> gamesIndexes = new Vector<>();
+    public static final Vector<String> profPlayers = new Vector<>();
+    public static final Vector<String> intermediatePlayers = new Vector<>();
+    public static final Vector<String> beginnerPlayers = new Vector<>();
+    public static Map<String, Integer> playerPoints = new HashMap<>();
 
     public DBManager() throws SQLException, ClassNotFoundException{
         Class.forName("com.mysql.jdbc.Driver");
@@ -30,6 +36,7 @@ public class DBManager {
             currPlayer = new Player(rs.getString(1), rs.getString(2), rs.getString(3), rs.getString(4), rs.getInt(5));
             allPlayers.add(currPlayer);
             playersIndexes.add(currPlayer.getUsername());
+            playerPoints.put(rs.getString(3), rs.getInt(5));
         }
         //adding all the games to the vector
         pst= conn.prepareStatement("select * from savedgames");
@@ -53,6 +60,7 @@ public class DBManager {
         pst.executeUpdate();
         allPlayers.add(e);
         playersIndexes.add(e.getUsername());
+        playerPoints.put(e.getUsername(), e.getPoints());
     }
     public final Player getPlayer(String Uname) throws SQLException{
         return allPlayers.get(playersIndexes.indexOf(Uname));
@@ -64,6 +72,7 @@ public class DBManager {
         pst.setInt(1, p.getPoints());
         pst.setString(2, Uname);
         pst.executeUpdate();
+        playerPoints.replace(Uname, p.getPoints());
     }
     
     //Game Functions
