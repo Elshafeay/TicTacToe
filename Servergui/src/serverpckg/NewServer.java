@@ -49,16 +49,11 @@ public class NewServer {
                 }
                 System.out.println("Entered While");
                 Socket s = serverSocket.accept();
+                System.out.println("socket has been opened with the server");
                 new ConnectionHandler(s);
             }
         } catch (IOException | SQLException | ClassNotFoundException ex) {
             Logger.getLogger(NewServer.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        try {
-            serverSocket.close();
-            System.out.println("Stopped Server");
-        } catch (IOException ex) {
-            Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -108,15 +103,8 @@ public class NewServer {
                     Rjson = new JSONObject(clientDataInputStream.readLine());
                     switch (Rjson.getString("code")) {
                         case "LOGIN":
-                            Sjson = new JSONObject();
-                            Sjson.put("code", "LOGIN");
-                            if (acceptLogin(Rjson.getString("username"),
-                                    Rjson.getString("username"))) {
-                                Sjson.put("response", 1); //successful login
-                            } else {
-                                Sjson.put("response", 0); //unsuccessful login
-                            }
-                            clientPrintStream.print(Sjson);
+                            acceptLogin(Rjson.getString("username"),
+                            Rjson.getString("password"));
                             break;
                         case "SIGNUP":
                             Sjson = new JSONObject();
@@ -255,32 +243,58 @@ public class NewServer {
                             informClosing();
                             break;
                     }
+                    runConnection=false; //just for developing purposes //to be removed in production
                 } catch (IOException | JSONException ex) {
                     Logger.getLogger(NewServer.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
+            //to close after just one msg //also for developing puposes
+            try {
+                clientDataInputStream.close();
+                clientPrintStream.close();
+                clientSocket.close();
+                System.out.println("socket has been successfullt closed");
+            } catch (IOException ex) {
+                Logger.getLogger(NewServer.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
-
-        public boolean acceptLogin(String username, String password) {
-            boolean authenticationResponse = false;
+        
+        
+        /* login function 
+        to validate credentials and send the result back to the client */
+        public void acceptLogin(String username, String password) {
             Player pTemp;
-
+            Sjson = new JSONObject();
+            int result = 0;
+            String message="";
+            Sjson.put("code", "LOGIN");
             try {
                 pTemp = dBManager.getPlayer(username);
+                if(pTemp == null){
+                    message = "User Not Found!";
+                }
+                else{
+                    if (pTemp != null && pTemp.getPass().equals(password)) {
+                        currentPlayerUsername = username;
+                        activePlayersSockets.put(username, clientSocket);
+                        offlinePlayers.remove(username);
+                        onlinePlayers.add(username);
+                        result = 1;
+                        message = "Welcome "+username;
+                    }else{
+                        message = "Wrong Password!";
+                    }
+                }
+                
             } catch (SQLException ex) {
                 Logger.getLogger(NewServer.class.getName()).log(Level.SEVERE, null, ex);
-                return false;
+                message = "Problem with connection!";
             }
-
-            if (pTemp != null && pTemp.getPass().equals(password)) {
-                currentPlayerUsername = username;
-                activePlayersSockets.put(username, clientSocket);
-                offlinePlayers.remove(username);
-                onlinePlayers.add(username);
-                authenticationResponse = true;
+            finally{
+                Sjson.put("message", message);
+                Sjson.put("response", result);
+                clientPrintStream.println(Sjson.toString());
             }
-
-            return authenticationResponse;
         }
 
         public boolean acceptSignUp(Player p) {
@@ -319,7 +333,7 @@ public class NewServer {
         }
 
         public boolean sendInvitation(String p2Username) {
-
+            //test if the other player is not in the busy list first
             if (!busyPlayers.contains(p2Username)) {
                 String invitationMessage = currentPlayerUsername + " has invited you to play. What do you think?";
 

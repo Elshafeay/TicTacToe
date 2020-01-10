@@ -63,7 +63,11 @@ public class DBManager {
         playerPoints.put(e.getUsername(), e.getPoints());
     }
     public final Player getPlayer(String Uname) throws SQLException{
-        return allPlayers.get(playersIndexes.indexOf(Uname));
+        for(Player p:allPlayers){
+            if(p.getUsername().equalsIgnoreCase(Uname))
+                return p;
+        }
+        return null;
     }
     public void addingBouns(String Uname) throws SQLException{
         Player p = getPlayer(Uname);
