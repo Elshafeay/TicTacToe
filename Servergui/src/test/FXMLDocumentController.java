@@ -14,6 +14,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
+import javafx.scene.control.TitledPane;
 
 import serverpckg.NewServer;
 
@@ -30,6 +32,8 @@ public class FXMLDocumentController implements Initializable {
     Button stop;
     @FXML
     Button start;
+    @FXML
+    TitledPane playerList;
 
     @FXML
     private void handleStartButtonAction(ActionEvent event) {
@@ -37,7 +41,13 @@ public class FXMLDocumentController implements Initializable {
             servThread = new ServThread();
             servThread.start();
         }
-
+        ListView<String> players = new ListView<>();
+        for(String user : NewServer.onlinePlayers)
+        {
+            players.getItems().add(user);
+        }
+        
+        playerList.setContent(players);
     }
 
     @FXML
@@ -49,6 +59,8 @@ public class FXMLDocumentController implements Initializable {
             servThread = null;
             System.out.println("Server Closing from button");
         }
+        ListView<String> players = new ListView<>();
+        playerList.setContent(players);
     }
 
     @Override
