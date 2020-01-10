@@ -20,6 +20,7 @@ import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 public class DummyClient extends JFrame {
@@ -44,7 +45,9 @@ public class DummyClient extends JFrame {
                         System.out.println(Rjson.toString());
                     } catch (IOException ex) {
                         Logger.getLogger(DummyClient.class.getName()).log(Level.SEVERE, null, ex);
-                    }
+                    } catch (JSONException ex) {
+                    Logger.getLogger(DummyClient.class.getName()).log(Level.SEVERE, null, ex);
+                }
                 }
         }).start();
     }

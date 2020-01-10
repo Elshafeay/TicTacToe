@@ -18,6 +18,10 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.TitledPane;
 
 import serverpckg.NewServer;
+import DBManager.DBManager;
+import java.util.Vector;
+import javafx.collections.ObservableList;
+import javafx.scene.control.ScrollPane;
 
 /**
  *
@@ -33,7 +37,10 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     Button start;
     @FXML
-    TitledPane playerList;
+    ScrollPane onlinePlayers;
+    @FXML
+    ScrollPane offlinePlayers;
+    
 
     @FXML
     private void handleStartButtonAction(ActionEvent event) {
@@ -41,13 +48,37 @@ public class FXMLDocumentController implements Initializable {
             servThread = new ServThread();
             servThread.start();
         }
-        ListView<String> players = new ListView<>();
+        
+        NewServer.onlinePlayers = new Vector<>();
+        NewServer.offlinePlayers = new Vector<>();
+        NewServer.onlinePlayers.add("Rehab");
+        NewServer.onlinePlayers.add("Radwa");
+        NewServer.onlinePlayers.add("Raghad");
+        NewServer.onlinePlayers.add("Shahd");
+        NewServer.onlinePlayers.add("Shrouk");
+        NewServer.onlinePlayers.add("Shada");
+        NewServer.offlinePlayers.add("Rou");
+        NewServer.offlinePlayers.add("Nada");
+        NewServer.offlinePlayers.add("Rana");
+        NewServer.offlinePlayers.add("Safwa");
+        NewServer.offlinePlayers.add("Eman");
+        NewServer.offlinePlayers.add("Ebtsam");
+        
+        ListView<String> onlinePlayersList = new ListView<>();
         for(String user : NewServer.onlinePlayers)
         {
-            players.getItems().add(user);
+            onlinePlayersList.getItems().add(user + "  " + DBManager.playerPoints.get(user));
+            System.out.println(user);
         }
         
-        playerList.setContent(players);
+        ListView<String> offlinePlayersList = new ListView<>();
+        for(String user : NewServer.offlinePlayers)
+        {
+            offlinePlayersList.getItems().add(user + "  " + DBManager.playerPoints.get(user));
+        }
+        
+        onlinePlayers.setContent(onlinePlayersList);
+        offlinePlayers.setContent(offlinePlayersList);
     }
 
     @FXML
@@ -59,8 +90,11 @@ public class FXMLDocumentController implements Initializable {
             servThread = null;
             System.out.println("Server Closing from button");
         }
-        ListView<String> players = new ListView<>();
-        playerList.setContent(players);
+        
+        ListView<String> offlinePlayersList = new ListView<>();
+        ListView<String> onlinePlayersList = new ListView<>();
+        onlinePlayers.setContent(onlinePlayersList);
+        offlinePlayers.setContent(offlinePlayersList);      
     }
 
     @Override

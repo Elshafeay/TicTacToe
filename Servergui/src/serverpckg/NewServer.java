@@ -34,6 +34,7 @@ public class NewServer {
     volatile boolean runServer;
 
     public NewServer() {
+        DBManager.stDB();
     }
 
     public void startServer() {
@@ -41,7 +42,7 @@ public class NewServer {
             runServer = true;
             serverSocket = new ServerSocket(5005);
             dBManager = new DBManager();
-            offlinePlayers = DBManager.getPlayersIndexes();
+            offlinePlayers = DBManager.getPlayersUsernames();
             while (runServer) {
                 if (!runServer) {
                     System.out.println("Out From While");
@@ -104,7 +105,7 @@ public class NewServer {
                     switch (Rjson.getString("code")) {
                         case "LOGIN":
                             acceptLogin(Rjson.getString("username"),
-                            Rjson.getString("password"));
+                                    Rjson.getString("password"));
                             break;
                         case "SIGNUP":
                             Sjson = new JSONObject();
@@ -243,57 +244,56 @@ public class NewServer {
                             informClosing();
                             break;
                     }
-                    runConnection=false; //just for developing purposes //to be removed in production
+                    runConnection = false; //just for developing purposes //to be removed in production
                 } catch (IOException | JSONException ex) {
                     Logger.getLogger(NewServer.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
-            //to close after just one msg //also for developing puposes
+            //to close after just one msg //also for developing purposes
             try {
                 clientDataInputStream.close();
                 clientPrintStream.close();
                 clientSocket.close();
-                System.out.println("socket has been successfullt closed");
+                System.out.println("socket has been successfully closed");
             } catch (IOException ex) {
                 Logger.getLogger(NewServer.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        
-        
+
         /* login function 
         to validate credentials and send the result back to the client */
         public void acceptLogin(String username, String password) {
-            Player pTemp;
-            Sjson = new JSONObject();
-            int result = 0;
-            String message="";
-            Sjson.put("code", "LOGIN");
             try {
-                pTemp = dBManager.getPlayer(username);
-                if(pTemp == null){
-                    message = "User Not Found!";
-                }
-                else{
-                    if (pTemp != null && pTemp.getPass().equals(password)) {
+                Player pTemp;
+                Sjson = new JSONObject();
+                int result = 0;
+                String message = "";
+                Sjson.put("code", "LOGIN");
+                try {
+                    pTemp = dBManager.getPlayer(username);
+                    if (pTemp == null) {
+                        message = "User Not Found!";
+                    } else if (pTemp != null && pTemp.getPass().equals(password)) {
                         currentPlayerUsername = username;
                         activePlayersSockets.put(username, clientSocket);
                         offlinePlayers.remove(username);
                         onlinePlayers.add(username);
                         result = 1;
-                        message = "Welcome "+username;
-                    }else{
+                        message = "Welcome " + username;
+                    } else {
                         message = "Wrong Password!";
                     }
+
+                } catch (SQLException ex) {
+                    Logger.getLogger(NewServer.class.getName()).log(Level.SEVERE, null, ex);
+                    message = "Problem with connection!";
+                } finally {
+                    Sjson.put("message", message);
+                    Sjson.put("response", result);
+                    clientPrintStream.println(Sjson.toString());
                 }
-                
-            } catch (SQLException ex) {
+            } catch (JSONException ex) {
                 Logger.getLogger(NewServer.class.getName()).log(Level.SEVERE, null, ex);
-                message = "Problem with connection!";
-            }
-            finally{
-                Sjson.put("message", message);
-                Sjson.put("response", result);
-                clientPrintStream.println(Sjson.toString());
             }
         }
 
