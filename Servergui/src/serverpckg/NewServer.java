@@ -34,7 +34,6 @@ public class NewServer {
     volatile boolean runServer;
 
     public NewServer() {
-        DBManager.stDB();
     }
 
     public void startServer() {

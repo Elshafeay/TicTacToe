@@ -49,20 +49,6 @@ public class FXMLDocumentController implements Initializable {
             servThread.start();
         }
         
-        NewServer.onlinePlayers = new Vector<>();
-        NewServer.offlinePlayers = new Vector<>();
-        NewServer.onlinePlayers.add("Rehab");
-        NewServer.onlinePlayers.add("Radwa");
-        NewServer.onlinePlayers.add("Raghad");
-        NewServer.onlinePlayers.add("Shahd");
-        NewServer.onlinePlayers.add("Shrouk");
-        NewServer.onlinePlayers.add("Shada");
-        NewServer.offlinePlayers.add("Rou");
-        NewServer.offlinePlayers.add("Nada");
-        NewServer.offlinePlayers.add("Rana");
-        NewServer.offlinePlayers.add("Safwa");
-        NewServer.offlinePlayers.add("Eman");
-        NewServer.offlinePlayers.add("Ebtsam");
         
         ListView<String> onlinePlayersList = new ListView<>();
         for(String user : NewServer.onlinePlayers)
