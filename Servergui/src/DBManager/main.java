@@ -17,14 +17,14 @@ import java.util.Vector;
 public class main {
         public static void main(String[] args) throws SQLException, ClassNotFoundException{
         DBManager db = new DBManager();
-        DBManager.getAllGames().stream().forEach((g) -> {
+        DBManager.getAllGames().values().stream().forEach((g) -> {
             g.print();
         });
         Game k = db.getGame(3); //game must be gotten from the vector
         k.print();
         db.editGame(k.getID(), "XOX__X_XO");
         System.out.println("======================");
-        DBManager.getAllGames().stream().forEach((g) -> {
+        DBManager.getAllGames().values().stream().forEach((g) -> {
             g.print();
         });
         System.out.println("======================");

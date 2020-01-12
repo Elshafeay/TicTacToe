@@ -20,8 +20,12 @@ import javafx.scene.control.TitledPane;
 import serverpckg.NewServer;
 import DBManager.DBManager;
 import java.util.Vector;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.cell.PropertyValueFactory;
 
 /**
  *
@@ -41,6 +45,8 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     ScrollPane offlinePlayers;
     
+    public static TableView<PlayerWthPoints> onlinePlayersTable = new TableView<>();
+    public static TableView<PlayerWthPoints> offlinePlayersTable = new TableView<>();
 
     @FXML
     private void handleStartButtonAction(ActionEvent event) {
@@ -49,22 +55,32 @@ public class FXMLDocumentController implements Initializable {
             servThread.start();
         }
         
+        TableColumn<PlayerWthPoints, String> nameColumnOnline = new TableColumn<>("Username");
+        nameColumnOnline.setMinWidth(150);
+        nameColumnOnline.setCellValueFactory(new PropertyValueFactory<>("username"));
         
-        ListView<String> onlinePlayersList = new ListView<>();
-        for(String user : NewServer.onlinePlayers)
-        {
-            onlinePlayersList.getItems().add(user + "  " + DBManager.playerPoints.get(user));
-            System.out.println(user);
-        }
+        TableColumn<PlayerWthPoints, String> pointsColumnOnline = new TableColumn<>("Points");
+        pointsColumnOnline.setMinWidth(100);
+        pointsColumnOnline.setCellValueFactory(new PropertyValueFactory<>("points"));
         
-        ListView<String> offlinePlayersList = new ListView<>();
-        for(String user : NewServer.offlinePlayers)
-        {
-            offlinePlayersList.getItems().add(user + "  " + DBManager.playerPoints.get(user));
-        }
+        onlinePlayersTable = new TableView<>();
+        onlinePlayersTable.setItems(getOnlinePlayers());
+        onlinePlayersTable.getColumns().addAll(nameColumnOnline, pointsColumnOnline);
         
-        onlinePlayers.setContent(onlinePlayersList);
-        offlinePlayers.setContent(offlinePlayersList);
+        TableColumn<PlayerWthPoints, String> nameColumnOffline = new TableColumn<>("Username");
+        nameColumnOffline.setMinWidth(150);
+        nameColumnOffline.setCellValueFactory(new PropertyValueFactory<>("username"));
+        
+        TableColumn<PlayerWthPoints, String> pointsColumnOffline = new TableColumn<>("Points");
+        pointsColumnOffline.setMinWidth(100);
+        pointsColumnOffline.setCellValueFactory(new PropertyValueFactory<>("points"));
+        
+        offlinePlayersTable = new TableView<>();
+        offlinePlayersTable.setItems(getOfflinePlayers());
+        offlinePlayersTable.getColumns().addAll(nameColumnOffline, pointsColumnOffline);
+        
+        onlinePlayers.setContent(onlinePlayersTable);
+        offlinePlayers.setContent(offlinePlayersTable);
     }
 
     @FXML
@@ -97,5 +113,61 @@ public class FXMLDocumentController implements Initializable {
         }
 
     }
+    
+    public class PlayerWthPoints
+    {
+        String username;
+        int points;
+
+        public PlayerWthPoints(String username, int points) {
+            this.username = username;
+            this.points = points;
+        }
+        
+        public String getUsername() {
+            return username;
+        }
+
+        public int getPoints() {
+            return points;
+        }
+        
+    }
+    
+    public ObservableList<PlayerWthPoints> getOnlinePlayers()
+    {
+        ObservableList<PlayerWthPoints> onlinePlayersWthPoints = FXCollections.observableArrayList();
+        
+        for(String user : NewServer.onlinePlayers)
+        {
+            onlinePlayersWthPoints.add(new PlayerWthPoints(user, DBManager.playerPoints.get(user)));
+        }
+        
+        return onlinePlayersWthPoints;
+    }
+    
+    public ObservableList<PlayerWthPoints> getOfflinePlayers()
+    {
+        ObservableList<PlayerWthPoints> offlinePlayersWthPoints = FXCollections.observableArrayList();
+        
+        for(String user : NewServer.offlinePlayers)
+        {
+            offlinePlayersWthPoints.add(new PlayerWthPoints(user, DBManager.playerPoints.get(user)));
+        }
+        
+        return offlinePlayersWthPoints;
+    }
 
 }
+//        ListView<String> onlinePlayersList = new ListView<>();
+//        for(String user : NewServer.onlinePlayers)
+//        {
+//            onlinePlayersList.getItems().add(user + "  " + DBManager.playerPoints.get(user));
+//            System.out.println(user);
+//        }
+//        
+//        ListView<String> offlinePlayersList = new ListView<>();
+//        for(String user : NewServer.offlinePlayers)
+//        {
+//            offlinePlayersList.getItems().add(user + "  " + DBManager.playerPoints.get(user));
+//        }

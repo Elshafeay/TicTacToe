@@ -26,22 +26,40 @@ public class NewServer {
     DBManager dBManager;
     //carries sokects and their username
     public static BiMap<String, Socket> activePlayersSockets = HashBiMap.create();
+    public static BiMap<String, PrintStream> activePlayersPrintStreams = HashBiMap.create();
     public static Vector<String> offlinePlayers = new Vector<>();
     public static Vector<String> onlinePlayers = new Vector<>();
     public static Vector<String> busyPlayers = new Vector<>();
-
+    //put for veiwing - not yet used
+    public static Vector<PlayerWthPoints> onlinePlayersWthPoints = new Vector<>();
+    public static Vector<PlayerWthPoints> offlinePlayersWthPoints = new Vector<>();
+    
     ServerSocket serverSocket;
     volatile boolean runServer;
 
     public NewServer() {
+        //this is for testing ui
+        DBManager.stDB();
+        NewServer.onlinePlayers.add("Rehab");
+        NewServer.onlinePlayers.add("Radwa");
+        NewServer.onlinePlayers.add("Rana");
+        NewServer.onlinePlayers.add("Rou");
+        NewServer.onlinePlayers.add("Nada");
+        NewServer.onlinePlayers.add("Raghad");
+        NewServer.offlinePlayers.add("Shahd");
+        NewServer.offlinePlayers.add("Shrouk");
+        NewServer.offlinePlayers.add("Shada");
+        NewServer.offlinePlayers.add("Safwa");
+        NewServer.offlinePlayers.add("Eman");
+        NewServer.offlinePlayers.add("Ebtsam");
     }
 
     public void startServer() {
         try {
             runServer = true;
             serverSocket = new ServerSocket(5005);
-            dBManager = new DBManager();
-            offlinePlayers = DBManager.getPlayersUsernames();
+//            dBManager = new DBManager();
+//            offlinePlayers = DBManager.getPlayersUsernames();
             while (runServer) {
                 if (!runServer) {
                     System.out.println("Out From While");
@@ -52,7 +70,7 @@ public class NewServer {
                 System.out.println("socket has been opened with the server");
                 new ConnectionHandler(s);
             }
-        } catch (IOException | SQLException | ClassNotFoundException ex) {
+        } catch (IOException ex) {
             Logger.getLogger(NewServer.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -74,9 +92,9 @@ public class NewServer {
     class ConnectionHandler extends Thread {
 
         private Socket clientSocket;
-        private Socket secondPlayerSocket;
         private DataInputStream clientDataInputStream;
         private PrintStream clientPrintStream;
+        private PrintStream secondPlayerPrintStream;
         private JSONObject Rjson; //for receiving
         private JSONObject Sjson; //for sending
         boolean runConnection;
@@ -275,6 +293,7 @@ public class NewServer {
                     } else if (pTemp != null && pTemp.getPass().equals(password)) {
                         currentPlayerUsername = username;
                         activePlayersSockets.put(username, clientSocket);
+                        activePlayersPrintStreams.put(username, clientPrintStream);
                         offlinePlayers.remove(username);
                         onlinePlayers.add(username);
                         result = 1;
@@ -317,10 +336,13 @@ public class NewServer {
             try {
                 onlinePlayers.remove(currentPlayerUsername);
                 offlinePlayers.add(currentPlayerUsername);
-                //should close the stream of the client
+                //close the streams and the socket of the client
                 clientDataInputStream.close();
                 clientPrintStream.close();
                 clientSocket.close();
+                //remove the socket and the print stream from their lists
+                activePlayersSockets.remove(currentPlayerUsername);
+                activePlayersPrintStreams.remove(currentPlayerUsername);
                 runConnection = false; //this should close the client's thread
 //                this.stop();
             } catch (IOException ex) {
@@ -336,18 +358,18 @@ public class NewServer {
             if (!busyPlayers.contains(p2Username)) {
                 String invitationMessage = currentPlayerUsername + " has invited you to play. What do you think?";
 
-                secondPlayerSocket = activePlayersSockets.get(p2Username);
+//                secondPlayerSocket = activePlayersSockets.get(p2Username);
 
-                PrintStream player2PS;
+                PrintStream player2PS = activePlayersPrintStreams.get(p2Username);
                 try {
-                    player2PS = new PrintStream(secondPlayerSocket.getOutputStream());
+//                    player2PS = new PrintStream(secondPlayerSocket.getOutputStream());
                     JSONObject invitationObject = new JSONObject();
                     invitationObject.put("code", "INVITATION");
                     invitationObject.put("type", "RECEIVE");
                     invitationObject.put("message", invitationMessage);
-                    player2PS.print(invitationObject);
-                    player2PS.close();
-                } catch (IOException | JSONException ex) {
+                    player2PS.print(invitationObject.toString());
+//                    player2PS.close();
+                } catch (JSONException ex) {
                     Logger.getLogger(NewServer.class.getName()).log(Level.SEVERE, null, ex);
                     return false;
                 }
@@ -362,7 +384,7 @@ public class NewServer {
                 invitationRejObj.put("code", "INVITATION");
                 invitationRejObj.put("type", "REJECT");
                 invitationRejObj.put("message", message);
-                clientPrintStream.print(invitationRejObj);
+                clientPrintStream.print(invitationRejObj.toString());
             } catch (JSONException ex) {
                 Logger.getLogger(NewServer.class.getName()).log(Level.SEVERE, null, ex);
                 return false;
@@ -377,9 +399,10 @@ public class NewServer {
                 invitationAccObj.put("code", "INVITATION");
                 invitationAccObj.put("type", "ACCEPT");
                 invitationAccObj.put("message", message);
-                clientPrintStream.print(invitationAccObj);
+                clientPrintStream.print(invitationAccObj.toString());
                 otherPlayerUsername = p2Username;
-                secondPlayerSocket = activePlayersSockets.get(p2Username);
+//                secondPlayerSocket = activePlayersSockets.get(p2Username);
+                secondPlayerPrintStream = activePlayersPrintStreams.get(p2Username);
                 busyPlayers.add(currentPlayerUsername);
                 busyPlayers.add(otherPlayerUsername);
             } catch (JSONException ex) {
@@ -395,13 +418,15 @@ public class NewServer {
             try {
                 moveObj.put("code", "MOVE");
                 moveObj.put("index", index);
-                try (PrintStream player2PS = new PrintStream(secondPlayerSocket.getOutputStream())) {
-                    player2PS.print(moveObj);
-                    return true;
-                } catch (IOException ex) {
-                    Logger.getLogger(NewServer.class.getName()).log(Level.SEVERE, null, ex);
-                    return false;
-                }
+                secondPlayerPrintStream.print(moveObj.toString());
+                return true;
+//                try (PrintStream player2PS = new PrintStream(secondPlayerSocket.getOutputStream())) {
+//                    player2PS.print(moveObj);
+//                    return true;
+//                } catch (IOException ex) {
+//                    Logger.getLogger(NewServer.class.getName()).log(Level.SEVERE, null, ex);
+//                    return false;
+//                }
             } catch (JSONException ex) {
                 Logger.getLogger(NewServer.class.getName()).log(Level.SEVERE, null, ex);
                 return false;
@@ -431,20 +456,21 @@ public class NewServer {
 
         public boolean sendClassification(String username, String level) {
             try {
-                Socket pSocket;
+//                Socket pSocket;
                 PrintStream ps = null;
-                for (Map.Entry<String, Socket> item : activePlayersSockets.entrySet()) {
-                    pSocket = item.getValue();
-                    ps = new PrintStream(pSocket.getOutputStream());
+                for (Map.Entry<String, PrintStream> item : activePlayersPrintStreams.entrySet()) {
+//                    pSocket = item.getValue();
+//                    ps = new PrintStream(pSocket.getOutputStream());
+                    ps = item.getValue();
                     JSONObject invitationObject = new JSONObject();
                     invitationObject.put("code", "UPDATECLASSIFICATION");
                     invitationObject.put("username", username);
                     invitationObject.put("level", level);
-                    ps.print(invitationObject);
+                    ps.print(invitationObject.toString());
                 }
-                ps.close();
+//                ps.close();
                 return true;
-            } catch (IOException | JSONException ex) {
+            } catch (JSONException ex) {
                 Logger.getLogger(NewServer.class.getName()).log(Level.SEVERE, null, ex);
                 return false;
             }
@@ -462,7 +488,7 @@ public class NewServer {
 
         public boolean sendResumeInvitaion(int gameID, String p2Username) {
             try {
-                PrintStream player2PS;
+                PrintStream player2PS = activePlayersPrintStreams.get(p2Username);
                 Game g = dBManager.getGame(gameID);
                 String board = g.getBoard();
                 Timestamp ts = g.getTS();
@@ -470,19 +496,19 @@ public class NewServer {
                 String invitationMessage = currentPlayerUsername
                         + " has invited you to resume the game you played in " + ts + "\n What do you think?";
 
-                secondPlayerSocket = activePlayersSockets.get(p2Username);
+//                secondPlayerSocket = activePlayersSockets.get(p2Username);
 
                 try {
-                    player2PS = new PrintStream(secondPlayerSocket.getOutputStream());
+//                    player2PS = new PrintStream(secondPlayerSocket.getOutputStream());
                     JSONObject invitationObject = new JSONObject();
                     invitationObject.put("code", "INVITATION");
                     invitationObject.put("type", "RESUME");
                     invitationObject.put("board", board);
                     invitationObject.put("message", invitationMessage);
-                    player2PS.print(invitationObject);
-                    player2PS.close();
+                    player2PS.print(invitationObject.toString());
+//                    player2PS.close();
                     return true;
-                } catch (IOException | JSONException ex) {
+                } catch (JSONException ex) {
                     Logger.getLogger(NewServer.class.getName()).log(Level.SEVERE, null, ex);
                     return false;
                 }
@@ -514,15 +540,16 @@ public class NewServer {
         public boolean informClosing() throws IOException {
             String closingMessage = currentPlayerUsername + " has closed the game.";
 
-            secondPlayerSocket = activePlayersSockets.get(otherPlayerUsername);
+//            secondPlayerSocket = activePlayersSockets.get(otherPlayerUsername);
 
             JSONObject closingObj = new JSONObject();
             try {
                 closingObj.put("code", "CLOSING");
                 closingObj.put("message", closingMessage);
-                PrintStream player2PS = new PrintStream(secondPlayerSocket.getOutputStream());
-                player2PS.print(closingObj.toString());
-                player2PS.close();
+//                PrintStream player2PS = new PrintStream(secondPlayerSocket.getOutputStream());
+//                player2PS.print(closingObj.toString());
+//                player2PS.close();
+                secondPlayerPrintStream.print(closingObj.toString());
                 updateBusyPlayers();
                 return true;
             } catch (JSONException ex) {
@@ -534,18 +561,19 @@ public class NewServer {
         public boolean informSaving() {
             String savingMessage = currentPlayerUsername + " has saved the game.";
 
-            secondPlayerSocket = activePlayersSockets.get(otherPlayerUsername);
+//            secondPlayerSocket = activePlayersSockets.get(otherPlayerUsername);
 
             JSONObject savingObj = new JSONObject();
             try {
                 savingObj.put("code", "SAVING");
                 savingObj.put("message", savingMessage);
-                PrintStream player2PS = new PrintStream(secondPlayerSocket.getOutputStream());
-                player2PS.print(savingObj);
-                player2PS.close();
+//                PrintStream player2PS = new PrintStream(secondPlayerSocket.getOutputStream());
+//                player2PS.print(savingObj);
+//                player2PS.close();
+                secondPlayerPrintStream.print(savingObj.toString());
                 updateBusyPlayers();
                 return true;
-            } catch (JSONException | IOException ex) {
+            } catch (JSONException ex) {
                 Logger.getLogger(NewServer.class.getName()).log(Level.SEVERE, null, ex);
                 return false;
             }
@@ -555,6 +583,27 @@ public class NewServer {
             busyPlayers.remove(currentPlayerUsername);
             busyPlayers.remove(otherPlayerUsername);
             otherPlayerUsername = "";
+            secondPlayerPrintStream = null;
         }
+    }
+    
+    public class PlayerWthPoints
+    {
+        String username;
+        int points;
+
+        public PlayerWthPoints(String username, int points) {
+            this.username = username;
+            this.points = points;
+        }
+        
+        public String getUsername() {
+            return username;
+        }
+
+        public int getPoints() {
+            return points;
+        }
+        
     }
 }
