@@ -26,6 +26,16 @@ import javafx.stage.Stage;
 import java.util.Random;
 import java.util.Vector;
 import GameData.Game;
+import java.io.IOException;
+import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javafx.application.Platform;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonBar;
+import javafx.scene.control.ButtonType;
 
 
 public class TicController implements Initializable {
@@ -57,7 +67,8 @@ public class TicController implements Initializable {
     private Line lineDiagonal1;
     @FXML
     private Line lineDiagonal2;
-    
+         @FXML public Button restart;
+            @FXML public Button exit;
     //Game variables
     boolean isGameEnds;
     boolean isFirstPlayerTurn = true;
@@ -215,6 +226,7 @@ public class TicController implements Initializable {
             isGameEnds = true;
             isFirstPlayerTurn = true;
             XOCounter = 0;
+            tie();
         }
         
         if (GameData.Game.challengeComputer == true)
@@ -323,18 +335,88 @@ public class TicController implements Initializable {
                  case 'X':
                      b.setId(String.valueOf(curChar));
                      b.setStyle("-fx-background-image: url('/clientGUI/images/PINK.png')");
+//                     b.disableProperty();
                      break;
                  case 'O':
                      b.setId(String.valueOf(curChar));
                      b.setStyle("-fx-background-image: url('/clientGUI/images/phone-icon-png-letter-o-7.png')");
+//                                          b.disableProperty();
+
                      break;
              }
-      //  b.setDisable(true);
+          try {
+                      b.setDisable(true);
+
+          } catch (Exception e) {
+              System.err.println("Don't worry Continue");
+          }
      
        setBoard(cells.indexOf(b), curChar);
        printBoard();
     }
      
+        //restart gui  or new game 
+          @FXML 
+      public void Restart(MouseEvent event){
+          
+//        Platform.exit();
+//          System.out.println("EXIT BUTTON CLICKED \n");
+           System.out.println("Game Scene Voila!!");
+        try {
+            loadGameFxml();
+        } catch (IOException ex) {
+            Logger.getLogger(TicController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+           Game.challengeComputer = true;
+    
+    
+      }
+      @FXML
+      public void EXIT(){
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setTitle("Exit");
+        alert.setHeaderText(null);
+        alert.setContentText("Do you want to exit the game");
+                    ButtonType yesButton = new ButtonType("Yes");
+            ButtonType BackButtonType = new ButtonType("Back");
+            ButtonType cancelButton = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+                        alert.getButtonTypes().setAll(yesButton, BackButtonType, cancelButton);
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.get() == yesButton) {
+        Platform.exit();
+        }
+        else if (result.get()==BackButtonType){
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("MainMenu.fxml"));
+            Parent root;
+            try {
+                root = (Parent) fxmlLoader.load();
+                            Scene scene = new Scene(root);
+                              Stage stage = (Stage) exit.getScene().getWindow();
+
+            stage.setScene(scene);
+                                                      stage.show();
+
+
+            } catch (IOException ex) {
+                Logger.getLogger(TicController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+          
+        }
+        
+      }
+      
+       
+      
+          public void loadGameFxml() throws IOException{
+            //Load new FXML and assign it to scene
+           
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("TicTac.fxml"));
+            Parent root = (Parent) fxmlLoader.load();
+            Scene scene = new Scene(root);
+            Stage stage = (Stage) exit.getScene().getWindow();
+            stage.setScene(scene);
+            stage.show();
+        }
      private void actionPerformed(ActionEvent e)
     {
         Button clickedButton = (Button) e.getSource();
@@ -356,12 +438,14 @@ public class TicController implements Initializable {
                       //  clickedButton.setText("O");
                         clickedButton.setStyle("-fx-background-image: url('/clientGUI/images/phone-icon-png-letter-o-7.png')");
                     }
+                    XOCounter++;
                     checkIfGameEnds();
               //      setCurrentPlayerSymbol();
                     isFirstPlayerTurn = !isFirstPlayerTurn;
               //      setCurrentPlayerSymbol();
-                    XOCounter++;
-            } 
+                    
+            }
+            clickedButton.setDisable(true);
          }
         
          //Single Player Mode
@@ -373,6 +457,10 @@ public class TicController implements Initializable {
                 computerPlay();
          }
             
+    }
+
+    private void tie() {
+        System.out.println("DRAWWWWWWWWW");    
     }
      
 
