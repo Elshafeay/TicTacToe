@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.effect.DisplacementMap?>
+<?import javafx.scene.effect.FloatMap?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox alignment="CENTER" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="clientGUI.MainMenuController">
+   <children>
+      <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="645.0" prefWidth="774.0" style="-fx-position-shape: center;">
+         <children>
+            <Button fx:id="btnSingle" alignment="CENTER" layoutX="94.0" layoutY="256.0" mnemonicParsing="false" onAction="#btnSinglePlayerClick" prefHeight="65.0" prefWidth="249.0" style="-fx-background-radius: 70px; -fx-background-color: steelblue;" styleClass="btn" text="Single Player" textAlignment="CENTER" textFill="WHITE">
+               <font>
+                  <Font name="Bookman Old Style Bold" size="24.0" />
+               </font>
+               <effect>
+                  <DisplacementMap>
+                     <mapData>
+                        <FloatMap />
+                     </mapData>
+                  </DisplacementMap>
+               </effect>
+            </Button>
+            <Button fx:id="btnMulti" alignment="CENTER" layoutX="95.0" layoutY="408.0" mnemonicParsing="false" onAction="#btnMultiPlayerClick" prefHeight="65.0" prefWidth="249.0" style="-fx-background-radius: 70px; -fx-background-color: steelblue;" styleClass="btn" text="Multi Player" textFill="WHITE">
+               <font>
+                  <Font name="Bookman Old Style Bold" size="24.0" />
+               </font>
+               <effect>
+                  <DisplacementMap>
+                     <mapData>
+                        <FloatMap />
+                     </mapData>
+                  </DisplacementMap>
+               </effect>
+            </Button>
+            <Pane layoutX="403.0" layoutY="1.0" prefHeight="670.0" prefWidth="359.0">
+               <children>
+                  <ScrollPane layoutY="158.0" prefHeight="160.0" prefWidth="370.0">
+                     <content>
+                        <ListView id="list2" prefHeight="162.0" prefWidth="354.0" />
+                     </content>
+                  </ScrollPane>
+                  <ScrollPane prefHeight="160.0" prefWidth="370.0">
+                     <content>
+                        <ListView id="list1" prefHeight="162.0" prefWidth="354.0" />
+                     </content>
+                  </ScrollPane>
+                  <ScrollPane layoutY="319.0" prefHeight="160.0" prefWidth="370.0">
+                     <content>
+                        <ListView id="list3" prefHeight="159.0" prefWidth="353.0" />
+                     </content>
+                  </ScrollPane>
+                  <ScrollPane layoutY="479.0" prefHeight="160.0" prefWidth="370.0">
+                     <content>
+                        <ListView id="list4" prefHeight="159.0" prefWidth="354.0" />
+                     </content>
+                  </ScrollPane>
+               </children>
+            </Pane>
+            <Pane layoutX="4.0" layoutY="18.0" prefHeight="146.0" prefWidth="384.0">
+               <children>
+                  <ImageView fitHeight="161.0" fitWidth="403.0" layoutX="-10.0" layoutY="1.0">
+                     <image>
+                        <Image url="@images/logo.jpeg" />
+                     </image>
+                  </ImageView>
+               </children>
+            </Pane>
+            <TextField layoutX="405.0" layoutY="321.0" prefHeight="25.0" prefWidth="351.0" style="-fx-background-color: steelblue; -fx-text-inner-color: white;" text="Beginners">
+               <font>
+                  <Font name="Bookman Old Style Bold" size="18.0" />
+               </font>
+            </TextField>
+            <TextField layoutX="405.0" layoutY="162.0" prefHeight="25.0" prefWidth="351.0" style="-fx-background-color: steelblue; -fx-text-inner-color: white;" text="Intermediate">
+               <font>
+                  <Font name="Bookman Old Style Bold" size="18.0" />
+               </font>
+            </TextField>
+            <TextField layoutX="405.0" layoutY="4.0" prefHeight="25.0" prefWidth="351.0" style="-fx-background-color: steelblue; -fx-text-inner-color: white;" text="professional">
+               <font>
+                  <Font name="Bookman Old Style Bold" size="18.0" />
+               </font>
+            </TextField>
+            <TextField layoutX="405.0" layoutY="481.0" prefHeight="33.0" prefWidth="351.0" style="-fx-background-color: steelblue; -fx-text-inner-color: white;" text="Offline">
+               <font>
+                  <Font name="Bookman Old Style Bold" size="18.0" />
+               </font>
+            </TextField>
+         </children>
+      </Pane>
+   </children>
+</VBox>

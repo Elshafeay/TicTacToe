@@ -19,7 +19,10 @@ import javafx.scene.control.TitledPane;
 
 import serverpckg.NewServer;
 import DBManager.DBManager;
+import java.sql.SQLException;
 import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ScrollPane;
@@ -109,7 +112,13 @@ public class FXMLDocumentController implements Initializable {
         @Override
         public void run() {
             server = new NewServer();
-            server.startServer();
+            try {
+                server.startServer();
+            } catch (SQLException ex) {
+                Logger.getLogger(FXMLDocumentController.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (ClassNotFoundException ex) {
+                Logger.getLogger(FXMLDocumentController.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
 
     }
