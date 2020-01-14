@@ -153,6 +153,10 @@ public class DBManager {
         return allSavedGames;
     }
 
+    public static Map<String, Integer> getPlayerPoints() {
+        return playerPoints;
+    }
+
     //for closing connection
     public void closeConn() throws SQLException {
         pst.close();

@@ -20,6 +20,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import java.util.HashMap;
+
+import test.FXMLDocumentController;
 
 public class NewServer {
 
@@ -31,27 +34,69 @@ public class NewServer {
     public static Vector<String> onlinePlayers = new Vector<>();
     public static Vector<String> busyPlayers = new Vector<>();
     //put for veiwing - not yet used
-    public static Vector<PlayerWthPoints> onlinePlayersWthPoints = new Vector<>();
-    public static Vector<PlayerWthPoints> offlinePlayersWthPoints = new Vector<>();
-    
+    public static Map<String, Integer> onlinePlayersWthPoints = new HashMap<>();
+    public static Map<String, Integer> offlinePlayersWthPoints = new HashMap<>();
+
     ServerSocket serverSocket;
     volatile boolean runServer;
 
     public NewServer() {
-        //this is for testing ui
+    }
+
+    public static void testUI() {
         DBManager.stDB();
-        NewServer.onlinePlayers.add("Rehab");
-        NewServer.onlinePlayers.add("Radwa");
-        NewServer.onlinePlayers.add("Rana");
-        NewServer.onlinePlayers.add("Rou");
-        NewServer.onlinePlayers.add("Nada");
-        NewServer.onlinePlayers.add("Raghad");
-        NewServer.offlinePlayers.add("Shahd");
-        NewServer.offlinePlayers.add("Shrouk");
-        NewServer.offlinePlayers.add("Shada");
-        NewServer.offlinePlayers.add("Safwa");
-        NewServer.offlinePlayers.add("Eman");
-        NewServer.offlinePlayers.add("Ebtsam");
+//        NewServer.onlinePlayers.add("Rehab");
+//        NewServer.onlinePlayers.add("Radwa");
+//        NewServer.onlinePlayers.add("Rana");
+//        NewServer.onlinePlayers.add("Rou");
+//        NewServer.onlinePlayers.add("Nada");
+//        NewServer.onlinePlayers.add("Raghad");
+//        NewServer.offlinePlayers.add("Shahd");
+//        NewServer.offlinePlayers.add("Shrouk");
+//        NewServer.offlinePlayers.add("Shada");
+//        NewServer.offlinePlayers.add("Safwa");
+//        NewServer.offlinePlayers.add("Eman");
+//        NewServer.offlinePlayers.add("Ebtsam");
+//        for (String item : onlinePlayers) {
+//            onlinePlayersWthPoints.put(item, DBManager.playerPoints.get(item));
+//        }
+//        for (String item : offlinePlayers) {
+//            offlinePlayersWthPoints.put(item, DBManager.playerPoints.get(item));
+//        }
+
+        //at server start, offline players are the same in DB
+        offlinePlayersWthPoints = DBManager.getPlayerPoints();
+        FXMLDocumentController.offlinePlayersTable.refresh();
+    }
+
+    public void testUILogin() {
+        onlinePlayersWthPoints.put("Rehab", DBManager.playerPoints.get("Rehab"));
+        offlinePlayersWthPoints.remove("Rehab");
+        System.out.println(offlinePlayersWthPoints.entrySet());
+        FXMLDocumentController.onlinePlayersTable.refresh();
+        FXMLDocumentController.offlinePlayersTable.refresh();
+
+        onlinePlayersWthPoints.put("Radwa", DBManager.playerPoints.get("Radwa"));
+        offlinePlayersWthPoints.remove("Radwa");
+        FXMLDocumentController.onlinePlayersTable.refresh();
+        FXMLDocumentController.offlinePlayersTable.refresh();
+
+        onlinePlayersWthPoints.put("Raghad", DBManager.playerPoints.get("Raghad"));
+        offlinePlayersWthPoints.remove("Raghad");
+        FXMLDocumentController.onlinePlayersTable.refresh();
+        FXMLDocumentController.offlinePlayersTable.refresh();
+    }
+
+    public void testUILogout() {
+        offlinePlayersWthPoints.put("Raghad", DBManager.playerPoints.get("Raghad"));
+        onlinePlayersWthPoints.remove("Raghad");
+        FXMLDocumentController.onlinePlayersTable.refresh();
+        FXMLDocumentController.offlinePlayersTable.refresh();
+    }
+
+    public void testUISetPoints() {
+        onlinePlayersWthPoints.put("Radwa", onlinePlayersWthPoints.get("Radwa") + 100);
+        FXMLDocumentController.onlinePlayersTable.refresh();
     }
 
     public void startServer() {
@@ -59,7 +104,7 @@ public class NewServer {
             runServer = true;
             serverSocket = new ServerSocket(5005);
 //            dBManager = new DBManager();
-//            offlinePlayers = DBManager.getPlayersUsernames();
+//            offlinePlayers = DBManager.getPlayersUsernames();            
             while (runServer) {
                 if (!runServer) {
                     System.out.println("Out From While");
@@ -78,6 +123,9 @@ public class NewServer {
     public void closeServer() {
         runServer = false;
         try {
+            for (PrintStream ps : activePlayersPrintStreams.values()) {
+                ps.close(); //to close all clients' printstreams before closing
+            }
             for (Socket s : activePlayersSockets.values()) {
                 s.close(); //to close all clients' sockets before closing
             }
@@ -298,6 +346,10 @@ public class NewServer {
                         onlinePlayers.add(username);
                         result = 1;
                         message = "Welcome " + username;
+                        onlinePlayersWthPoints.put(currentPlayerUsername, DBManager.playerPoints.get(currentPlayerUsername));
+                        offlinePlayersWthPoints.remove(currentPlayerUsername);
+                        FXMLDocumentController.onlinePlayersTable.refresh();
+                        FXMLDocumentController.offlinePlayersTable.refresh();
                     } else {
                         message = "Wrong Password!";
                     }
@@ -344,7 +396,11 @@ public class NewServer {
                 activePlayersSockets.remove(currentPlayerUsername);
                 activePlayersPrintStreams.remove(currentPlayerUsername);
                 runConnection = false; //this should close the client's thread
-//                this.stop();
+//                this.stop(); //for closing client's thread
+                offlinePlayersWthPoints.put(currentPlayerUsername, DBManager.playerPoints.get(currentPlayerUsername));
+                onlinePlayersWthPoints.remove(currentPlayerUsername);
+                FXMLDocumentController.onlinePlayersTable.refresh();
+                FXMLDocumentController.offlinePlayersTable.refresh();
             } catch (IOException ex) {
                 Logger.getLogger(NewServer.class.getName()).log(Level.SEVERE, null, ex);
                 return false;
@@ -359,7 +415,6 @@ public class NewServer {
                 String invitationMessage = currentPlayerUsername + " has invited you to play. What do you think?";
 
 //                secondPlayerSocket = activePlayersSockets.get(p2Username);
-
                 PrintStream player2PS = activePlayersPrintStreams.get(p2Username);
                 try {
 //                    player2PS = new PrintStream(secondPlayerSocket.getOutputStream());
@@ -446,7 +501,9 @@ public class NewServer {
                     DBManager.beginnerPlayers.remove(p.getUsername());
                     sendClassification(winnerUsername, "intermediate");
                 }
-                updateBusyPlayers();//remove both current player and other player from busy list
+                onlinePlayersWthPoints.put(winnerUsername, onlinePlayersWthPoints.get(winnerUsername) + 100);
+                FXMLDocumentController.onlinePlayersTable.refresh();
+                updateBusyPlayers(); //remove both current player and other player from busy list
                 return true;
             } catch (SQLException ex) {
                 Logger.getLogger(NewServer.class.getName()).log(Level.SEVERE, null, ex);
@@ -497,7 +554,6 @@ public class NewServer {
                         + " has invited you to resume the game you played in " + ts + "\n What do you think?";
 
 //                secondPlayerSocket = activePlayersSockets.get(p2Username);
-
                 try {
 //                    player2PS = new PrintStream(secondPlayerSocket.getOutputStream());
                     JSONObject invitationObject = new JSONObject();
@@ -541,7 +597,6 @@ public class NewServer {
             String closingMessage = currentPlayerUsername + " has closed the game.";
 
 //            secondPlayerSocket = activePlayersSockets.get(otherPlayerUsername);
-
             JSONObject closingObj = new JSONObject();
             try {
                 closingObj.put("code", "CLOSING");
@@ -562,7 +617,6 @@ public class NewServer {
             String savingMessage = currentPlayerUsername + " has saved the game.";
 
 //            secondPlayerSocket = activePlayersSockets.get(otherPlayerUsername);
-
             JSONObject savingObj = new JSONObject();
             try {
                 savingObj.put("code", "SAVING");
@@ -585,25 +639,5 @@ public class NewServer {
             otherPlayerUsername = "";
             secondPlayerPrintStream = null;
         }
-    }
-    
-    public class PlayerWthPoints
-    {
-        String username;
-        int points;
-
-        public PlayerWthPoints(String username, int points) {
-            this.username = username;
-            this.points = points;
-        }
-        
-        public String getUsername() {
-            return username;
-        }
-
-        public int getPoints() {
-            return points;
-        }
-        
     }
 }

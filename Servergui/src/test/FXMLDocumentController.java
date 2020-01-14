@@ -8,24 +8,22 @@ package test;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
-import javafx.scene.control.TitledPane;
 
 import serverpckg.NewServer;
-import DBManager.DBManager;
-import java.util.Vector;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.cell.PropertyValueFactory;
 
 /**
  *
@@ -44,9 +42,12 @@ public class FXMLDocumentController implements Initializable {
     ScrollPane onlinePlayers;
     @FXML
     ScrollPane offlinePlayers;
-    
-    public static TableView<PlayerWthPoints> onlinePlayersTable = new TableView<>();
-    public static TableView<PlayerWthPoints> offlinePlayersTable = new TableView<>();
+
+    public static ObservableList<Map.Entry<String, Integer>> onlinePlayersList;
+    public static ObservableList<Map.Entry<String, Integer>> offlinePlayersList;
+
+    public static TableView<Map.Entry<String, Integer>> onlinePlayersTable = new TableView<>();
+    public static TableView<Map.Entry<String, Integer>> offlinePlayersTable = new TableView<>();
 
     @FXML
     private void handleStartButtonAction(ActionEvent event) {
@@ -54,35 +55,48 @@ public class FXMLDocumentController implements Initializable {
             servThread = new ServThread();
             servThread.start();
         }
-        
-        TableColumn<PlayerWthPoints, String> nameColumnOnline = new TableColumn<>("Username");
+
+        NewServer.testUI();
+        System.out.println(NewServer.onlinePlayersWthPoints.size() + " " + NewServer.onlinePlayersWthPoints.entrySet());
+        onlinePlayersList = FXCollections.observableArrayList(NewServer.onlinePlayersWthPoints.entrySet());
+        offlinePlayersList = FXCollections.observableArrayList(NewServer.offlinePlayersWthPoints.entrySet());
+
+        TableColumn<Map.Entry<String, Integer>, String> nameColumnOnline = new TableColumn<>("Username");
         nameColumnOnline.setMinWidth(150);
-        nameColumnOnline.setCellValueFactory(new PropertyValueFactory<>("username"));
-        
-        TableColumn<PlayerWthPoints, String> pointsColumnOnline = new TableColumn<>("Points");
+        nameColumnOnline.setCellValueFactory((TableColumn.CellDataFeatures<Map.Entry<String, Integer>, String> p) -> new SimpleStringProperty(p.getValue().getKey()));
+
+        TableColumn<Map.Entry<String, Integer>, Integer> pointsColumnOnline = new TableColumn<>("Points");
         pointsColumnOnline.setMinWidth(100);
-        pointsColumnOnline.setCellValueFactory(new PropertyValueFactory<>("points"));
-        
-        onlinePlayersTable = new TableView<>();
-        onlinePlayersTable.setItems(getOnlinePlayers());
+        pointsColumnOnline.setCellValueFactory((TableColumn.CellDataFeatures<Map.Entry<String, Integer>, Integer> p) -> new SimpleObjectProperty<>(p.getValue().getValue()));
+
+//        onlinePlayersTable = new TableView<>();
+        onlinePlayersTable.setItems(onlinePlayersList);
         onlinePlayersTable.getColumns().addAll(nameColumnOnline, pointsColumnOnline);
-        
-        TableColumn<PlayerWthPoints, String> nameColumnOffline = new TableColumn<>("Username");
+
+        TableColumn<Map.Entry<String, Integer>, String> nameColumnOffline = new TableColumn<>("Username");
         nameColumnOffline.setMinWidth(150);
-        nameColumnOffline.setCellValueFactory(new PropertyValueFactory<>("username"));
-        
-        TableColumn<PlayerWthPoints, String> pointsColumnOffline = new TableColumn<>("Points");
+        nameColumnOffline.setCellValueFactory((TableColumn.CellDataFeatures<Map.Entry<String, Integer>, String> p) -> new SimpleStringProperty(p.getValue().getKey()));
+
+        TableColumn<Map.Entry<String, Integer>, Integer> pointsColumnOffline = new TableColumn<>("Points");
         pointsColumnOffline.setMinWidth(100);
-        pointsColumnOffline.setCellValueFactory(new PropertyValueFactory<>("points"));
-        
-        offlinePlayersTable = new TableView<>();
-        offlinePlayersTable.setItems(getOfflinePlayers());
+        pointsColumnOffline.setCellValueFactory((TableColumn.CellDataFeatures<Map.Entry<String, Integer>, Integer> p) -> new SimpleObjectProperty<>(p.getValue().getValue()));
+
+//        offlinePlayersTable = new TableView<>();
+        offlinePlayersTable.setItems(offlinePlayersList);
         offlinePlayersTable.getColumns().addAll(nameColumnOffline, pointsColumnOffline);
-        
+
         onlinePlayers.setContent(onlinePlayersTable);
         offlinePlayers.setContent(offlinePlayersTable);
+        
+        initiateLogin();
     }
 
+    private void initiateLogin()
+    {
+        NewServer ns = new NewServer();
+        ns.testUILogin();
+    }
+    
     @FXML
     private void handleStopButtonAction(ActionEvent event) {
         if (server != null) {
@@ -92,11 +106,11 @@ public class FXMLDocumentController implements Initializable {
             servThread = null;
             System.out.println("Server Closing from button");
         }
-        
+
         ListView<String> offlinePlayersList = new ListView<>();
         ListView<String> onlinePlayersList = new ListView<>();
         onlinePlayers.setContent(onlinePlayersList);
-        offlinePlayers.setContent(offlinePlayersList);      
+        offlinePlayers.setContent(offlinePlayersList);
     }
 
     @Override
@@ -111,63 +125,5 @@ public class FXMLDocumentController implements Initializable {
             server = new NewServer();
             server.startServer();
         }
-
     }
-    
-    public class PlayerWthPoints
-    {
-        String username;
-        int points;
-
-        public PlayerWthPoints(String username, int points) {
-            this.username = username;
-            this.points = points;
-        }
-        
-        public String getUsername() {
-            return username;
-        }
-
-        public int getPoints() {
-            return points;
-        }
-        
-    }
-    
-    public ObservableList<PlayerWthPoints> getOnlinePlayers()
-    {
-        ObservableList<PlayerWthPoints> onlinePlayersWthPoints = FXCollections.observableArrayList();
-        
-        for(String user : NewServer.onlinePlayers)
-        {
-            onlinePlayersWthPoints.add(new PlayerWthPoints(user, DBManager.playerPoints.get(user)));
-        }
-        
-        return onlinePlayersWthPoints;
-    }
-    
-    public ObservableList<PlayerWthPoints> getOfflinePlayers()
-    {
-        ObservableList<PlayerWthPoints> offlinePlayersWthPoints = FXCollections.observableArrayList();
-        
-        for(String user : NewServer.offlinePlayers)
-        {
-            offlinePlayersWthPoints.add(new PlayerWthPoints(user, DBManager.playerPoints.get(user)));
-        }
-        
-        return offlinePlayersWthPoints;
-    }
-
 }
-//        ListView<String> onlinePlayersList = new ListView<>();
-//        for(String user : NewServer.onlinePlayers)
-//        {
-//            onlinePlayersList.getItems().add(user + "  " + DBManager.playerPoints.get(user));
-//            System.out.println(user);
-//        }
-//        
-//        ListView<String> offlinePlayersList = new ListView<>();
-//        for(String user : NewServer.offlinePlayers)
-//        {
-//            offlinePlayersList.getItems().add(user + "  " + DBManager.playerPoints.get(user));
-//        }
