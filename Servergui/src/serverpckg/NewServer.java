@@ -181,64 +181,39 @@ public class NewServer {
                                     Rjson.getString("password")));
                             break;
                         case "LOGOUT":
-                            Sjson = new JSONObject();
-                            Sjson.put("code", "LOGOUT");
-                            if (acceptLogOut()) {
-                                Sjson.put("response", 1); //successful signup
-                            } else {
-                                Sjson.put("response", 0); //unsuccessful signup
-                            }
-                            clientPrintStream.print(Sjson);
+                            acceptLogOut();
                             break;
                         case "INVITATION":
                             switch (Rjson.getString("type")) {
                                 case "SEND":
                                     sendInvitation(Rjson.getString("username"));
-//                                    clientPrintStream.print(Sjson);
                                     break;
                                 case "ACCEPT":
                                     sendAcceptance(Rjson.getString("username"));
-                                    
-                                    clientPrintStream.print(Sjson);
                                     break;
                                 case "REJECT":
-                                    Sjson = new JSONObject();
-                                    Sjson.put("code", "INVITATION");
-                                    Sjson.put("type", "REJECT");
-                                    if (sendRejection(Rjson.getString("username"))) {
-                                        Sjson.put("response", 1); //successful sending
-                                    } else {
-                                        Sjson.put("response", 0); //unsuccessful sending
-                                    }
-                                    clientPrintStream.print(Sjson);
+                                    sendRejection(Rjson.getString("username"));
                                     break;
                                 case "RESUME":
-                                    Sjson = new JSONObject();
-                                    Sjson.put("code", "INVITATION");
-                                    Sjson.put("type", "RESUME");
                                     switch (Rjson.getString("reply")) {
                                         case "ACCEPTANCE":
+                                            sendAcceptance(Rjson.getString("username"));
+                                            Sjson = new JSONObject();
+                                            Sjson.put("code", "INVITATION");
+                                            Sjson.put("type", "RESUME");
                                             Sjson.put("reply", "ACCEPTANCE");
                                             Sjson.put("board", Rjson.get("board"));
-                                            if (sendAcceptance(Rjson.getString("username"))) {
-                                                Sjson.put("response", 1); //successful sending
-                                            } else {
-                                                Sjson.put("response", 0); //unsuccessful sending
-                                            }
-                                            clientPrintStream.print(Sjson);
+                                            secondPlayerPrintStream.println(Sjson);
                                             break;
                                         case "REJECTION":
-                                            Sjson.put("reply", "REJECTION");
-                                            if (sendRejection(Rjson.getString("username"))) {
-                                                Sjson.put("response", 1); //successful sending
-                                            } else {
-                                                Sjson.put("response", 0); //unsuccessful sending
-                                            }
-                                            break;
+                                            sendRejection(Rjson.getString("username"));
                                     }
-                                    clientPrintStream.print(Sjson);
+                                    clientPrintStream.println(Sjson);
                                     break;
                             }
+                            break;     
+                        case "UPDATEOPPONENT": //client will send it if he received an acceptance to swt his opponent
+                            updateOpponent(Rjson.getString("username"));
                             break;
                         case "MOVE":
                             sendMove(Rjson.getInt("index"));
@@ -248,14 +223,14 @@ public class NewServer {
                             Sjson.put("code", "WINNING");
                             if (setPlayerPoints(Rjson.getString("username"))) {
                                 Sjson.put("response", 1); //adding points successfully
-                                updateBusyPlayers(); //function implemented
+                                Sjson.put("message", "points has been added successfully");
                             } else {
                                 Sjson.put("response", 0); //unsuccessful try
                             }
-                            clientPrintStream.print(Sjson);
+                            clientPrintStream.println(Sjson);
                             break;
                         case "TIE":
-                            updateBusyPlayers(); //function implemented
+                            updateBusyPlayers("REMOVE");
                             break;
                         case "SAVING":
                             Sjson = new JSONObject();
@@ -263,21 +238,16 @@ public class NewServer {
                             if (saveGame(Rjson.getString("board"))) {
                                 if (informSaving()) {
                                     Sjson.put("response", 1);
+                                    Sjson.put("message", "Saved Successfully");
                                 } //saved
                             } else {
                                 Sjson.put("response", 0); //not saved
+                                Sjson.put("message", "Failed to save, please try again");
                             }
-                            clientPrintStream.print(Sjson);
+                            clientPrintStream.println(Sjson);
                             break;
                         case "RESUME":
-                            Sjson = new JSONObject();
-                            Sjson.put("code", "RESUME");
-                            if (sendResumeInvitaion(Rjson.getInt("gameID"), Rjson.getString("p2"))) {
-                                Sjson.put("response", 1); //Found and sent successfully
-                            } else {
-                                Sjson.put("response", 0); //Not Found or hasn't been sent
-                            }
-                            clientPrintStream.print(Sjson);
+                            sendResumeInvitaion(Rjson.getInt("gameID"), Rjson.getString("player2"));
                             break;
                         case "CLOSING":
                             informClosing();
@@ -319,12 +289,6 @@ public class NewServer {
                         offlinePlayers.remove(username);
                         onlinePlayers.add(username);
                         result = 1;
-                        message = "Welcome " + username;
-                        onlinePlayersWthPoints.put(currentPlayerUsername, DBManager.playerPoints.get(currentPlayerUsername));
-                        offlinePlayersWthPoints.remove(currentPlayerUsername);
-                        FXMLDocumentController.onlinePlayersTable.refresh();
-                        FXMLDocumentController.offlinePlayersTable.refresh();
-                    } else {
                         message = "Welcome "+username;
                     }else{
                         message = "Wrong Password!";
@@ -340,6 +304,9 @@ public class NewServer {
                 Sjson.put("response", result);
                 clientPrintStream.println(Sjson.toString());
                 System.out.println(Sjson);
+                if(result == 1){
+                    sendOnlineUpdates(username, "ADD");
+                }
             }
         }
 
@@ -349,19 +316,24 @@ public class NewServer {
             try {
                 dBManager.addPlayer(p);
                 DBManager.beginnerPlayers.add(p.getUsername());
-                sendClassification(p.getUsername(), "beginner");
+                sendClassificationUpdates(p.getUsername(), "beginner");
                 Sjson.put("response", 1); //successful signup
             } catch (SQLException ex) {
                 Sjson.put("response", 0); //unsuccessful signup
             }
-            clientPrintStream.println(Sjson);
+            clientPrintStream.println(Sjson.toString());
         }
 
-        public boolean acceptLogOut() {
-            boolean logOutResponse = true;
+        public void acceptLogOut() {
+            Sjson = new JSONObject();
+            Sjson.put("code", "LOGOUT");
             try {
                 onlinePlayers.remove(currentPlayerUsername);
                 offlinePlayers.add(currentPlayerUsername);
+                sendOnlineUpdates(currentPlayerUsername, "REMOVE");
+                if(otherPlayerUsername != null){
+                    informClosing();
+                }
                 //close the streams and the socket of the client
                 clientDataInputStream.close();
                 clientPrintStream.close();
@@ -371,25 +343,26 @@ public class NewServer {
                 activePlayersPrintStreams.remove(currentPlayerUsername);
                 activePlayersInputStreams.remove(currentPlayerUsername);
                 runConnection = false; //this should close the client's thread
-//                this.stop(); //for closing client's thread
                 offlinePlayersWthPoints.put(currentPlayerUsername, DBManager.playerPoints.get(currentPlayerUsername));
                 onlinePlayersWthPoints.remove(currentPlayerUsername);
                 FXMLDocumentController.onlinePlayersTable.refresh();
                 FXMLDocumentController.offlinePlayersTable.refresh();
+                Sjson.put("response", 1); //successful logout
+                Sjson.put("message", "you have successfully logged out");
             } catch (IOException ex) {
-                Logger.getLogger(NewServer.class.getName()).log(Level.SEVERE, null, ex);
-                return false;
+                Sjson.put("response", 0); //unsuccessful logout
+                Sjson.put("message", "Connection Error, Try again");
             }
 
-            return logOutResponse;
+            clientPrintStream.println(Sjson.toString());
         }
 
-        public boolean sendInvitation(String p2Username) throws IOException {
+        public void sendInvitation(String p2Username) throws IOException {
             if (!busyPlayers.contains(p2Username)) {
+                Sjson = new JSONObject();
+                Sjson.put("code", "INVITATION");
+                Sjson.put("type", "SEND");
                 String invitationMessage = currentPlayerUsername + " has invited you to play. What do you think?";
-
-//                secondPlayerSocket = activePlayersSockets.get(p2Username);
-
                 PrintStream player2PS = activePlayersPrintStreams.get(p2Username);
                 try {
                     JSONObject invitationObject = new JSONObject();
@@ -398,22 +371,17 @@ public class NewServer {
                     invitationObject.put("sender", currentPlayerUsername);
                     invitationObject.put("message", invitationMessage);
                     player2PS.println(invitationObject.toString());
-//                    invitationObject = new JSONObject(activePlayersInputStreams.get(p2Username).readLine());
-//                    if(invitationObject.getString("code")=="INVITATION" &&
-//                            invitationObject.getString("type")=="ACCEPT" &&
-//                            invitationObject.getString("username")== currentPlayerUsername){
-//                        otherPlayerUsername = p2Username;
-//                        secondPlayerPrintStream = activePlayersPrintStreams.get(p2Username);
-//                    }
+                    Sjson.put("response", 1);
+                    Sjson.put("message", "your invitation has been sent successfully");
                 } catch (JSONException ex) {
-                    Logger.getLogger(NewServer.class.getName()).log(Level.SEVERE, null, ex);
-                    return false;
+                    Sjson.put("response", 0);
+                    Sjson.put("message", "Failed to send your invitation, please try again");
                 }
+                clientPrintStream.println(Sjson.toString());
             }
-            return false;
         }
 
-        public boolean sendRejection(String p2Username) {
+        public void sendRejection(String p2Username) {
             String message = currentPlayerUsername + " has rejected your invitation.";
             JSONObject invitationRejObj = new JSONObject();
             try {
@@ -423,9 +391,7 @@ public class NewServer {
                 activePlayersPrintStreams.get(p2Username).println(invitationRejObj.toString());
             } catch (JSONException ex) {
                 Logger.getLogger(NewServer.class.getName()).log(Level.SEVERE, null, ex);
-                return false;
             }
-            return true;
         }
 
         public boolean sendAcceptance(String p2Username) {
@@ -439,13 +405,17 @@ public class NewServer {
                 activePlayersPrintStreams.get(p2Username).println(invitationAccObj.toString());
                 otherPlayerUsername = p2Username;
                 secondPlayerPrintStream = activePlayersPrintStreams.get(p2Username);
-                busyPlayers.add(currentPlayerUsername);
-                busyPlayers.add(otherPlayerUsername);
+                updateBusyPlayers("ADD");
             } catch (JSONException ex) {
                 Logger.getLogger(NewServer.class.getName()).log(Level.SEVERE, null, ex);
                 return false;
             }
             return true;
+        }
+        
+        public void updateOpponent(String p2Username){
+            otherPlayerUsername = p2Username;
+            secondPlayerPrintStream = activePlayersPrintStreams.get(p2Username);
         }
 
         public boolean sendMove(int index) {
@@ -469,15 +439,15 @@ public class NewServer {
                 if (p.getPoints() >= 1500 && !DBManager.profPlayers.contains(winnerUsername)) {
                     DBManager.profPlayers.add(p.getUsername());
                     DBManager.intermediatePlayers.remove(p.getUsername());
-                    sendClassification(winnerUsername, "prof");
+                    sendClassificationUpdates(winnerUsername, "prof");
                 } else if (p.getPoints() >= 1000 && !DBManager.intermediatePlayers.contains(winnerUsername)) {
                     DBManager.intermediatePlayers.add(p.getUsername());
                     DBManager.beginnerPlayers.remove(p.getUsername());
-                    sendClassification(winnerUsername, "intermediate");
+                    sendClassificationUpdates(winnerUsername, "intermediate");
                 }
                 onlinePlayersWthPoints.put(winnerUsername, onlinePlayersWthPoints.get(winnerUsername) + 100);
                 FXMLDocumentController.onlinePlayersTable.refresh();
-                updateBusyPlayers(); //remove both current player and other player from busy list
+                updateBusyPlayers("REMOVE");
                 return true;
             } catch (SQLException ex) {
                 Logger.getLogger(NewServer.class.getName()).log(Level.SEVERE, null, ex);
@@ -485,13 +455,10 @@ public class NewServer {
             }
         }
 
-        public boolean sendClassification(String username, String level) {
+        public boolean sendClassificationUpdates(String username, String level) {
             try {
-//                Socket pSocket;
                 PrintStream ps = null;
                 for (Map.Entry<String, PrintStream> item : activePlayersPrintStreams.entrySet()) {
-//                    pSocket = item.getValue();
-//                    ps = new PrintStream(pSocket.getOutputStream());
                     ps = item.getValue();
                     JSONObject invitationObject = new JSONObject();
                     invitationObject.put("code", "UPDATECLASSIFICATION");
@@ -499,7 +466,6 @@ public class NewServer {
                     invitationObject.put("level", level);
                     ps.println(invitationObject.toString());
                 }
-//                ps.close();
                 return true;
             } catch (JSONException ex) {
                 Logger.getLogger(NewServer.class.getName()).log(Level.SEVERE, null, ex);
@@ -517,34 +483,36 @@ public class NewServer {
             }
         }
 
-        public boolean sendResumeInvitaion(int gameID, String p2Username) {
+        public void sendResumeInvitaion(int gameID, String p2Username) {
             try {
                 PrintStream player2PS = activePlayersPrintStreams.get(p2Username);
                 Game g = dBManager.getGame(gameID);
                 String board = g.getBoard();
                 Timestamp ts = g.getTS();
-
+                Sjson = new JSONObject();
+                Sjson.put("code", "RESUME");
                 String invitationMessage = currentPlayerUsername
                         + " has invited you to resume the game you played in " + ts + "\n What do you think?";
-
-//                secondPlayerSocket = activePlayersSockets.get(p2Username);
                 try {
-//                    player2PS = new PrintStream(secondPlayerSocket.getOutputStream());
                     JSONObject invitationObject = new JSONObject();
                     invitationObject.put("code", "INVITATION");
                     invitationObject.put("type", "RESUME");
                     invitationObject.put("board", board);
                     invitationObject.put("message", invitationMessage);
-                    player2PS.print(invitationObject.toString());
-//                    player2PS.close();
-                    return true;
+                    player2PS.println(invitationObject.toString());
+                    Sjson.put("response", 1);
+                    Sjson.put("message", "your invitation has been sent successfully");
+                    
                 } catch (JSONException ex) {
-                    Logger.getLogger(NewServer.class.getName()).log(Level.SEVERE, null, ex);
-                    return false;
+                    Sjson.put("response", 0);
+                    Sjson.put("message", "Failed to send the invitation, please try again");
                 }
             } catch (SQLException ex) {
-                Logger.getLogger(NewServer.class.getName()).log(Level.SEVERE, null, ex);
-                return false;
+                    Sjson.put("response", 0);
+                    Sjson.put("message", "Failed to send the invitation, please try again");
+            }
+            finally{
+                clientPrintStream.println(Sjson.toString());
             }
         }
 
@@ -567,39 +535,29 @@ public class NewServer {
             return allPlayers;
         }
 
-        public boolean informClosing() throws IOException {
+        public void informClosing() throws IOException {
             String closingMessage = currentPlayerUsername + " has closed the game.";
-
-//            secondPlayerSocket = activePlayersSockets.get(otherPlayerUsername);
             JSONObject closingObj = new JSONObject();
             try {
                 closingObj.put("code", "CLOSING");
                 closingObj.put("message", closingMessage);
-//                PrintStream player2PS = new PrintStream(secondPlayerSocket.getOutputStream());
-//                player2PS.print(closingObj.toString());
-//                player2PS.close();
-                secondPlayerPrintStream.print(closingObj.toString());
-                updateBusyPlayers();
-                return true;
+                secondPlayerPrintStream.println(closingObj.toString());
+                otherPlayerUsername = "";
+                secondPlayerPrintStream = null;
+                updateBusyPlayers("REMOVE");
             } catch (JSONException ex) {
                 Logger.getLogger(NewServer.class.getName()).log(Level.SEVERE, null, ex);
-                return false;
             }
         }
 
         public boolean informSaving() {
             String savingMessage = currentPlayerUsername + " has saved the game.";
-
-//            secondPlayerSocket = activePlayersSockets.get(otherPlayerUsername);
             JSONObject savingObj = new JSONObject();
             try {
                 savingObj.put("code", "SAVING");
                 savingObj.put("message", savingMessage);
-//                PrintStream player2PS = new PrintStream(secondPlayerSocket.getOutputStream());
-//                player2PS.print(savingObj);
-//                player2PS.close();
-                secondPlayerPrintStream.print(savingObj.toString());
-                updateBusyPlayers();
+                secondPlayerPrintStream.println(savingObj.toString());
+                updateBusyPlayers("REMOVE");
                 return true;
             } catch (JSONException ex) {
                 Logger.getLogger(NewServer.class.getName()).log(Level.SEVERE, null, ex);
@@ -607,11 +565,51 @@ public class NewServer {
             }
         }
 
-        public void updateBusyPlayers() {
-            busyPlayers.remove(currentPlayerUsername);
-            busyPlayers.remove(otherPlayerUsername);
-            otherPlayerUsername = "";
-            secondPlayerPrintStream = null;
+        public void updateBusyPlayers(String type) {
+            //send updates to all the online players
+            try {
+                PrintStream ps;
+                for (Map.Entry<String, PrintStream> item : activePlayersPrintStreams.entrySet()) {
+                    ps = item.getValue();
+                    JSONObject invitationObject = new JSONObject();
+                    invitationObject.put("code", "UPDATEBUSY");
+                    invitationObject.put("type", type);
+                    invitationObject.put("player1", currentPlayerUsername);
+                    invitationObject.put("player2", otherPlayerUsername);
+                    ps.println(invitationObject.toString());
+                }
+            } catch (JSONException ex) {
+                Logger.getLogger(NewServer.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
+            //add or remove layers from the busy list
+            if(type.equalsIgnoreCase("add")){
+                busyPlayers.add(currentPlayerUsername);
+                busyPlayers.add(otherPlayerUsername);
+            }
+            else{
+                busyPlayers.remove(currentPlayerUsername);
+                busyPlayers.remove(otherPlayerUsername);
+                otherPlayerUsername = "";
+                secondPlayerPrintStream = null;
+            }
+            
+        }
+        
+        public void sendOnlineUpdates(String username, String type) {
+            try {
+                PrintStream ps;
+                for (Map.Entry<String, PrintStream> item : activePlayersPrintStreams.entrySet()) {
+                    ps = item.getValue();
+                    JSONObject invitationObject = new JSONObject();
+                    invitationObject.put("code", "UPDATEONLINE");
+                    invitationObject.put("type", type);
+                    invitationObject.put("username", username);
+                    ps.println(invitationObject.toString());
+                }
+            } catch (JSONException ex) {
+                Logger.getLogger(NewServer.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }
 }
