@@ -30,6 +30,7 @@ public class NewServer {
     //carries sokects and their username
     public static BiMap<String, Socket> activePlayersSockets = HashBiMap.create();
     public static BiMap<String, PrintStream> activePlayersPrintStreams = HashBiMap.create();
+    public static BiMap<String, DataInputStream> activePlayersInputStreams = HashBiMap.create();
     public static Vector<String> offlinePlayers = new Vector<>();
     public static Vector<String> onlinePlayers = new Vector<>();
     public static Vector<String> busyPlayers = new Vector<>();
@@ -99,12 +100,12 @@ public class NewServer {
         FXMLDocumentController.onlinePlayersTable.refresh();
     }
 
-    public void startServer() {
+    public void startServer() throws SQLException, ClassNotFoundException {
         try {
             runServer = true;
             serverSocket = new ServerSocket(5005);
-//            dBManager = new DBManager();
-//            offlinePlayers = DBManager.getPlayersUsernames();            
+            dBManager = new DBManager();
+            offlinePlayers = DBManager.getPlayersUsernames();
             while (runServer) {
                 if (!runServer) {
                     System.out.println("Out From While");
@@ -167,24 +168,17 @@ public class NewServer {
             while (runConnection) {
                 try {
                     Rjson = new JSONObject(clientDataInputStream.readLine());
+                    System.out.println(Rjson);
                     switch (Rjson.getString("code")) {
                         case "LOGIN":
                             acceptLogin(Rjson.getString("username"),
                                     Rjson.getString("password"));
                             break;
                         case "SIGNUP":
-                            Sjson = new JSONObject();
-                            Sjson.put("code", "SIGNUP");
-                            if (acceptSignUp(new Player(Rjson.getString("firstname"),
+                            acceptSignUp(new Player(Rjson.getString("firstname"),
                                     Rjson.getString("lastname"),
                                     Rjson.getString("username"),
-                                    Rjson.getString("password"))
-                            )) {
-                                Sjson.put("response", 1); //successful signup
-                            } else {
-                                Sjson.put("response", 0); //unsuccessful signup
-                            }
-                            clientPrintStream.print(Sjson);
+                                    Rjson.getString("password")));
                             break;
                         case "LOGOUT":
                             Sjson = new JSONObject();
@@ -199,25 +193,12 @@ public class NewServer {
                         case "INVITATION":
                             switch (Rjson.getString("type")) {
                                 case "SEND":
-                                    Sjson = new JSONObject();
-                                    Sjson.put("code", "INVITATION");
-                                    Sjson.put("type", "SEND");
-                                    if (sendInvitation(Rjson.getString("username"))) {
-                                        Sjson.put("response", 1); //successful sending
-                                    } else {
-                                        Sjson.put("response", 0); //unsuccessful sending
-                                    }
-                                    clientPrintStream.print(Sjson);
+                                    sendInvitation(Rjson.getString("username"));
+//                                    clientPrintStream.print(Sjson);
                                     break;
                                 case "ACCEPT":
-                                    Sjson = new JSONObject();
-                                    Sjson.put("code", "INVITATION");
-                                    Sjson.put("type", "ACCEPT");
-                                    if (sendAcceptance(Rjson.getString("username"))) {
-                                        Sjson.put("response", 1); //successful sending
-                                    } else {
-                                        Sjson.put("response", 0); //unsuccessful sending
-                                    }
+                                    sendAcceptance(Rjson.getString("username"));
+                                    
                                     clientPrintStream.print(Sjson);
                                     break;
                                 case "REJECT":
@@ -260,14 +241,7 @@ public class NewServer {
                             }
                             break;
                         case "MOVE":
-                            Sjson = new JSONObject();
-                            Sjson.put("code", "MOVE");
-                            if (sendMove(Rjson.getInt("index"))) {
-                                Sjson.put("response", 1); //successful sending
-                            } else {
-                                Sjson.put("response", 0); //unsuccessful sending
-                            }
-                            clientPrintStream.print(Sjson);
+                            sendMove(Rjson.getInt("index"));
                             break;
                         case "WINNING":
                             Sjson = new JSONObject();
@@ -309,12 +283,10 @@ public class NewServer {
                             informClosing();
                             break;
                     }
-                    runConnection = false; //just for developing purposes //to be removed in production
                 } catch (IOException | JSONException ex) {
-                    Logger.getLogger(NewServer.class.getName()).log(Level.SEVERE, null, ex);
+                    runConnection = false;
                 }
             }
-            //to close after just one msg //also for developing purposes
             try {
                 clientDataInputStream.close();
                 clientPrintStream.close();
@@ -328,20 +300,22 @@ public class NewServer {
         /* login function 
         to validate credentials and send the result back to the client */
         public void acceptLogin(String username, String password) {
+            Player pTemp;
+            Sjson = new JSONObject();
+            int result = 0;
+            String message="";
+            Sjson.put("code", "LOGIN");
             try {
-                Player pTemp;
-                Sjson = new JSONObject();
-                int result = 0;
-                String message = "";
-                Sjson.put("code", "LOGIN");
-                try {
-                    pTemp = dBManager.getPlayer(username);
-                    if (pTemp == null) {
-                        message = "User Not Found!";
-                    } else if (pTemp != null && pTemp.getPass().equals(password)) {
+                pTemp = dBManager.getPlayer(username);
+                if(pTemp == null){
+                    message = "User Not Found!";
+                }
+                else{
+                    if (pTemp != null && pTemp.getPass().equals(password)) {
                         currentPlayerUsername = username;
                         activePlayersSockets.put(username, clientSocket);
                         activePlayersPrintStreams.put(username, clientPrintStream);
+                        activePlayersInputStreams.put(username, clientDataInputStream);
                         offlinePlayers.remove(username);
                         onlinePlayers.add(username);
                         result = 1;
@@ -351,36 +325,36 @@ public class NewServer {
                         FXMLDocumentController.onlinePlayersTable.refresh();
                         FXMLDocumentController.offlinePlayersTable.refresh();
                     } else {
+                        message = "Welcome "+username;
+                    }else{
                         message = "Wrong Password!";
                     }
-
-                } catch (SQLException ex) {
-                    Logger.getLogger(NewServer.class.getName()).log(Level.SEVERE, null, ex);
-                    message = "Problem with connection!";
-                } finally {
-                    Sjson.put("message", message);
-                    Sjson.put("response", result);
-                    clientPrintStream.println(Sjson.toString());
                 }
-            } catch (JSONException ex) {
+                
+            } catch (SQLException ex) {
                 Logger.getLogger(NewServer.class.getName()).log(Level.SEVERE, null, ex);
+                message = "Problem with connection!";
+            }
+            finally{
+                Sjson.put("message", message);
+                Sjson.put("response", result);
+                clientPrintStream.println(Sjson.toString());
+                System.out.println(Sjson);
             }
         }
 
-        public boolean acceptSignUp(Player p) {
-            boolean signUpResponse;
-
+        public void acceptSignUp(Player p) {
+            Sjson = new JSONObject();
+            Sjson.put("code", "SIGNUP");
             try {
                 dBManager.addPlayer(p);
                 DBManager.beginnerPlayers.add(p.getUsername());
                 sendClassification(p.getUsername(), "beginner");
-                signUpResponse = true;
+                Sjson.put("response", 1); //successful signup
             } catch (SQLException ex) {
-                Logger.getLogger(NewServer.class.getName()).log(Level.SEVERE, null, ex);
-                return false;
+                Sjson.put("response", 0); //unsuccessful signup
             }
-
-            return signUpResponse;
+            clientPrintStream.println(Sjson);
         }
 
         public boolean acceptLogOut() {
@@ -395,6 +369,7 @@ public class NewServer {
                 //remove the socket and the print stream from their lists
                 activePlayersSockets.remove(currentPlayerUsername);
                 activePlayersPrintStreams.remove(currentPlayerUsername);
+                activePlayersInputStreams.remove(currentPlayerUsername);
                 runConnection = false; //this should close the client's thread
 //                this.stop(); //for closing client's thread
                 offlinePlayersWthPoints.put(currentPlayerUsername, DBManager.playerPoints.get(currentPlayerUsername));
@@ -409,21 +384,27 @@ public class NewServer {
             return logOutResponse;
         }
 
-        public boolean sendInvitation(String p2Username) {
-            //test if the other player is not in the busy list first
+        public boolean sendInvitation(String p2Username) throws IOException {
             if (!busyPlayers.contains(p2Username)) {
                 String invitationMessage = currentPlayerUsername + " has invited you to play. What do you think?";
 
 //                secondPlayerSocket = activePlayersSockets.get(p2Username);
+
                 PrintStream player2PS = activePlayersPrintStreams.get(p2Username);
                 try {
-//                    player2PS = new PrintStream(secondPlayerSocket.getOutputStream());
                     JSONObject invitationObject = new JSONObject();
                     invitationObject.put("code", "INVITATION");
                     invitationObject.put("type", "RECEIVE");
+                    invitationObject.put("sender", currentPlayerUsername);
                     invitationObject.put("message", invitationMessage);
-                    player2PS.print(invitationObject.toString());
-//                    player2PS.close();
+                    player2PS.println(invitationObject.toString());
+//                    invitationObject = new JSONObject(activePlayersInputStreams.get(p2Username).readLine());
+//                    if(invitationObject.getString("code")=="INVITATION" &&
+//                            invitationObject.getString("type")=="ACCEPT" &&
+//                            invitationObject.getString("username")== currentPlayerUsername){
+//                        otherPlayerUsername = p2Username;
+//                        secondPlayerPrintStream = activePlayersPrintStreams.get(p2Username);
+//                    }
                 } catch (JSONException ex) {
                     Logger.getLogger(NewServer.class.getName()).log(Level.SEVERE, null, ex);
                     return false;
@@ -433,13 +414,13 @@ public class NewServer {
         }
 
         public boolean sendRejection(String p2Username) {
-            String message = p2Username + " has rejected your invitation.";
+            String message = currentPlayerUsername + " has rejected your invitation.";
             JSONObject invitationRejObj = new JSONObject();
             try {
                 invitationRejObj.put("code", "INVITATION");
                 invitationRejObj.put("type", "REJECT");
                 invitationRejObj.put("message", message);
-                clientPrintStream.print(invitationRejObj.toString());
+                activePlayersPrintStreams.get(p2Username).println(invitationRejObj.toString());
             } catch (JSONException ex) {
                 Logger.getLogger(NewServer.class.getName()).log(Level.SEVERE, null, ex);
                 return false;
@@ -448,15 +429,15 @@ public class NewServer {
         }
 
         public boolean sendAcceptance(String p2Username) {
-            String message = p2Username + " has accepted your invitation.";
+            String message = currentPlayerUsername + " has accepted your invitation.";
             JSONObject invitationAccObj = new JSONObject();
             try {
                 invitationAccObj.put("code", "INVITATION");
                 invitationAccObj.put("type", "ACCEPT");
+                invitationAccObj.put("username", currentPlayerUsername);
                 invitationAccObj.put("message", message);
-                clientPrintStream.print(invitationAccObj.toString());
+                activePlayersPrintStreams.get(p2Username).println(invitationAccObj.toString());
                 otherPlayerUsername = p2Username;
-//                secondPlayerSocket = activePlayersSockets.get(p2Username);
                 secondPlayerPrintStream = activePlayersPrintStreams.get(p2Username);
                 busyPlayers.add(currentPlayerUsername);
                 busyPlayers.add(otherPlayerUsername);
@@ -473,15 +454,8 @@ public class NewServer {
             try {
                 moveObj.put("code", "MOVE");
                 moveObj.put("index", index);
-                secondPlayerPrintStream.print(moveObj.toString());
+                secondPlayerPrintStream.println(moveObj.toString());
                 return true;
-//                try (PrintStream player2PS = new PrintStream(secondPlayerSocket.getOutputStream())) {
-//                    player2PS.print(moveObj);
-//                    return true;
-//                } catch (IOException ex) {
-//                    Logger.getLogger(NewServer.class.getName()).log(Level.SEVERE, null, ex);
-//                    return false;
-//                }
             } catch (JSONException ex) {
                 Logger.getLogger(NewServer.class.getName()).log(Level.SEVERE, null, ex);
                 return false;
@@ -523,7 +497,7 @@ public class NewServer {
                     invitationObject.put("code", "UPDATECLASSIFICATION");
                     invitationObject.put("username", username);
                     invitationObject.put("level", level);
-                    ps.print(invitationObject.toString());
+                    ps.println(invitationObject.toString());
                 }
 //                ps.close();
                 return true;
