@@ -339,13 +339,13 @@ public class TicController implements Initializable {
                      break;
                  case 'O':
                      b.setId(String.valueOf(curChar));
-                     b.setStyle("-fx-background-image: url('/clientGUI/images/phone-icon-png-letter-o-7.png')");
+                     b.setStyle("-fx-background-image: url('/clientGUI/images/O1.png')");
 //                                          b.disableProperty();
 
                      break;
              }
-          try {
-                      b.setDisable(true);
+         try {
+                     // b.setDisable(true);
 
           } catch (Exception e) {
               System.err.println("Don't worry Continue");
@@ -436,7 +436,7 @@ public class TicController implements Initializable {
                       //  clickedButton.setTextFill(oForeground);
                         clickedButton.setId("O");
                       //  clickedButton.setText("O");
-                        clickedButton.setStyle("-fx-background-image: url('/clientGUI/images/phone-icon-png-letter-o-7.png')");
+                        clickedButton.setStyle("-fx-background-image: url('/clientGUI/images/O1.png')");
                     }
                     XOCounter++;
                     checkIfGameEnds();
@@ -445,7 +445,9 @@ public class TicController implements Initializable {
               //      setCurrentPlayerSymbol();
                     
             }
-            clickedButton.setDisable(true);
+              clickedButton.setOnAction(null);
+           // clickedButton.setDisable(true);
+          
          }
         
          //Single Player Mode

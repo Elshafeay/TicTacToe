@@ -10,24 +10,24 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" prefHeight="700.0" prefWidth="600.0" style="-fx-background-color: gainsboro;" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="clientGUI.LoginController">
+<AnchorPane id="AnchorPane" prefHeight="700.0" prefWidth="600.0" style="-fx-background-color: gainsboro;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="clientGUI.LoginController">
    <children>
-      <ImageView fitHeight="817.0" fitWidth="914.0" layoutY="6.0">
+      <ImageView fitHeight="700.0" fitWidth="787.0">
          <image>
-            <Image url="@images/images%20(4).jpg" />
+            <Image url="@images/pngtree-simple-memphis-geometric-background-image_57600.jpg" />
          </image>
       </ImageView>
-      <ImageView fitHeight="200.0" fitWidth="200.0" layoutX="373.0" layoutY="126.0">
+      <ImageView fitHeight="200.0" fitWidth="200.0" layoutX="284.0" layoutY="126.0">
          <image>
             <Image url="@images/user-icon-placeholder.png" />
          </image>
       </ImageView>
-      <Button fx:id="login" layoutX="215.0" layoutY="583.0" mnemonicParsing="false" onAction="#btnLoginClick" prefHeight="46.0" prefWidth="205.0" style="-fx-background-color: transparent; -fx-border-color: white;" text="Login" textFill="WHITE">
+      <Button fx:id="login" layoutX="119.0" layoutY="575.0" mnemonicParsing="false" onAction="#btnLoginClick" prefHeight="46.0" prefWidth="205.0" style="-fx-background-color: transparent; -fx-border-color: white; -fx-border-radius: 10;" text="Login" textAlignment="CENTER" textFill="WHITE">
          <font>
-            <Font name="Calisto MT" size="24.0" />
+            <Font name="Calisto MT Bold" size="24.0" />
          </font>
       </Button>
-      <PasswordField fx:id="txtPassword" alignment="CENTER" layoutX="318.0" layoutY="468.0" prefHeight="54.0" prefWidth="310.0" promptText="Enter your password" style="-fx-background-color: white; -fx-border-color: white;">
+      <PasswordField fx:id="txtPassword" layoutX="262.0" layoutY="469.0" prefHeight="54.0" prefWidth="291.0" promptText="Enter your password" style="-fx-background-color: white; -fx-border-color: white;">
          <font>
             <Font name="Bookman Old Style" size="18.0" />
          </font>
@@ -35,27 +35,27 @@
             <Insets />
          </opaqueInsets>
       </PasswordField>
-      <TextField fx:id="txtUserName" alignment="CENTER" layoutX="317.0" layoutY="378.0" prefHeight="54.0" prefWidth="310.0" promptText="Enter your username" style="-fx-background-color: white; -fx-border-color: white;">
+      <TextField fx:id="txtUserName" layoutX="263.0" layoutY="378.0" prefHeight="54.0" prefWidth="291.0" promptText="Enter your username" style="-fx-background-color: white; -fx-border-color: white;">
          <font>
             <Font name="Bookman Old Style" size="18.0" />
          </font>
       </TextField>
-      <ImageView fitHeight="54.0" fitWidth="53.0" layoutX="317.0" layoutY="378.0">
-         <image>
-            <Image url="@images/user-icon-png-pnglogocom.png" />
-         </image>
-      </ImageView>
-      <ImageView fitHeight="47.0" fitWidth="67.0" layoutX="313.0" layoutY="473.0">
-         <image>
-            <Image url="@images/key+password+unlock+icon-1320190937666084898.png" />
-         </image>
-      </ImageView>
-      <Button fx:id="signUp" layoutX="525.0" layoutY="583.0" mnemonicParsing="false" onAction="#btnSignUpClick" prefHeight="46.0" prefWidth="205.0" style="-fx-background-color: transparent; -fx-border-color: white;" text="Sign Up" textFill="WHITE">
+      <Button fx:id="signUp" layoutX="475.0" layoutY="577.0" mnemonicParsing="false" onAction="#btnSignUpClick" prefHeight="46.0" prefWidth="205.0" style="-fx-border-radius: 10; -fx-background-color: transparent; -fx-border-color: white;" text="Sign Up" textFill="#faf7f9">
          <font>
-            <Font name="Calisto MT" size="24.0" />
+            <Font name="Calisto MT Bold" size="24.0" />
          </font>
       </Button>
-      <Separator layoutX="368.0" layoutY="469.0" orientation="VERTICAL" prefHeight="54.0" />
-      <Separator layoutX="368.0" layoutY="378.0" orientation="VERTICAL" prefHeight="54.0" />
+      <ImageView fitHeight="54.0" fitWidth="45.0" layoutX="217.0" layoutY="469.0">
+         <image>
+            <Image url="@images/images%20(17).jpg" />
+         </image>
+      </ImageView>
+      <AnchorPane layoutX="217.0" layoutY="378.0" prefHeight="54.0" prefWidth="46.0" style="-fx-background-color: white;" />
+      <ImageView fitHeight="50.0" fitWidth="39.0" layoutX="219.0" layoutY="380.0">
+         <image>
+            <Image url="@images/43ff64072e598f6ed6b2ac2afd6907d9_user-icon-vector-clip-art-clipart-free-clipart_600-916.png" />
+         </image>
+      </ImageView>
+      <Separator layoutX="258.0" layoutY="378.0" orientation="VERTICAL" prefHeight="54.0" prefWidth="6.0" />
    </children>
 </AnchorPane>

@@ -13,6 +13,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
 import GameData.Game;
+import javafx.scene.layout.Pane;
 
 /**
  *
@@ -24,6 +25,10 @@ public class MainMenuController implements Initializable {
     private Button btnMulti;
     @FXML
     private Button btnSingle;
+    @FXML
+    private Pane playerspane;
+    @FXML
+    private Button closebtn;
     
      @FXML
     private void btnSinglePlayerClick(ActionEvent event) throws IOException {
@@ -35,7 +40,8 @@ public class MainMenuController implements Initializable {
     @FXML
     private void btnMultiPlayerClick(ActionEvent event) throws IOException {
            System.out.println("Game Scene Voila!!");
-           loadGameFxml();
+           playerspane.setVisible(true);
+           //loadGameFxml();
            GameData.Game.challengeComputer = false;
     }
     
@@ -54,4 +60,9 @@ public class MainMenuController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
     }    
+
+    @FXML
+    private void cclosemenu(ActionEvent event) {
+        playerspane.setVisible(false);
+    }
 }

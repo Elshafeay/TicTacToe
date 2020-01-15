@@ -1,8 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package clientGUI;
 
 import java.io.IOException;
@@ -19,8 +15,18 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import PlayerData.Player;
-import clientConnection.Client;
+import static clientConnection.Client.serverDataInputStream;
+import java.io.DataInputStream;
+import java.io.PrintStream;
+import java.net.Socket;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import org.json.JSONException;
 import org.json.JSONObject;
+import clientConnection.Client;
+import javafx.application.Platform;
 
 public class LoginController implements Initializable {
     @FXML
@@ -32,22 +38,29 @@ public class LoginController implements Initializable {
     @FXML
     private TextField txtUserName;
     
-    PlayerData.Player player = new PlayerData.Player();
-    
-
+    PlayerData.Player player = new PlayerData.Player();//added for testing only
    
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // TODO
+        try {
+            Client.startConnection();
+        } catch (IOException ex) {
+            Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }    
 
     @FXML
     private void btnLoginClick(ActionEvent event) throws IOException {
-          System.out.println("Main Menu Scene Voila!!");
-          loadMainMenu();
+      // System.out.println("Main Menu Scene Voila!!");
+           JSONObject Sjson = new JSONObject();
+            Sjson.put("code", "LOGIN");
+            Sjson.put("username", txtUserName.getText());
+            Sjson.put("password", txtPassword.getText());
+            Client.serverPrintStream.println(Sjson);
+      //    loadMainMenu(); //used to load Main Menu Fxml >>> return after testing Client
           
-          // TestConnection Code
-     /*   System.out.println("Test Start");
+          // TestConnection Code 1
+    /*    System.out.println("Test Start");
         Client.startConnection();
         JSONObject Sjson = new JSONObject();
         player.username = txtUserName.getText();
@@ -59,6 +72,27 @@ public class LoginController implements Initializable {
       //  JSONObject Rjson=new JSONObject(Client.serverDataInputStream.readLine());
         System.out.println(Client.Rjson.toString());
         Client.closeConnection();  */
+      
+       //Test Connection 2
+     /*     Client.startConnection();
+          try {
+                JSONObject Sjson = new JSONObject();
+                Sjson.put("code", "LOGIN");
+                Sjson.put("username", txtUserName.getText());
+                Sjson.put("password", txtPassword.getText());
+                Client.serverPrintStream.println(Sjson);
+                JSONObject Rjson=new JSONObject(Client.serverDataInputStream.readLine());
+              //  System.out.println(Client.Rjson.toString());
+                System.out.println(Rjson.toString());
+                Alert a = new Alert(AlertType.INFORMATION);
+                a.setContentText(Rjson.toString());
+             //    a.setContentText(Client.Rjson.toString()); 
+                a.show();
+            }/* catch (IOException ex) {
+                Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (JSONException ex) {
+                Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, ex);
+            } */
     }
 
     @FXML
@@ -86,5 +120,4 @@ public class LoginController implements Initializable {
             stage.setScene(scene);
             stage.show();
         }
-    
 }
