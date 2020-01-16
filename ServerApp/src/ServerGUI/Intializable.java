@@ -1,0 +1,5 @@
+package ServerGUI;
+
+interface Intializable {
+    
+}
