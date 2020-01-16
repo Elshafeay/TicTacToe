@@ -21,6 +21,8 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import DBManager.DBManager;
 import java.sql.SQLException;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -38,6 +40,8 @@ public class FXMLDocumentController implements Initializable {
 
     NewServer server;
     ServThread servThread;
+    Timer timer;
+    RefreshLists refreshLists;
 
     @FXML
     Button stop;
@@ -51,8 +55,8 @@ public class FXMLDocumentController implements Initializable {
     public static ObservableList<Map.Entry<String, Integer>> onlinePlayersList;
     public static ObservableList<Map.Entry<String, Integer>> offlinePlayersList;
 
-    public static TableView<Map.Entry<String, Integer>> onlinePlayersTable = new TableView<>();
-    public static TableView<Map.Entry<String, Integer>> offlinePlayersTable = new TableView<>();
+    public static TableView<Map.Entry<String, Integer>> onlinePlayersTable;
+    public static TableView<Map.Entry<String, Integer>> offlinePlayersTable;
 
     @FXML
     private void handleStartButtonAction(ActionEvent event) {
@@ -61,8 +65,6 @@ public class FXMLDocumentController implements Initializable {
             servThread.start();
         }
 
-        NewServer.testUI();
-        System.out.println(NewServer.onlinePlayersWthPoints.size() + " " + NewServer.onlinePlayersWthPoints.entrySet());
         onlinePlayersList = FXCollections.observableArrayList(NewServer.onlinePlayersWthPoints.entrySet());
         offlinePlayersList = FXCollections.observableArrayList(NewServer.offlinePlayersWthPoints.entrySet());
 
@@ -74,7 +76,7 @@ public class FXMLDocumentController implements Initializable {
         pointsColumnOnline.setMinWidth(100);
         pointsColumnOnline.setCellValueFactory((TableColumn.CellDataFeatures<Map.Entry<String, Integer>, Integer> p) -> new SimpleObjectProperty<>(p.getValue().getValue()));
 
-//        onlinePlayersTable = new TableView<>();
+        onlinePlayersTable = new TableView<>();
         onlinePlayersTable.setItems(onlinePlayersList);
         onlinePlayersTable.getColumns().addAll(nameColumnOnline, pointsColumnOnline);
 
@@ -86,22 +88,22 @@ public class FXMLDocumentController implements Initializable {
         pointsColumnOffline.setMinWidth(100);
         pointsColumnOffline.setCellValueFactory((TableColumn.CellDataFeatures<Map.Entry<String, Integer>, Integer> p) -> new SimpleObjectProperty<>(p.getValue().getValue()));
 
-//        offlinePlayersTable = new TableView<>();
+        offlinePlayersTable = new TableView<>();
         offlinePlayersTable.setItems(offlinePlayersList);
         offlinePlayersTable.getColumns().addAll(nameColumnOffline, pointsColumnOffline);
 
         onlinePlayers.setContent(onlinePlayersTable);
         offlinePlayers.setContent(offlinePlayersTable);
         
-        initiateLogin();
+        if(refreshLists == null)
+            refreshLists = new RefreshLists();
+        if(timer == null)
+        {
+            timer = new Timer();
+            timer.schedule(refreshLists, 0, 1000);
+        }
     }
 
-    private void initiateLogin()
-    {
-        NewServer ns = new NewServer();
-        ns.testUILogin();
-    }
-    
     @FXML
     private void handleStopButtonAction(ActionEvent event) {
         if (server != null) {
@@ -112,6 +114,14 @@ public class FXMLDocumentController implements Initializable {
             System.out.println("Server Closing from button");
         }
 
+        if(timer != null)
+        {
+            refreshLists.cancel();
+            refreshLists = null;
+            timer.cancel();
+            timer = null;
+        }
+        
         ListView<String> offlinePlayersList = new ListView<>();
         ListView<String> onlinePlayersList = new ListView<>();
         onlinePlayers.setContent(onlinePlayersList);
@@ -121,6 +131,8 @@ public class FXMLDocumentController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
+        onlinePlayersList = FXCollections.observableArrayList(NewServer.onlinePlayersWthPoints.entrySet());
+        offlinePlayersList = FXCollections.observableArrayList(NewServer.offlinePlayersWthPoints.entrySet());
     }
 
     class ServThread extends Thread {
@@ -136,5 +148,17 @@ public class FXMLDocumentController implements Initializable {
                 Logger.getLogger(FXMLDocumentController.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
+    }
+
+    class RefreshLists extends TimerTask {
+
+        @Override
+        public void run() {
+            onlinePlayersList = FXCollections.observableArrayList(NewServer.onlinePlayersWthPoints.entrySet());
+            offlinePlayersList = FXCollections.observableArrayList(NewServer.offlinePlayersWthPoints.entrySet());
+            onlinePlayersTable.setItems(onlinePlayersList);
+            offlinePlayersTable.setItems(offlinePlayersList);
+        }
+
     }
 }

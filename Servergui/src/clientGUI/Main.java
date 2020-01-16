@@ -13,6 +13,7 @@ import javafx.stage.Stage;
 import clientConnection.Client;
 import java.io.IOException;
 import java.io.PrintStream;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
@@ -29,7 +30,7 @@ public class Main extends Application {
         stage.show();
     }
    
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, JSONException {
         launch(args);
       //  Client.serverPrintStream.print(args);
         System.out.println("Test Start");

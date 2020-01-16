@@ -22,8 +22,6 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import java.util.HashMap;
 
-import test.FXMLDocumentController;
-
 public class NewServer {
 
     DBManager dBManager;
@@ -42,62 +40,7 @@ public class NewServer {
     volatile boolean runServer;
 
     public NewServer() {
-    }
-
-    public static void testUI() {
-        DBManager.stDB();
-//        NewServer.onlinePlayers.add("Rehab");
-//        NewServer.onlinePlayers.add("Radwa");
-//        NewServer.onlinePlayers.add("Rana");
-//        NewServer.onlinePlayers.add("Rou");
-//        NewServer.onlinePlayers.add("Nada");
-//        NewServer.onlinePlayers.add("Raghad");
-//        NewServer.offlinePlayers.add("Shahd");
-//        NewServer.offlinePlayers.add("Shrouk");
-//        NewServer.offlinePlayers.add("Shada");
-//        NewServer.offlinePlayers.add("Safwa");
-//        NewServer.offlinePlayers.add("Eman");
-//        NewServer.offlinePlayers.add("Ebtsam");
-//        for (String item : onlinePlayers) {
-//            onlinePlayersWthPoints.put(item, DBManager.playerPoints.get(item));
-//        }
-//        for (String item : offlinePlayers) {
-//            offlinePlayersWthPoints.put(item, DBManager.playerPoints.get(item));
-//        }
-
-        //at server start, offline players are the same in DB
-        offlinePlayersWthPoints = DBManager.getPlayerPoints();
-        FXMLDocumentController.offlinePlayersTable.refresh();
-    }
-
-    public void testUILogin() {
-        onlinePlayersWthPoints.put("Rehab", DBManager.playerPoints.get("Rehab"));
-        offlinePlayersWthPoints.remove("Rehab");
-        System.out.println(offlinePlayersWthPoints.entrySet());
-        FXMLDocumentController.onlinePlayersTable.refresh();
-        FXMLDocumentController.offlinePlayersTable.refresh();
-
-        onlinePlayersWthPoints.put("Radwa", DBManager.playerPoints.get("Radwa"));
-        offlinePlayersWthPoints.remove("Radwa");
-        FXMLDocumentController.onlinePlayersTable.refresh();
-        FXMLDocumentController.offlinePlayersTable.refresh();
-
-        onlinePlayersWthPoints.put("Raghad", DBManager.playerPoints.get("Raghad"));
-        offlinePlayersWthPoints.remove("Raghad");
-        FXMLDocumentController.onlinePlayersTable.refresh();
-        FXMLDocumentController.offlinePlayersTable.refresh();
-    }
-
-    public void testUILogout() {
-        offlinePlayersWthPoints.put("Raghad", DBManager.playerPoints.get("Raghad"));
-        onlinePlayersWthPoints.remove("Raghad");
-        FXMLDocumentController.onlinePlayersTable.refresh();
-        FXMLDocumentController.offlinePlayersTable.refresh();
-    }
-
-    public void testUISetPoints() {
-        onlinePlayersWthPoints.put("Radwa", onlinePlayersWthPoints.get("Radwa") + 100);
-        FXMLDocumentController.onlinePlayersTable.refresh();
+        offlinePlayersWthPoints.putAll(DBManager.playerPoints);
     }
 
     public void startServer() throws SQLException, ClassNotFoundException {
@@ -133,7 +76,7 @@ public class NewServer {
             serverSocket.close();
             System.out.println("Stopped Server from closeServer");
         } catch (IOException ex) {
-            Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(NewServer.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -211,7 +154,7 @@ public class NewServer {
                                     clientPrintStream.println(Sjson);
                                     break;
                             }
-                            break;     
+                            break;
                         case "UPDATEOPPONENT": //client will send it if he received an acceptance to swt his opponent
                             updateOpponent(Rjson.getString("username"));
                             break;
@@ -269,48 +212,46 @@ public class NewServer {
 
         /* login function 
         to validate credentials and send the result back to the client */
-        public void acceptLogin(String username, String password) {
+        public void acceptLogin(String username, String password) throws JSONException {
             Player pTemp;
             Sjson = new JSONObject();
             int result = 0;
-            String message="";
+            String message = "";
             Sjson.put("code", "LOGIN");
             try {
                 pTemp = dBManager.getPlayer(username);
-                if(pTemp == null){
+                if (pTemp == null) {
                     message = "User Not Found!";
+                } else if (pTemp != null && pTemp.getPass().equals(password)) {
+                    currentPlayerUsername = username;
+                    activePlayersSockets.put(username, clientSocket);
+                    activePlayersPrintStreams.put(username, clientPrintStream);
+                    activePlayersInputStreams.put(username, clientDataInputStream);
+                    offlinePlayers.remove(username);
+                    onlinePlayers.add(username);
+                    onlinePlayersWthPoints.put(currentPlayerUsername, DBManager.playerPoints.get(currentPlayerUsername));
+                    offlinePlayersWthPoints.remove(currentPlayerUsername);
+                    result = 1;
+                    message = "Welcome " + username;
+                } else {
+                    message = "Wrong Password!";
                 }
-                else{
-                    if (pTemp != null && pTemp.getPass().equals(password)) {
-                        currentPlayerUsername = username;
-                        activePlayersSockets.put(username, clientSocket);
-                        activePlayersPrintStreams.put(username, clientPrintStream);
-                        activePlayersInputStreams.put(username, clientDataInputStream);
-                        offlinePlayers.remove(username);
-                        onlinePlayers.add(username);
-                        result = 1;
-                        message = "Welcome "+username;
-                    }else{
-                        message = "Wrong Password!";
-                    }
-                }
-                
+
             } catch (SQLException ex) {
                 Logger.getLogger(NewServer.class.getName()).log(Level.SEVERE, null, ex);
                 message = "Problem with connection!";
-            }
-            finally{
+            } finally {
                 Sjson.put("message", message);
                 Sjson.put("response", result);
                 clientPrintStream.println(Sjson.toString());
                 System.out.println(Sjson);
-                if(result == 1){
+                if (result == 1) {
                     sendOnlineUpdates(username, "ADD");
                 }
             }
         }
 
-        public void acceptSignUp(Player p) {
+        public void acceptSignUp(Player p) throws JSONException {
             Sjson = new JSONObject();
             Sjson.put("code", "SIGNUP");
             try {
@@ -324,14 +265,14 @@ public class NewServer {
             clientPrintStream.println(Sjson.toString());
         }
 
-        public void acceptLogOut() {
+        public void acceptLogOut() throws JSONException {
             Sjson = new JSONObject();
             Sjson.put("code", "LOGOUT");
             try {
                 onlinePlayers.remove(currentPlayerUsername);
                 offlinePlayers.add(currentPlayerUsername);
                 sendOnlineUpdates(currentPlayerUsername, "REMOVE");
-                if(otherPlayerUsername != null){
+                if (otherPlayerUsername != null) {
                     informClosing();
                 }
                 //close the streams and the socket of the client
@@ -345,8 +286,6 @@ public class NewServer {
                 runConnection = false; //this should close the client's thread
                 offlinePlayersWthPoints.put(currentPlayerUsername, DBManager.playerPoints.get(currentPlayerUsername));
                 onlinePlayersWthPoints.remove(currentPlayerUsername);
-                FXMLDocumentController.onlinePlayersTable.refresh();
-                FXMLDocumentController.offlinePlayersTable.refresh();
                 Sjson.put("response", 1); //successful logout
                 Sjson.put("message", "you have successfully logged out");
             } catch (IOException ex) {
@@ -357,7 +296,7 @@ public class NewServer {
             clientPrintStream.println(Sjson.toString());
         }
 
-        public void sendInvitation(String p2Username) throws IOException {
+        public void sendInvitation(String p2Username) throws IOException, JSONException {
             if (!busyPlayers.contains(p2Username)) {
                 Sjson = new JSONObject();
                 Sjson.put("code", "INVITATION");
@@ -412,8 +351,8 @@ public class NewServer {
             }
             return true;
         }
-        
-        public void updateOpponent(String p2Username){
+
+        public void updateOpponent(String p2Username) {
             otherPlayerUsername = p2Username;
             secondPlayerPrintStream = activePlayersPrintStreams.get(p2Username);
         }
@@ -446,7 +385,6 @@ public class NewServer {
                     sendClassificationUpdates(winnerUsername, "intermediate");
                 }
                 onlinePlayersWthPoints.put(winnerUsername, onlinePlayersWthPoints.get(winnerUsername) + 100);
-                FXMLDocumentController.onlinePlayersTable.refresh();
                 updateBusyPlayers("REMOVE");
                 return true;
             } catch (SQLException ex) {
@@ -483,7 +421,7 @@ public class NewServer {
             }
         }
 
-        public void sendResumeInvitaion(int gameID, String p2Username) {
+        public void sendResumeInvitaion(int gameID, String p2Username) throws JSONException {
             try {
                 PrintStream player2PS = activePlayersPrintStreams.get(p2Username);
                 Game g = dBManager.getGame(gameID);
@@ -502,16 +440,15 @@ public class NewServer {
                     player2PS.println(invitationObject.toString());
                     Sjson.put("response", 1);
                     Sjson.put("message", "your invitation has been sent successfully");
-                    
+
                 } catch (JSONException ex) {
                     Sjson.put("response", 0);
                     Sjson.put("message", "Failed to send the invitation, please try again");
                 }
             } catch (SQLException ex) {
-                    Sjson.put("response", 0);
-                    Sjson.put("message", "Failed to send the invitation, please try again");
-            }
-            finally{
+                Sjson.put("response", 0);
+                Sjson.put("message", "Failed to send the invitation, please try again");
+            } finally {
                 clientPrintStream.println(Sjson.toString());
             }
         }
@@ -581,21 +518,20 @@ public class NewServer {
             } catch (JSONException ex) {
                 Logger.getLogger(NewServer.class.getName()).log(Level.SEVERE, null, ex);
             }
-            
+
             //add or remove layers from the busy list
-            if(type.equalsIgnoreCase("add")){
+            if (type.equalsIgnoreCase("add")) {
                 busyPlayers.add(currentPlayerUsername);
                 busyPlayers.add(otherPlayerUsername);
-            }
-            else{
+            } else {
                 busyPlayers.remove(currentPlayerUsername);
                 busyPlayers.remove(otherPlayerUsername);
                 otherPlayerUsername = "";
                 secondPlayerPrintStream = null;
             }
-            
+
         }
-        
+
         public void sendOnlineUpdates(String username, String type) {
             try {
                 PrintStream ps;

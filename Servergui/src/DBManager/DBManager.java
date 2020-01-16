@@ -28,22 +28,6 @@ public class DBManager {
     public static final Vector<String> beginnerPlayers = new Vector<>();
     public static Map<String, Integer> playerPoints = new HashMap<>();
 
-    //this is for testing ui
-    public static void stDB() {
-        playerPoints.put("Rehab", 1500);
-        playerPoints.put("Radwa", 500);
-        playerPoints.put("Rana", 100);
-        playerPoints.put("Rou", 1000);
-        playerPoints.put("Nada", 1500);
-        playerPoints.put("Raghad", 800);
-        playerPoints.put("Shahd", 600);
-        playerPoints.put("Shrouk", 0);
-        playerPoints.put("Shada", 200);
-        playerPoints.put("Safwa", 300);
-        playerPoints.put("Eman", 1600);
-        playerPoints.put("Ebtsam", 1000);
-    }
-
     public DBManager() throws SQLException, ClassNotFoundException {
         Class.forName("com.mysql.jdbc.Driver");
         conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/tictactoe", "root", "");

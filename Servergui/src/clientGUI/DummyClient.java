@@ -22,31 +22,39 @@ import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import org.json.JSONException;
 import org.json.JSONObject;
 
-
 public class DummyClient {
-    
-      public static void main(String[] args) throws IOException{
+
+    public static void main(String[] args) throws IOException {
         System.out.println("Test Start");
         Client.startConnection();
-        new Thread(new Runnable(){
-           public void run(){
-                   JSONObject Sjson = new JSONObject();
-                   Sjson.put("code", "LOGIN");
-                   Sjson.put("username", "elshafeay");
-                   Sjson.put("password", "123456");
-                   Client.serverPrintStream.println(Sjson);
-                   Client.receive();
-                   System.out.println(Client.Rjson.toString());
-               try {
-                   Client.closeConnection();
-               } catch (IOException ex) {
-                   Logger.getLogger(DummyClient.class.getName()).log(Level.SEVERE, null, ex);
-               }
+        new Thread(new Runnable() {
+            public void run() {
+                JSONObject Sjson = new JSONObject();
+                try {
+                    Sjson.put("code", "LOGIN");
+                    Sjson.put("username", "elshafeay");
+                } catch (JSONException ex) {
+                    Logger.getLogger(DummyClient.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                try {
+                    Sjson.put("password", "123456");
+                } catch (JSONException ex) {
+                    Logger.getLogger(DummyClient.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                Client.serverPrintStream.println(Sjson);
+                Client.receive();
+                System.out.println(Client.Rjson.toString());
+                try {
+                    Client.closeConnection();
+                } catch (IOException ex) {
+                    Logger.getLogger(DummyClient.class.getName()).log(Level.SEVERE, null, ex);
+                }
 
-               }
+            }
         }).start();
     }
-    
+
 }
