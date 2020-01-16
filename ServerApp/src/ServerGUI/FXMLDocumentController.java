@@ -65,8 +65,8 @@ public class FXMLDocumentController implements Initializable {
             servThread.start();
         }
 
-        onlinePlayersList = FXCollections.observableArrayList(NewServer.onlinePlayersWthPoints.entrySet());
-        offlinePlayersList = FXCollections.observableArrayList(NewServer.offlinePlayersWthPoints.entrySet());
+        onlinePlayersList = FXCollections.observableArrayList(Server.onlinePlayersWthPoints.entrySet());
+        offlinePlayersList = FXCollections.observableArrayList(Server.offlinePlayersWthPoints.entrySet());
 
         TableColumn<Map.Entry<String, Integer>, String> nameColumnOnline = new TableColumn<>("Username");
         nameColumnOnline.setMinWidth(150);
@@ -131,8 +131,8 @@ public class FXMLDocumentController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
-        onlinePlayersList = FXCollections.observableArrayList(NewServer.onlinePlayersWthPoints.entrySet());
-        offlinePlayersList = FXCollections.observableArrayList(NewServer.offlinePlayersWthPoints.entrySet());
+        onlinePlayersList = FXCollections.observableArrayList(Server.onlinePlayersWthPoints.entrySet());
+        offlinePlayersList = FXCollections.observableArrayList(Server.offlinePlayersWthPoints.entrySet());
     }
 
     class ServThread extends Thread {
@@ -154,8 +154,8 @@ public class FXMLDocumentController implements Initializable {
 
         @Override
         public void run() {
-            onlinePlayersList = FXCollections.observableArrayList(NewServer.onlinePlayersWthPoints.entrySet());
-            offlinePlayersList = FXCollections.observableArrayList(NewServer.offlinePlayersWthPoints.entrySet());
+            onlinePlayersList = FXCollections.observableArrayList(Server.onlinePlayersWthPoints.entrySet());
+            offlinePlayersList = FXCollections.observableArrayList(Server.offlinePlayersWthPoints.entrySet());
             onlinePlayersTable.setItems(onlinePlayersList);
             offlinePlayersTable.setItems(offlinePlayersList);
         }

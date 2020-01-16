@@ -43,7 +43,7 @@ public class Server {
 
 	
     public Server() {
-		offlinePlayersWthPoints.putAll(DBManager.playerPoints);
+        offlinePlayersWthPoints.putAll(DBManager.playerPoints);
     }
 
     public void startServer() throws SQLException, ClassNotFoundException {
@@ -79,7 +79,7 @@ public class Server {
             serverSocket.close();
             System.out.println("Stopped Server from closeServer");
         } catch (IOException ex) {
-            Logger.getLogger(NewServer.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
