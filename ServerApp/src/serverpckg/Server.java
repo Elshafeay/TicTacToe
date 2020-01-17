@@ -43,7 +43,7 @@ public class Server {
 
 	
     public Server() {
-        offlinePlayersWthPoints.putAll(DBManager.playerPoints);
+        
     }
 
     public void startServer() throws SQLException, ClassNotFoundException {
@@ -52,6 +52,7 @@ public class Server {
             serverSocket = new ServerSocket(5005);
             dBManager = new DBManager();
             offlinePlayers = DBManager.getPlayersUsernames();
+            offlinePlayersWthPoints.putAll(DBManager.playerPoints);
             while (runServer) {
                 if (!runServer) {
                     System.out.println("Out From While");
