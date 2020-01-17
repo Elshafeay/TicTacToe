@@ -143,23 +143,16 @@
                   <Image url="@images/winnerx.png" />
                </image>
             </ImageView>
-            <ImageView fx:id="okImageView" fitHeight="46.0" fitWidth="55.0" layoutX="725.0" layoutY="551.0" onMouseClicked="#okBtnClick" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@images/ok.png" />
-               </image>
-            </ImageView>
-              <ImageView fx:id="NOImageView" fitHeight="46.0" fitWidth="45.0" layoutX="700.0" layoutY="500.0" onMouseClicked="#EXIT" pickOnBounds="true" preserveRatio="true">
-               <image>
-                  <Image url="@images/NO.png" />
-               </image>
-            </ImageView>
+           
+             
          </children>
       </Pane>
-      <Pane layoutX="783.0" prefHeight="142.0" prefWidth="159.0">
+      <Pane layoutX="713.0" layoutY="2.0" prefHeight="142.0" prefWidth="269.0">
          <children>
+            <Button fx:id="minimizegame" layoutX="98.0" layoutY="16.0" mnemonicParsing="false" onAction="#minimizegamebutton" prefHeight="47.0" prefWidth="47.0" style="-fx-background-color: transparent; -fx-background-image: url('/clientGUI/images/minimize.png'); -fx-background-repeat: no-repeat;" />
             
-                   <Button fx:id="exit" layoutX="75.0" layoutY="13.0" mnemonicParsing="false" onMouseClicked="#EXIT" prefHeight="47.0" prefWidth="45.0" style="-fx-background-image:url('/clientGUI/images/PINKo.jpg') " />
-            <Button fx:id="restart1" layoutX="28.0" layoutY="13.0" mnemonicParsing="false" onMouseClicked="#Restart" prefHeight="47.0" prefWidth="47.0" style="-fx-background-image:url('/clientGUI/images/restart.png')" />
+             <Button fx:id="exit" layoutX="143.0" layoutY="12.0" mnemonicParsing="false" onMouseClicked="#EXIT" prefHeight="47.0" prefWidth="45.0" style="-fx-background-color: transparent; -fx-background-image: url('/clientGUI/images/PINKo.png');" />
+            <Button fx:id="restart" layoutX="93.0" layoutY="567.0" mnemonicParsing="false" onMouseClicked="#Restart" prefHeight="47.0" prefWidth="47.0" style="-fx-background-color: transparent; -fx-background-image: url('/clientGUI/images/restart.png');" />
          </children>
       </Pane>
      

@@ -35,15 +35,17 @@
             <Font name="Bookman Old Style" size="18.0" />
          </font>
       </TextField>
-      <Button layoutX="230.0" layoutY="460.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="221.0" style="-fx-background-color: white; -fx-border-radius: 30;" text="SIGN UP " textFill="#ff22b6">
+      <Button layoutX="230.0" layoutY="460.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="221.0" style="-fx-background-color: white; -fx-border-radius: 30;" text="SIGN UP " textFill="#df2ba6">
          <font>
             <Font name="Bookman Old Style Bold" size="24.0" />
          </font>
       </Button>
-      <Text fill="#ff22b6" layoutX="227.0" layoutY="119.0" strokeType="OUTSIDE" strokeWidth="0.0" text="REGISTER" textAlignment="CENTER" wrappingWidth="236.0">
+      <Text fill="#d7219e" layoutX="227.0" layoutY="119.0" strokeType="OUTSIDE" strokeWidth="0.0" text="REGISTER" textAlignment="CENTER" wrappingWidth="236.0">
          <font>
             <Font name="Bookman Old Style Bold" size="36.0" />
          </font>
       </Text>
+      <Button fx:id="closeregister" layoutX="566.0" layoutY="3.0" mnemonicParsing="false" onAction="#closeregisterbutton" prefHeight="47.0" prefWidth="47.0" style="-fx-background-image: url('/clientGUI/images/PINKo.png'); -fx-background-color: transparent;" />
+      <Button fx:id="minimizeregister" layoutX="516.0" layoutY="4.0" mnemonicParsing="false" onAction="#minimizeregisterbutton" prefHeight="47.0" prefWidth="47.0" style="-fx-background-image: url('/clientGUI/images/minimize.png'); -fx-background-repeat: no-repeat; -fx-background-color: transparent; -fx-background-position: center;" />
    </children>
 </AnchorPane>

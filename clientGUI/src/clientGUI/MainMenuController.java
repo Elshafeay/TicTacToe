@@ -14,6 +14,7 @@ import javafx.scene.control.Label;
 import javafx.stage.Stage;
 import GameData.Game;
 import javafx.scene.layout.Pane;
+import javafx.stage.StageStyle;
 
 /**
  *
@@ -29,6 +30,10 @@ public class MainMenuController implements Initializable {
     private Pane playerspane;
     @FXML
     private Button closebtn;
+    @FXML
+    private Button closemenu;
+    @FXML
+    private Button minimize;
     
      @FXML
     private void btnSinglePlayerClick(ActionEvent event) throws IOException {
@@ -53,6 +58,7 @@ public class MainMenuController implements Initializable {
             Scene scene = new Scene(root);
             Stage stage = (Stage) btnMulti.getScene().getWindow();
             stage.setScene(scene);
+           
             stage.show();
         }
     
@@ -64,5 +70,18 @@ public class MainMenuController implements Initializable {
     @FXML
     private void cclosemenu(ActionEvent event) {
         playerspane.setVisible(false);
+    }
+
+    @FXML
+    private void closebutton(ActionEvent event) {
+        Stage stage = (Stage) closemenu.getScene().getWindow();
+    stage.close();
+
+    }
+
+    @FXML
+    private void minimizebutton(ActionEvent event) {
+          Stage stage = (Stage) minimize.getScene().getWindow();
+          stage.setIconified(true);
     }
 }

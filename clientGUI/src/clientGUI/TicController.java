@@ -26,6 +26,7 @@ import javafx.stage.Stage;
 import java.util.Random;
 import java.util.Vector;
 import GameData.Game;
+import static com.google.common.collect.Iterables.size;
 import java.io.IOException;
 import java.util.Optional;
 import java.util.logging.Level;
@@ -36,6 +37,8 @@ import javafx.scene.Parent;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
+import static javafx.scene.paint.Color.color;
+import static javafx.scene.text.Font.font;
 
 
 public class TicController implements Initializable {
@@ -67,7 +70,8 @@ public class TicController implements Initializable {
     private Line lineDiagonal1;
     @FXML
     private Line lineDiagonal2;
-         @FXML public Button restart;
+    @FXML
+         public Button restart;
             @FXML public Button exit;
     //Game variables
     boolean isGameEnds;
@@ -78,6 +82,11 @@ public class TicController implements Initializable {
     Random random;
     int rnd;
     Vector<Button> cells = new Vector<Button>();
+    @FXML
+    private ImageView NOImageView;
+    @FXML
+    private Button minimizegame;
+    
     
    //Fxml Action Events
     @FXML
@@ -377,6 +386,8 @@ public class TicController implements Initializable {
         alert.setTitle("Exit");
         alert.setHeaderText(null);
         alert.setContentText("Do you want to exit the game");
+        alert.getDialogPane().setStyle("-fx-background-color:lightgrey;-fx-border-color:#2bbba7; -fx-border-width:5;");
+           
                     ButtonType yesButton = new ButtonType("Yes");
             ButtonType BackButtonType = new ButtonType("Back");
             ButtonType cancelButton = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
@@ -463,6 +474,14 @@ public class TicController implements Initializable {
 
     private void tie() {
         System.out.println("DRAWWWWWWWWW");    
+    }
+
+   
+
+    @FXML
+    private void minimizegamebutton(ActionEvent event) {
+         Stage stage = (Stage) minimizegame.getScene().getWindow();
+          stage.setIconified(true);
     }
      
 

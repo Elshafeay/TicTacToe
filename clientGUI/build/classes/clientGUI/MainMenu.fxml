@@ -19,7 +19,7 @@
    <children>
       <Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="750.0" prefWidth="700.0" style="-fx-position-shape: center;">
          <children>
-            <ImageView fitHeight="750.0" fitWidth="700.0" layoutX="-2.0">
+            <ImageView fitHeight="750.0" fitWidth="709.0" layoutX="-3.0">
                <image>
                   <Image url="@images/pngtree-simple-memphis-geometric-background-image_57600.jpg" />
                </image>
@@ -53,11 +53,11 @@
                   <Font name="Bookman Old Style Bold Italic" size="72.0" />
                </font>
             </Text>
-            <Pane fx:id="playerspane" layoutX="10.0" layoutY="47.0" prefHeight="714.0" prefWidth="656.0" visible="false">
+            <Pane fx:id="playerspane" layoutX="10.0" layoutY="55.0" prefHeight="714.0" prefWidth="656.0" visible="false">
                <children>
-                  <ScrollPane layoutX="88.0" layoutY="8.0" prefHeight="679.0" prefWidth="475.0" style="-fx-border-color: WHITE; -fx-background-color: steelblue; -fx-border-width: 6;">
+                  <ScrollPane layoutX="88.0" layoutY="10.0" prefHeight="679.0" prefWidth="475.0" style="-fx-border-color: WHITE; -fx-background-color: steelblue; -fx-border-width: 6;">
                      <content>
-                        <TextField prefHeight="34.0" prefWidth="474.0" style="-fx-background-color: #cf299a;" text="professional">
+                        <TextField alignment="TOP_LEFT" editable="false" prefHeight="25.0" prefWidth="466.0" style="-fx-background-color: #cf299a; -fx-text-inner-color: white;" text="professional">
                            <font>
                               <Font name="Bookman Old Style Bold" size="18.0" />
                            </font>
@@ -66,7 +66,7 @@
                   </ScrollPane>
                   <ScrollPane layoutX="94.0" layoutY="44.0" prefHeight="140.0" prefWidth="462.0">
                      <content>
-                        <GridPane gridLinesVisible="true" prefHeight="135.0" prefWidth="461.0" style="-fx-background-color: lightgrWHITEey; -fx-stroke: white;">
+                        <GridPane gridLinesVisible="true" prefHeight="122.0" prefWidth="462.0" style="-fx-background-color: lightgrWHITEey; -fx-stroke: white;">
                           <columnConstraints>
                             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                             <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -79,19 +79,19 @@
                           </rowConstraints>
                            <children>
                               <TextField prefHeight="52.0" prefWidth="154.0" />
-                              <TextField prefHeight="52.0" prefWidth="154.0" style="-fx-background-color: WHITE;" text="             200000" GridPane.columnIndex="1" />
+                              <TextField prefHeight="48.0" prefWidth="154.0" style="-fx-background-color: WHITE;" text="             200000" GridPane.columnIndex="1" />
                               <TextField prefHeight="50.0" prefWidth="154.0" style="-fx-background-color: WHITE;" text="       NAHLA AHMED" />
-                              <Button mnemonicParsing="false" prefHeight="42.0" prefWidth="138.0" text="INVITE" GridPane.columnIndex="2" />
+                              <Button mnemonicParsing="false" prefHeight="42.0" prefWidth="155.0" text="INVITE" GridPane.columnIndex="2" />
                            </children>
                         </GridPane>
                      </content>
                   </ScrollPane>
-                  <Button fx:id="closebtn" cancelButton="true" contentDisplay="CENTER" layoutX="516.0" layoutY="16.0" mnemonicParsing="false" onAction="#cclosemenu" style="-fx-background-color: #cf299a;" text="Close" textAlignment="CENTER" textFill="WHITE">
+                  <Button fx:id="closebtn" cancelButton="true" contentDisplay="CENTER" layoutX="509.0" layoutY="16.0" mnemonicParsing="false" onAction="#cclosemenu" style="-fx-background-color: #cf299a;" text="Close" textAlignment="CENTER" textFill="WHITE">
                      <font>
                         <Font name="System Bold" size="12.0" />
                      </font>
                   </Button>
-                  <TextField layoutX="90.0" layoutY="183.0" prefHeight="33.0" prefWidth="468.0" style="-fx-background-color: #cf299a;" text="Intermediate">
+                  <TextField editable="false" layoutX="96.0" layoutY="183.0" prefHeight="33.0" prefWidth="462.0" style="-fx-background-color: #cf299a; -fx-text-inner-color: white;" text="Intermediate">
                      <font>
                         <Font name="Bookman Old Style Bold" size="18.0" />
                      </font>
@@ -112,7 +112,7 @@
                         </GridPane>
                      </content>
                   </ScrollPane>
-                  <TextField layoutX="93.0" layoutY="351.0" prefHeight="33.0" prefWidth="468.0" style="-fx-background-color: #cf299a;" text="Beginners">
+                  <TextField editable="false" layoutX="93.0" layoutY="351.0" prefHeight="33.0" prefWidth="462.0" style="-fx-background-color: #cf299a; -fx-text-inner-color: white;" text="Beginners">
                      <font>
                         <Font name="Bookman Old Style Bold" size="18.0" />
                      </font>
@@ -133,7 +133,7 @@
                         </GridPane>
                      </content>
                   </ScrollPane>
-                  <TextField layoutX="94.0" layoutY="519.0" prefHeight="33.0" prefWidth="468.0" style="-fx-background-color: #cf299a;" text="Offline">
+                  <TextField editable="false" layoutX="94.0" layoutY="519.0" prefHeight="33.0" prefWidth="462.0" style="-fx-background-color: #cf299a; -fx-text-inner-color: white;" text="Offline">
                      <font>
                         <Font name="Bookman Old Style Bold" size="18.0" />
                      </font>
@@ -156,6 +156,8 @@
                   </ScrollPane>
                </children>
             </Pane>
+            <Button fx:id="closemenu" layoutX="607.0" layoutY="16.0" mnemonicParsing="false" onAction="#closebutton" prefHeight="47.0" prefWidth="47.0" style="-fx-background-image: url('/clientGUI/images/PINKo.png'); -fx-background-color: transparent;" />
+            <Button fx:id="minimize" layoutX="558.0" layoutY="18.0" mnemonicParsing="false" onAction="#minimizebutton" prefHeight="47.0" prefWidth="47.0" style="-fx-background-image: url('/clientGUI/images/minimize.png'); -fx-background-repeat: no-repeat; -fx-background-color: transparent; -fx-background-position: center;" />
          </children>
       </Pane>
    </children>

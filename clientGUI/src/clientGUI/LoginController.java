@@ -39,6 +39,10 @@ public class LoginController implements Initializable {
     private TextField txtUserName;
     
     PlayerData.Player player = new PlayerData.Player();//added for testing only
+    @FXML
+    private Button closelogin;
+    @FXML
+    private Button minimizelogin;
    
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -52,12 +56,12 @@ public class LoginController implements Initializable {
     @FXML
     private void btnLoginClick(ActionEvent event) throws IOException {
       // System.out.println("Main Menu Scene Voila!!");
-           JSONObject Sjson = new JSONObject();
-            Sjson.put("code", "LOGIN");
-            Sjson.put("username", txtUserName.getText());
-            Sjson.put("password", txtPassword.getText());
-            Client.serverPrintStream.println(Sjson);
-      //    loadMainMenu(); //used to load Main Menu Fxml >>> return after testing Client
+          // JSONObject Sjson = new JSONObject();
+            //Sjson.put("code", "LOGIN");
+            //Sjson.put("username", txtUserName.getText());
+            //Sjson.put("password", txtPassword.getText());
+            //Client.serverPrintStream.println(Sjson);
+          loadMainMenu(); //used to load Main Menu Fxml >>> return after testing Client
           
           // TestConnection Code 1
     /*    System.out.println("Test Start");
@@ -120,4 +124,17 @@ public class LoginController implements Initializable {
             stage.setScene(scene);
             stage.show();
         }
+
+
+    @FXML
+    private void closeloginbutton(ActionEvent event) {
+        Stage stage = (Stage) closelogin.getScene().getWindow();
+    stage.close();
+    }
+
+    @FXML
+    private void minimizeloginbutton(ActionEvent event) {
+        Stage stage = (Stage) minimizelogin.getScene().getWindow();
+          stage.setIconified(true);
+    }
 }
