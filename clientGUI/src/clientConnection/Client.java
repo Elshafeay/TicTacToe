@@ -33,68 +33,20 @@ public class Client {
         serverDataInputStream = new DataInputStream(serverSocket.getInputStream());
         serverPrintStream = new PrintStream(serverSocket.getOutputStream());
         runConnection = true;
-        Platform.runLater(new Runnable() {
+        Thread ListeningThread = new Thread (new Runnable() {
             public void run(){
-                while(runConnection){    
+                while(runConnection){
                     try {
-                        JSONObject Rjson=new JSONObject(Client.serverDataInputStream.readLine());
-                        System.out.println(Rjson.toString());
-                        Alert a = new Alert(Alert.AlertType.INFORMATION);
-                        a.setContentText(Rjson.toString());
-                        a.show();
-                    } catch (IOException ex) {
+                        Rjson=new JSONObject(Client.serverDataInputStream.readLine());
+                        LoginController.showAlert();
+                    } catch (IOException | JSONException ex) {
                         Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, ex);
-                    } catch (JSONException ex) {
-                    Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
             }
-        }); 
-        // Test Client 1
-    /*    new Thread(new Runnable(){
-            public void run(){
-                while(runConnection)
-                {
-                    if (!runConnection) 
-                    {
-                        System.out.println("Out From While");
-                        break;
-                    }
-                    System.out.println("Entered While");
-                    try 
-                    {
-                        if(serverDataInputStream.readLine() != null)
-                        {
-                          Rjson = new JSONObject(serverDataInputStream.readLine());
-                          System.out.println("Reading Succes");
-                        }
-                    } catch (IOException ex) {
-                        Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                }
-            }
-        }).start();  */
-        // Test Client 2
-          /*       Platform.runLater(new Runnable() {
-                 public void run() 
-                 {
-                    while(true)
-                    {  
-                           System.out.println("Entered While");
-                           try 
-                           {
-                               if(serverDataInputStream.readLine() != null)
-                               {
-                                 Rjson = new JSONObject(serverDataInputStream.readLine());
-                                 System.out.println("Reading Succes");
-                               }
-                           } catch (IOException ex) {
-                               Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
-                           }
-                    }
-                 }
-            });  */
-        }
+        });
+        ListeningThread.start();
+    }
        
     static public void closeConnection() throws IOException{
          runConnection = false;
