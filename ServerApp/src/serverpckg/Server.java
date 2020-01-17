@@ -22,8 +22,6 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import java.util.HashMap;
 
-import ServerGUI.FXMLDocumentController;
-
 public class Server {
 
     DBManager dBManager;
@@ -53,6 +51,7 @@ public class Server {
             dBManager = new DBManager();
             offlinePlayers = DBManager.getPlayersUsernames();
             offlinePlayersWthPoints.putAll(DBManager.playerPoints);
+            onlinePlayersWthPoints = new HashMap<>();
             while (runServer) {
                 if (!runServer) {
                     System.out.println("Out From While");
@@ -251,6 +250,7 @@ public class Server {
                 System.out.println(Sjson);
                 if (result == 1) {
                     sendOnlineUpdates(username, "ADD");
+                    getPlayers();
                 }
             }
         }
@@ -457,23 +457,41 @@ public class Server {
             }
         }
 
-        public JSONObject getPlayers() {
-            JSONObject allPlayers = new JSONObject();
-            List<String> onlineP = new ArrayList<>();
+        public void getPlayers() {
+            Sjson = new JSONObject();
+            JSONObject onlineP = new JSONObject();
             List<String> offlineP = new ArrayList<>();
-            for (String s : onlinePlayers) {
-                onlineP.add(s);
+            List<String> profP = new ArrayList<>();
+            List<String> intermediateP = new ArrayList<>();
+            List<String> beginnerP = new ArrayList<>();
+            for(Map.Entry<String, Integer> item : onlinePlayersWthPoints.entrySet()){                
+                if(item.getKey().equals(currentPlayerUsername)){
+                    continue;
+                }
+                if(item.getValue()>= 1500){
+                    profP.add(item.getKey());
+                }
+                else if(item.getValue() >= 1000){
+                    intermediateP.add(item.getKey());
+                }
+                else{
+                    beginnerP.add(item.getKey());
+                }
             }
             for (String s : offlinePlayers) {
                 offlineP.add(s);
             }
+            onlineP.put("prof", profP);
+            onlineP.put("intermediate", intermediateP);
+            onlineP.put("beginner", beginnerP);
             try {
-                allPlayers.put("online", onlineP);
-                allPlayers.put("offline", offlineP);
+                Sjson.put("code", "getPlayers");
+                Sjson.put("online", onlineP);
+                Sjson.put("offline", offlineP);
             } catch (JSONException ex) {
                 Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
             }
-            return allPlayers;
+            clientPrintStream.println(Sjson.toString());
         }
 
         public void informClosing() throws IOException {
@@ -512,6 +530,9 @@ public class Server {
                 PrintStream ps;
                 for (Map.Entry<String, PrintStream> item : activePlayersPrintStreams.entrySet()) {
                     ps = item.getValue();
+                    if(ps == clientPrintStream || ps == secondPlayerPrintStream){
+                        continue;
+                    }
                     JSONObject invitationObject = new JSONObject();
                     invitationObject.put("code", "UPDATEBUSY");
                     invitationObject.put("type", type);
@@ -541,10 +562,14 @@ public class Server {
                 PrintStream ps;
                 for (Map.Entry<String, PrintStream> item : activePlayersPrintStreams.entrySet()) {
                     ps = item.getValue();
+                    if(ps == clientPrintStream){
+                        continue;
+                    }
                     JSONObject invitationObject = new JSONObject();
                     invitationObject.put("code", "UPDATEONLINE");
                     invitationObject.put("type", type);
                     invitationObject.put("username", username);
+                    invitationObject.put("classification", DBManager.getClassification(username));
                     ps.println(invitationObject.toString());
                 }
             } catch (JSONException ex) {

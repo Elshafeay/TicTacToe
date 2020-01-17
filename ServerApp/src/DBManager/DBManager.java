@@ -12,6 +12,8 @@ import java.util.HashMap;
 import java.util.Map;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import java.io.PrintStream;
+import static serverpckg.Server.activePlayersPrintStreams;
 
 public class DBManager {
 
@@ -40,6 +42,7 @@ public class DBManager {
             playersUsernames.add(currPlayer.getUsername());
             playerPoints.put(rs.getString(3), rs.getInt(5));
         }
+        classifyPlayers();
         //adding all the games to the vector
         pst = conn.prepareStatement("select * from savedgames");
         rs = pst.executeQuery();
@@ -72,7 +75,29 @@ public class DBManager {
         }
         return null;
     }
-
+    
+    public final void classifyPlayers(){
+        for(Map.Entry<String, Integer> item : playerPoints.entrySet()){
+            if(item.getValue()>= 1500){
+                profPlayers.add(item.getKey());
+            }
+            else if(item.getValue() >= 1000){
+                intermediatePlayers.add(item.getKey());
+            }
+            else{
+                beginnerPlayers.add(item.getKey());
+            }
+        }
+    }
+    
+    public static String getClassification(String username){
+        if(profPlayers.contains(username))
+            return "prof";
+        else if(intermediatePlayers.contains(username))
+            return "intermediate";
+        else
+            return "beginner";
+    }
     public void addingBouns(String Uname) throws SQLException {
         Player p = getPlayer(Uname);
         p.setPoints(p.getPoints() + 100);
