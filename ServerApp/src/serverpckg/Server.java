@@ -432,7 +432,6 @@ public class Server {
                 String board = g.getBoard();
                 Timestamp ts = g.getTS();
                 Sjson = new JSONObject();
-                Sjson.put("code", "RESUME");
                 String invitationMessage = currentPlayerUsername
                         + " has invited you to resume the game you played in " + ts + "\n What do you think?";
                 try {
@@ -485,7 +484,7 @@ public class Server {
             onlineP.put("intermediate", intermediateP);
             onlineP.put("beginner", beginnerP);
             try {
-                Sjson.put("code", "getPlayers");
+                Sjson.put("code", "GETPLAYERS");
                 Sjson.put("online", onlineP);
                 Sjson.put("offline", offlineP);
             } catch (JSONException ex) {
