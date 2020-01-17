@@ -93,12 +93,12 @@ public class LoginController implements Initializable {
         stage.setIconified(true);
     }
     
-    public static void showAlert(){
+    public static void showAlert(String message){
         Platform.runLater(new Runnable() {
            @Override
            public void run() {
                 Alert a = new Alert(Alert.AlertType.INFORMATION);
-                a.setContentText(Client.Rjson.getString("message"));
+                a.setContentText(message);
                 a.show();
 //                if (Client.Rjson.getInt("response")==1){
 //                  loadMainMenu();
