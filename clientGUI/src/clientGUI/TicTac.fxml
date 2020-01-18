@@ -16,7 +16,7 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="700.0" prefWidth="800.0" stylesheets="@cssfile.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="clientGUI.TicController">
+<AnchorPane fx:id="rootNode" onMousePressed="#onMousePressed" onMouseDragged="#onMouseDrag" prefHeight="700.0" prefWidth="800.0" stylesheets="@cssfile.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="clientGUI.TicController">
    <children>
       <ImageView fitHeight="723.0" fitWidth="976.0">
          <image>
