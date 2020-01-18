@@ -19,15 +19,14 @@ import javafx.scene.control.TableView;
 import javafx.scene.layout.Pane;
 import javafx.stage.StageStyle;
 import clientConnection.Client;
+import static clientConnection.Client.Sjson;
+import static clientConnection.Client.serverPrintStream;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.scene.control.ListView;
+import org.json.JSONObject;
 
-/**
- *
- * @author nahla ahmed
- */
 public class MainMenuController implements Initializable {
     
     @FXML
@@ -89,21 +88,16 @@ public class MainMenuController implements Initializable {
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-            //Only for Testing -- remove after development
-            Client.profplayers.add("Omar");//Dummy Data For Testing
-            Client.beginnerplayers.add("Aly");//Dummy Data For Testing
-            Client.intermediateplayers.add("Ahmed");//Dummy Data For Testing
-            Client.offlineplayers.add("Ahmed");//Dummy Data For Testing
             //Initialize Observable Lists
             offlineplayers = FXCollections.observableList(Client.offlineplayers);
             profplayers = FXCollections.observableList(Client.profplayers);
             intermediateplayers = FXCollections.observableList(Client.intermediateplayers);
             beginnerplayers = FXCollections.observableList(Client.beginnerplayers);
             //initiliaze view lists
-            ListView<String> offlineList = new ListView<String>();
-            ListView<String> profList = new ListView<String>();
-            ListView<String> intermediateList = new ListView<String>();
-            ListView<String> begginerList = new ListView<String>();
+            ListView<String> offlineList = new ListView<>();
+            ListView<String> profList = new ListView<>();
+            ListView<String> intermediateList = new ListView<>();
+            ListView<String> begginerList = new ListView<>();
             //set list width
             offlineList.setPrefWidth(461.0);
             profList.setPrefWidth(461.0);
@@ -116,28 +110,25 @@ public class MainMenuController implements Initializable {
             begginerList.setItems(beginnerplayers);
             //on click events
             offlineList.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends String> ov, String old_val, String new_val) -> {
-            String selectedItem = offlineList.getSelectionModel().getSelectedItem();//Get the selected UserName
-            int index = offlineList.getSelectionModel().getSelectedIndex();//Get Selected Index if needed
-            System.out.println(selectedItem + " " + index);// For Testing only
-           });
+                String selectedItem = offlineList.getSelectionModel().getSelectedItem();//Get the selected UserName
+                int index = offlineList.getSelectionModel().getSelectedIndex();//Get Selected Index if needed
+                System.out.println("This player is offline"); // could be an alert
+            });
             
             profList.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends String> ov, String old_val, String new_val) -> {
-            String selectedItem = profList.getSelectionModel().getSelectedItem();//Get the selected UserName
-            int index = profList.getSelectionModel().getSelectedIndex();//Get Selected Index if needed
-            System.out.println(selectedItem + " " + index);// For Testing only
-           });
+                String selectedItem = profList.getSelectionModel().getSelectedItem();//Get the selected UserName
+                sendInvitation(selectedItem);
+            });
             
             intermediateList.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends String> ov, String old_val, String new_val) -> {
-            String selectedItem = intermediateList.getSelectionModel().getSelectedItem();//Get the selected UserName
-            int index = intermediateList.getSelectionModel().getSelectedIndex();//Get Selected Index if needed
-            System.out.println(selectedItem + " " + index);// For Testing only
-           });
+                String selectedItem = intermediateList.getSelectionModel().getSelectedItem();//Get the selected UserName
+                sendInvitation(selectedItem);
+            });
             
             begginerList.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends String> ov, String old_val, String new_val) -> {
-            String selectedItem = begginerList.getSelectionModel().getSelectedItem();//Get the selected UserName
-            int index = begginerList.getSelectionModel().getSelectedIndex();//Get Selected Index if needed
-            System.out.println(selectedItem + " " + index);// For Testing only
-           });
+                String selectedItem = begginerList.getSelectionModel().getSelectedItem();//Get the selected UserName
+                sendInvitation(selectedItem);
+            });
             //Scroll Pane Show
             offlinePane.setContent(offlineList);
             professionalPane.setContent(profList);
@@ -161,5 +152,13 @@ public class MainMenuController implements Initializable {
     private void minimizebutton(ActionEvent event) {
           Stage stage = (Stage) minimize.getScene().getWindow();
           stage.setIconified(true);
+    }
+    
+    public void sendInvitation(String username){
+        Sjson = new JSONObject();
+        Sjson.put("code", "INVITATION");
+        Sjson.put("type", "SEND");
+        Sjson.put("username", username);
+        serverPrintStream.println(Sjson);
     }
 }
