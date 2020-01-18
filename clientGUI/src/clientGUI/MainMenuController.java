@@ -20,6 +20,7 @@ import javafx.scene.layout.Pane;
 import javafx.stage.StageStyle;
 import clientConnection.Client;
 import static clientConnection.Client.Sjson;
+import static clientConnection.Client.closeConnection;
 import static clientConnection.Client.serverPrintStream;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -109,25 +110,29 @@ public class MainMenuController implements Initializable {
             intermediateList.setItems(intermediateplayers);
             begginerList.setItems(beginnerplayers);
             //on click events
-            offlineList.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends String> ov, String old_val, String new_val) -> {
-                String selectedItem = offlineList.getSelectionModel().getSelectedItem();//Get the selected UserName
-                int index = offlineList.getSelectionModel().getSelectedIndex();//Get Selected Index if needed
-                System.out.println("This player is offline"); // could be an alert
+            offlineList.getSelectionModel().selectedItemProperty().addListener(
+                    (ObservableValue<? extends String> ov, String old_val, String new_val) -> {
+                        String selectedItem = offlineList.getSelectionModel().getSelectedItem();//Get the selected UserName
+                        int index = offlineList.getSelectionModel().getSelectedIndex();//Get Selected Index if needed
+                        System.out.println("This player is offline"); // could be an alert
             });
             
-            profList.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends String> ov, String old_val, String new_val) -> {
-                String selectedItem = profList.getSelectionModel().getSelectedItem();//Get the selected UserName
-                sendInvitation(selectedItem);
+            profList.getSelectionModel().selectedItemProperty().addListener(
+                    (ObservableValue<? extends String> ov, String old_val, String new_val) -> {
+                        String selectedItem = profList.getSelectionModel().getSelectedItem();//Get the selected UserName
+                        sendInvitation(selectedItem);
             });
             
-            intermediateList.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends String> ov, String old_val, String new_val) -> {
-                String selectedItem = intermediateList.getSelectionModel().getSelectedItem();//Get the selected UserName
-                sendInvitation(selectedItem);
+            intermediateList.getSelectionModel().selectedItemProperty().addListener(
+                    (ObservableValue<? extends String> ov, String old_val, String new_val) -> {
+                        String selectedItem = intermediateList.getSelectionModel().getSelectedItem();//Get the selected UserName
+                        sendInvitation(selectedItem);
             });
             
-            begginerList.getSelectionModel().selectedItemProperty().addListener((ObservableValue<? extends String> ov, String old_val, String new_val) -> {
-                String selectedItem = begginerList.getSelectionModel().getSelectedItem();//Get the selected UserName
-                sendInvitation(selectedItem);
+            begginerList.getSelectionModel().selectedItemProperty().addListener(
+                    (ObservableValue<? extends String> ov, String old_val, String new_val) -> {
+                        String selectedItem = begginerList.getSelectionModel().getSelectedItem();//Get the selected UserName
+                        sendInvitation(selectedItem);
             });
             //Scroll Pane Show
             offlinePane.setContent(offlineList);
@@ -142,10 +147,8 @@ public class MainMenuController implements Initializable {
     }
 
     @FXML
-    private void closebutton(ActionEvent event) {
-        Stage stage = (Stage) closemenu.getScene().getWindow();
-    stage.close();
-
+    private void closebutton(ActionEvent event) throws IOException {
+        logout();
     }
 
     @FXML
@@ -160,5 +163,15 @@ public class MainMenuController implements Initializable {
         Sjson.put("type", "SEND");
         Sjson.put("username", username);
         serverPrintStream.println(Sjson);
+    }
+    
+    public void logout(){
+        Sjson = new JSONObject();
+        Sjson.put("code", "LOGOUT");
+        serverPrintStream.println(Sjson);
+        Client.listeningThread.stop();
+        closeConnection();
+        Stage stage = (Stage) closemenu.getScene().getWindow();
+        stage.close();
     }
 }
