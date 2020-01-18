@@ -21,6 +21,7 @@ import org.json.JSONObject;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import java.util.HashMap;
+import java.util.concurrent.TimeUnit;
 
 public class Server {
 
@@ -193,7 +194,7 @@ public class Server {
                             clientPrintStream.println(Sjson);
                             break;
                         case "RESUME":
-                            sendResumeInvitaion(Rjson.getInt("gameID"), Rjson.getString("player2"));
+                            sendResumeInvitaion(Rjson.getInt("gameID"));
                             break;
                         case "CLOSING":
                             informClosing();
@@ -291,7 +292,7 @@ public class Server {
                 offlinePlayersWthPoints.put(currentPlayerUsername, DBManager.playerPoints.get(currentPlayerUsername));
                 onlinePlayersWthPoints.remove(currentPlayerUsername);
                 Sjson.put("response", 1); //successful logout
-                Sjson.put("message", "you have successfully logged out");
+                Sjson.put("message", "you have successfully logged out, hope to see you soon.");
             } catch (IOException ex) {
                 Sjson.put("response", 0); //unsuccessful logout
                 Sjson.put("message", "Connection Error, Try again");
@@ -425,10 +426,16 @@ public class Server {
             }
         }
 
-        public void sendResumeInvitaion(int gameID, String p2Username) throws JSONException {
+        public void sendResumeInvitaion(int gameID) throws JSONException {
             try {
-                PrintStream player2PS = activePlayersPrintStreams.get(p2Username);
                 Game g = dBManager.getGame(gameID);
+                PrintStream player2PS;
+                if (g.getP1().equals(currentPlayerUsername)){
+                    player2PS = activePlayersPrintStreams.get(g.getP2());
+                }
+                else{
+                    player2PS = activePlayersPrintStreams.get(g.getP1());
+                }
                 String board = g.getBoard();
                 Timestamp ts = g.getTS();
                 Sjson = new JSONObject();
@@ -459,7 +466,6 @@ public class Server {
         public void getPlayers() {
             Sjson = new JSONObject();
             JSONObject onlineP = new JSONObject();
-            List<String> offlineP = new ArrayList<>();
             List<String> profP = new ArrayList<>();
             List<String> intermediateP = new ArrayList<>();
             List<String> beginnerP = new ArrayList<>();
@@ -477,16 +483,14 @@ public class Server {
                     beginnerP.add(item.getKey());
                 }
             }
-            for (String s : offlinePlayers) {
-                offlineP.add(s);
-            }
             onlineP.put("prof", profP);
             onlineP.put("intermediate", intermediateP);
             onlineP.put("beginner", beginnerP);
             try {
                 Sjson.put("code", "GETPLAYERS");
                 Sjson.put("online", onlineP);
-                Sjson.put("offline", offlineP);
+                Sjson.put("offline", offlinePlayers);
+                Sjson.put("busy", busyPlayers);
             } catch (JSONException ex) {
                 Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -512,7 +516,7 @@ public class Server {
             String savingMessage = currentPlayerUsername + " has saved the game.";
             JSONObject savingObj = new JSONObject();
             try {
-                savingObj.put("code", "SAVING");
+                savingObj.put("code", "INFORMSAVING");
                 savingObj.put("message", savingMessage);
                 secondPlayerPrintStream.println(savingObj.toString());
                 updateBusyPlayers("REMOVE");
