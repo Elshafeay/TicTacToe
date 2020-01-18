@@ -211,7 +211,10 @@ public class TicController implements Initializable {
                 colorBackgroundWinnerButtons(b1, b2, b3);
                 linePane.setVisible(true);
                 lineRow1.setVisible(true);
+                if (Game.challengeComputer == false) {
                 informWinnig();
+
+            }
             }
 
             if (t10.equals(t11) && t10.equals(t12) && !t10.equals("")) {
@@ -219,7 +222,10 @@ public class TicController implements Initializable {
                 colorBackgroundWinnerButtons(b4, b5, b6);
                 linePane.setVisible(true);
                 lineRow2.setVisible(true);
+                if (Game.challengeComputer == false) {
                 informWinnig();
+
+            }
             }
 
             if (t20.equals(t21) && t20.equals(t22) && !t20.equals("")) {
@@ -227,7 +233,10 @@ public class TicController implements Initializable {
                 colorBackgroundWinnerButtons(b7, b8, b9);
                 linePane.setVisible(true);
                 lineRow3.setVisible(true);
+                if (Game.challengeComputer == false) {
                 informWinnig();
+
+            }
             }
 
             if (t00.equals(t10) && t00.equals(t20) && !t00.equals("")) {
@@ -235,7 +244,10 @@ public class TicController implements Initializable {
                 colorBackgroundWinnerButtons(b1, b4, b7);
                 linePane.setVisible(true);
                 lineColumn1.setVisible(true);
+                if (Game.challengeComputer == false) {
                 informWinnig();
+
+            }
             }
 
             if (t01.equals(t11) && t01.equals(t21) && !t01.equals("")) {
@@ -243,7 +255,10 @@ public class TicController implements Initializable {
                 colorBackgroundWinnerButtons(b2, b5, b8);
                 linePane.setVisible(true);
                 lineColumn2.setVisible(true);
+                if (Game.challengeComputer == false) {
                 informWinnig();
+
+            }
             }
 
             if (t02.equals(t12) && t02.equals(t22) && !t02.equals("")) {
@@ -251,7 +266,10 @@ public class TicController implements Initializable {
                 colorBackgroundWinnerButtons(b3, b6, b9);
                 linePane.setVisible(true);
                 lineColumn3.setVisible(true);
+                if (Game.challengeComputer == false) {
                 informWinnig();
+
+            }
             }
 
             if (t00.equals(t11) && t00.equals(t22) && !t00.equals("")) {
@@ -259,7 +277,10 @@ public class TicController implements Initializable {
                 colorBackgroundWinnerButtons(b1, b5, b9);
                 linePane.setVisible(true);
                 lineDiagonal1.setVisible(true);
+                if (Game.challengeComputer == false) {
                 informWinnig();
+
+            }
             }
 
             if (t02.equals(t11) && t02.equals(t20) && !t02.equals("")) {
@@ -267,7 +288,10 @@ public class TicController implements Initializable {
                 colorBackgroundWinnerButtons(b3, b5, b7);
                 linePane.setVisible(true);
                 lineDiagonal2.setVisible(true);
+                if (Game.challengeComputer == false) {
                 informWinnig();
+
+            }
             }
 
             if (XOCounter >= 9) {
@@ -275,7 +299,10 @@ public class TicController implements Initializable {
                 isFirstPlayerTurn = true;
                 XOCounter = 0;
                 tie();
-                informTIE();
+                if (Game.challengeComputer == false) {
+                    informWinnig();
+
+            }
             }
         } catch (IOException ex) {
             Logger.getLogger(TicController.class.getName()).log(Level.SEVERE, null, ex);
@@ -288,38 +315,23 @@ public class TicController implements Initializable {
                 if (i == 8) {
                     isGameEnds = true;
                     if (winner == false) {
+                        if (Game.challengeComputer == false) {
+                            try {
+                                informTIE();
+                                tie();
 
-                        tie();
+                            } catch (IOException ex) {
+                                Logger.getLogger(TicController.class.getName()).log(Level.SEVERE, null, ex);
                     }
+
                 }
             }
         }
-        /*
-        if(isGameEnds == true)
-        {
-            if(isFirstPlayerTurn)
-                playerOneScore.setText(Integer.valueOf(playerOneScore.getText()) + 1 + "");
-            else
-                playerTwoScore.setText(Integer.valueOf(playerTwoScore.getText()) + 1 + "");
-                XOCounter = 0;
-                start.requestFocus();
             }
-        */
-    }
-
-        /*
-    private void setCurrentPlayerSymbol() {
-
-        if (isFirstPlayerTurn == true) {
-            currentPlayerSymbol.setText("X");
-            currentPlayerSymbol.setTextFill(xForeground);
-        } else {
-            currentPlayerSymbol.setText("O");
-            currentPlayerSymbol.setTextFill(oForeground);
         }
-
+       
     }
-     */
+
 //Single Player Mode Functions
 //Switch Character Fn
     public void drawChar() {
@@ -381,8 +393,6 @@ public class TicController implements Initializable {
     @FXML
     public void Restart(MouseEvent event) {
 
-// Platform.exit();
-// System.out.println("EXIT BUTTON CLICKED \n");
         System.out.println("Game Scene Voila!!");
         try {
             RedirectToGameBoard();
@@ -411,8 +421,11 @@ public class TicController implements Initializable {
         alert.getButtonTypes().setAll(yesButton, BackButtonType, cancelButton);
         Optional<ButtonType> result = alert.showAndWait();
         if (result.get() == yesButton) {
+            if (Game.challengeComputer == false) {
             informClosing();
             
+            }
+            logout();
         } else if (result.get() == BackButtonType) {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("MainMenu.fxml"));
             Parent root;
@@ -421,7 +434,10 @@ public class TicController implements Initializable {
                 Scene scene = new Scene(root);
                 Stage stage = (Stage) exit.getScene().getWindow();
                 stage.setScene(scene);
+                if (Game.challengeComputer == false) {
                 informClosing();
+
+                }
                 stage.show();
 
             } catch (IOException ex) {
@@ -430,6 +446,16 @@ public class TicController implements Initializable {
 
         }
 
+    }
+
+    public void logout() {
+        Sjson = new JSONObject();
+        Sjson.put("code", "LOGOUT");
+        serverPrintStream.println(Sjson);
+        Client.listeningThread.stop();
+        closeConnection();
+        Stage stage = (Stage) exit.getScene().getWindow();
+        stage.close();
     }
 
     public void RedirectToGameBoard() throws IOException {
@@ -497,22 +523,8 @@ public class TicController implements Initializable {
     }
 
 // recieve invitation ()
-    @FXML
-    public static void RecieveInvitation(String message) {
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                Alert alert = new Alert(Alert.AlertType.WARNING);
-                alert.setTitle("RecieveInvitation");
-                alert.setHeaderText(null);
-                alert.setContentText(message);
-                ButtonType Accept = new ButtonType("Accept");
-                ButtonType Reject = new ButtonType("Reject");
-                ButtonType cancelButton = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
-                alert.getButtonTypes().setAll(Accept, Reject, cancelButton);
-                Optional<ButtonType> result = alert.showAndWait();
-            }
-        });
+
+
         // if (result.get() == Accept) {
         // try {
         // RedirectToGameBoard();
@@ -523,8 +535,6 @@ public class TicController implements Initializable {
         // else if (result.get()==Reject){
         // System.out.println("REject");
         // }
-    }
-
     @FXML
     private void minimizegamebutton(ActionEvent event) {
         Stage stage = (Stage) minimizegame.getScene().getWindow();
@@ -583,13 +593,4 @@ public class TicController implements Initializable {
         primaryStage.setX(event.getScreenX() + deltaX);
         primaryStage.setY(event.getScreenY() + deltaY);
     }
-    public void logout() {
-        Sjson = new JSONObject();
-        Sjson.put("code", "LOGOUT");
-        serverPrintStream.println(Sjson);
-        Client.listeningThread.stop();
-        closeConnection();
-        Stage stage = (Stage) exit.getScene().getWindow();
-        stage.close();
     }
-}

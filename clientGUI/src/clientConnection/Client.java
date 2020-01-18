@@ -20,113 +20,110 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class Client {
-      
+
     public static Socket serverSocket;
     public static DataInputStream serverDataInputStream;
     public static PrintStream serverPrintStream;
     public static JSONObject Rjson; //for receiving
     public static JSONObject Sjson; //for sending
     public static boolean runConnection;
-    public static String myUsername; 
-    public static String otherPlayerUsername; 
-    public static char myChar; 
+    public static String myUsername;
+    public static String otherPlayerUsername;
+    public static char myChar;
     public static char otherPlayerChar;
     public static Thread listeningThread;
-        
-    static public void startConnection() throws IOException{
+
+    static public void startConnection() throws IOException {
         System.out.println("Connection Started");
-        serverSocket = new Socket("127.0.0.1", 5005);
+        serverSocket = new Socket("192.168.1.5", 5005);
         serverDataInputStream = new DataInputStream(serverSocket.getInputStream());
         serverPrintStream = new PrintStream(serverSocket.getOutputStream());
         runConnection = true;
-        listeningThread = new Thread (new Runnable() {
+        listeningThread = new Thread(new Runnable() {
             @Override
-            public void run(){
-                while(runConnection){
+            public void run() {
+                while (runConnection) {
                     try {
-                        Rjson=new JSONObject(Client.serverDataInputStream.readLine());
-                        switch(Rjson.getString("code")){
+                        Rjson = new JSONObject(Client.serverDataInputStream.readLine());
+                        switch (Rjson.getString("code")) {
                             case "LOGIN":
                                 LoginController.showAlert(Rjson.getString("message"));
                                 LoginController.tempJson = Rjson;
                                 break;
                             case "SIGNUP":
-                                if(Rjson.getInt("response") == 1){
+                                if (Rjson.getInt("response") == 1) {
                                     /*
-                                    successful signup and
-                                    should be redirected to login page
-                                    after seeing a message tells him that 
-                                    he has signed up successfully
-                                    */
-                                }
-                                else{
+                                     successful signup and
+                                     should be redirected to login page
+                                     after seeing a message tells him that 
+                                     he has signed up successfully
+                                     */
+                                } else {
                                     /*
-                                    unsuccessful signup
-                                    do what ever you like
-                                    may be tell him to try again
-                                    or check his connection 
-                                    */
+                                     unsuccessful signup
+                                     do what ever you like
+                                     may be tell him to try again
+                                     or check his connection 
+                                     */
                                 }
                                 break;
                             case "LOGOUT":
-                                if(Rjson.getInt("response") == 1){
+                                if (Rjson.getInt("response") == 1) {
                                     /*
-                                    successful logout and
-                                    also there is a farewell message
-                                    you can use if you like
-                                    and you can access it using 
-                                    Rjson.getString("message")
-                                    but afterwards you must
-                                    stop the thread and close the application
-                                    and the close function should also be used 
-                                    the user pressed the close icon
-                                    upper right
-                                    */
-                                    
+                                     successful logout and
+                                     also there is a farewell message
+                                     you can use if you like
+                                     and you can access it using 
+                                     Rjson.getString("message")
+                                     but afterwards you must
+                                     stop the thread and close the application
+                                     and the close function should also be used 
+                                     the user pressed the close icon
+                                     upper right
+                                     */
+
                                     //close();
-                                }
-                                else{
+                                } else {
                                     /*
-                                    un successful login and there is
-                                    a message tells you for what reason
-                                    you can access it using 
-                                    Rjson.getString("message")
-                                    and do what ever you like with it 
-                                    */
+                                     un successful login and there is
+                                     a message tells you for what reason
+                                     you can access it using 
+                                     Rjson.getString("message")
+                                     and do what ever you like with it 
+                                     */
                                 }
                                 break;
                             case "INVITATION":
-                                switch(Rjson.getString("type")){
+                                switch (Rjson.getString("type")) {
                                     case "SEND":
-                                        if(Rjson.getInt("response") == 1){
+                                        if (Rjson.getInt("response") == 1) {
                                             /*
-                                            your invitation has been sent
-                                            successfully and there is a message
-                                            you can use
-                                            Rjson.getString("message"); 
-                                            */
-                                        }
-                                        else{
+                                             your invitation has been sent
+                                             successfully and there is a message
+                                             you can use
+                                             Rjson.getString("message"); 
+                                             */
+                                        } else {
                                             /*
-                                            failed to send the invitation
-                                            and these is also a message you can
-                                            use from
-                                            Rjson.getString("message"); 
-                                            */
+                                             failed to send the invitation
+                                             and these is also a message you can
+                                             use from
+                                             Rjson.getString("message"); 
+                                             */
                                         }
                                         break;
                                     case "RECEIVE":
                                         otherPlayerUsername = Rjson.getString("sender");
                                         /*
-                                        this means that some one send you 
-                                        an invitation and there is a message
-                                        you can use in your alert or 
-                                        pop up or whatever from
-                                        Rjson.getString("message")
+                                         this means that some one send you 
+                                         an invitation and there is a message
+                                         you can use in your alert or 
+                                         pop up or whatever from
+                                         Rjson.getString("message")
                                         
-                                        //receiveInvitation(Rjson.getString("message"));
-                                        */
-                                        TicController.RecieveInvitation(Rjson.getString("message"));
+                                         //receiveInvitation(Rjson.getString("message"));
+                                         */
+                                        MainMenuController.RecieveInvitation(Rjson.getString("message"));
                                         break;
                                     case "ACCEPT":
                                         otherPlayerUsername = Rjson.getString("username");
@@ -135,34 +132,23 @@ public class Client {
                                         Sjson.put("code", "UPDATEOPPONENT");
                                         Sjson.put("username", otherPlayerUsername);
                                         serverPrintStream.println(Sjson);
-                                        /*
-                                        show a message that the other player accepted
-                                        your invitation the message you can find
-                                        here -> Rjson.getString("message") and then
-                                        redirect to game board and set player2 username
-                                        to equal (otherPlayerUsername) 
-                                        */
+                                        MainMenuController.acceptanceMessage(Rjson.getString("message"));
                                         break;
                                     case "REJECT":
-                                        /*
-                                        show a message that the other player
-                                        rejected your invitation 
-                                        the message you can find here
-                                        Rjson.getString("message") 
-                                        */
+                                        MainMenuController.rejectionMessage(Rjson.getString("message"));
                                         break;
                                 }
                                 break;
                             case "MOVE":
                                 /*
-                                the function to draw charachter which takes
-                                an index should be put here
-                                */
-                                
+                                 the function to draw charachter which takes
+                                 an index should be put here
+                                 */
+
                                 // drawChar(Rjson.get("index"));
                                 break;
                             case "UPDATECLASSIFICATION":
-                                switch(Rjson.getString("level")){
+                                switch (Rjson.getString("level")) {
                                     case "prof":
                                         MainMenuController.profList.getItems().add(Rjson.getString("username"));
                                         MainMenuController.intermediateList.getItems().remove(Rjson.getString("username"));
@@ -176,20 +162,20 @@ public class Client {
                                 // refresh();
                                 break;
                             case "UPDATEBUSY":
-                                switch(Rjson.getString("type")){
+                                switch (Rjson.getString("type")) {
                                     case "ADD":
                                         /* here we should make the two players
-                                        unavailable for anyone to invite them
-                                        so you should edit them in the GUI
-                                        to be in a gray color or something
-                                        it's up to you */
-                                        
+                                         unavailable for anyone to invite them
+                                         so you should edit them in the GUI
+                                         to be in a gray color or something
+                                         it's up to you */
+
 //                                        makePlayerUnavailable(Rjson.getString(player1));
 //                                        makePlayerUnavailable(Rjson.getString(player2));
                                         break;
                                     case "REMOVE":
                                         /* here we should make them available again */
-                                        
+
 //                                        makePlayerAvailable(Rjson.getString(player1));
 //                                        makePlayerAvailable(Rjson.getString(player2));
                                         break;
@@ -197,37 +183,37 @@ public class Client {
                                 break;
                             case "GETPLAYERS":
                                 /* this is responsible for getting
-                                all the players from the server
-                                and storing them in vectors to be used later
-                                this one happens once the user
-                                makes a successful login */
-                                
-                                for(Object player:Rjson.getJSONArray("offline")){
+                                 all the players from the server
+                                 and storing them in vectors to be used later
+                                 this one happens once the user
+                                 makes a successful login */
+
+                                for (Object player : Rjson.getJSONArray("offline")) {
                                     MainMenuController.offlineList.getItems().add((String) player);
                                 }
                                 JSONObject tempJson = (JSONObject) Rjson.get("online");
-                                for(Object player:tempJson.getJSONArray("prof")){
+                                for (Object player : tempJson.getJSONArray("prof")) {
                                     MainMenuController.profList.getItems().add((String) player);
                                 }
-                                for(Object player:tempJson.getJSONArray("intermediate")){
+                                for (Object player : tempJson.getJSONArray("intermediate")) {
                                     MainMenuController.intermediateList.getItems().add((String) player);
                                 }
-                                for(Object player:tempJson.getJSONArray("beginner")){
+                                for (Object player : tempJson.getJSONArray("beginner")) {
                                     MainMenuController.beginnerList.getItems().add((String) player);
                                 }
-                                for(Object player:Rjson.getJSONArray("busy")){
+                                for (Object player : Rjson.getJSONArray("busy")) {
 //                                        makePlayerUnavailable((string) player);
                                 }
-                                
+
                                 /* here you should display all the players in
-                                their classification Titled lists in the GUI
-                                and make sure to make the busy ones unavailable
-                                */
+                                 their classification Titled lists in the GUI
+                                 and make sure to make the busy ones unavailable
+                                 */
                                 break;
                             case "UPDATEONLINE":
-                                if(Rjson.getString("type").equalsIgnoreCase("ADD")){
+                                if (Rjson.getString("type").equalsIgnoreCase("ADD")) {
                                     MainMenuController.offlineList.getItems().remove(Rjson.getString("username"));
-                                    switch(Rjson.getString("classification")){
+                                    switch (Rjson.getString("classification")) {
                                         case "prof":
                                             MainMenuController.profList.getItems().add(Rjson.getString("username"));
                                             break;
@@ -238,9 +224,9 @@ public class Client {
                                             MainMenuController.beginnerList.getItems().add(Rjson.getString("username"));
                                             break;
                                     }
-                                }else{
+                                } else {
                                     MainMenuController.offlineList.getItems().add(Rjson.getString("username"));
-                                    switch(Rjson.getString("classification")){
+                                    switch (Rjson.getString("classification")) {
                                         case "prof":
                                             MainMenuController.profList.getItems().remove(Rjson.getString("username"));
                                             break;
@@ -256,44 +242,43 @@ public class Client {
                                 // refresh();
                                 break;
                             case "WINNING":
-                                if(Rjson.getInt("response")==1){
+                                if (Rjson.getInt("response") == 1) {
                                     /* this means that the points has been
-                                    added succesfully to the player points after
-                                    winning a game and ther is a message you can
-                                    use from here
-                                    Rjson.getString("message");                                 
-                                    */
-                                }
-                                else{
+                                     added succesfully to the player points after
+                                     winning a game and ther is a message you can
+                                     use from here
+                                     Rjson.getString("message");                                 
+                                     */
+                                } else {
                                     // there was a problem in saving
                                 }
                                 break;
                             case "CLOSING":
                                 /* this means that the opponent closed the game
-                                so we sould display a pop up tells the user that
-                                the other player has closed the game
-                                there is a message you can use from 
-                                Rjson.getString("message");
-                                */
+                                 so we sould display a pop up tells the user that
+                                 the other player has closed the game
+                                 there is a message you can use from 
+                                 Rjson.getString("message");
+                                 */
                                 break;
                             case "SAVING":
-                                if(Rjson.getInt("response")==1){
+                                if (Rjson.getInt("response") == 1) {
                                     /* game has been saved successfully
-                                    there is a message you can use
-                                    Rjson.getString("message");
-                                    and you must disable the save button */
-                                }else{
+                                     there is a message you can use
+                                     Rjson.getString("message");
+                                     and you must disable the save button */
+                                } else {
                                     // failed to save
                                 }
                                 break;
                             case "INFORMSAVING":
                                 /* here means that the other player
-                                has saved the game and we should disable the
-                                save button and display a message tells him
-                                that the other player saved the game
-                                thers is a message you can use from
-                                Rjson.getString("message");
-                                */
+                                 has saved the game and we should disable the
+                                 save button and display a message tells him
+                                 that the other player saved the game
+                                 thers is a message you can use from
+                                 Rjson.getString("message");
+                                 */
                                 break;
                         }
                     } catch (IOException ex) {
@@ -303,9 +288,9 @@ public class Client {
             }
         });
         listeningThread.start();
-        }
-       
-    public static void closeConnection(){
+    }
+
+    public static void closeConnection() {
         try {
             serverSocket.close();
         } catch (IOException ex) {

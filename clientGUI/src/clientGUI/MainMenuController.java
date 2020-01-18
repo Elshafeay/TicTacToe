@@ -22,13 +22,22 @@ import clientConnection.Client;
 import static clientConnection.Client.Sjson;
 import static clientConnection.Client.closeConnection;
 import static clientConnection.Client.serverPrintStream;
+import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javafx.application.Platform;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonBar;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ListView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import org.json.JSONObject;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 
 public class MainMenuController implements Initializable {
 
@@ -42,6 +51,8 @@ public class MainMenuController implements Initializable {
     private Button closebtn;
     @FXML
     private Button closemenu;
+    @FXML
+    private Button exit;
     @FXML
     private Button minimize;
     @FXML
@@ -182,4 +193,67 @@ public class MainMenuController implements Initializable {
         primaryStage.setY(event.getScreenY() + deltaY);
     }
     
+     public static void rejectionMessage(String message) {
+            Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                Alert alert = new Alert(Alert.AlertType.WARNING);
+                alert.setTitle("Reject Message");
+                alert.setHeaderText(null);
+                alert.setContentText(message);
+                ButtonType cancelButton = new ButtonType("Ok", ButtonBar.ButtonData.CANCEL_CLOSE);
+                alert.getButtonTypes().setAll(cancelButton);
+
+
+                 Optional<ButtonType> result = alert.showAndWait();
+
 }
+            });}
+     
+      
+     public static void acceptanceMessage(String message) {
+            Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                Alert alert = new Alert(Alert.AlertType.WARNING);
+                alert.setTitle("Accept Message");
+                alert.setHeaderText(null);
+                alert.setContentText(message);
+                ButtonType cancelButton = new ButtonType("Ok", ButtonBar.ButtonData.CANCEL_CLOSE);
+                alert.getButtonTypes().setAll(cancelButton);
+
+                 Optional<ButtonType> result = alert.showAndWait();
+                        if (result.get() == cancelButton) {
+            
+//  REDIRECT TO GAME BOARD
+                        }
+
+            }
+            });}
+  
+         
+        @FXML
+    public static void RecieveInvitation(String message) {
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                Alert alert = new Alert(Alert.AlertType.WARNING);
+                alert.setTitle("RecieveInvitation");
+                alert.setHeaderText(null);
+                alert.setContentText(message);
+                ButtonType Accept = new ButtonType("Accept");
+                ButtonType Reject = new ButtonType("Reject");
+                ButtonType cancelButton = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+                alert.getButtonTypes().setAll(Accept, Reject, cancelButton);
+                Optional<ButtonType> result = alert.showAndWait();
+            }
+        });
+    }
+
+    }
+
+
+
+
+
+
