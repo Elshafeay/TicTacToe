@@ -28,6 +28,7 @@ import java.util.Vector;
 import GameData.Game;
 import clientConnection.Client;
 import static clientConnection.Client.Sjson;
+import static clientConnection.Client.closeConnection;
 import static clientConnection.Client.serverPrintStream;
 import static com.google.common.collect.Iterables.size;
 import java.io.IOException;
@@ -411,7 +412,7 @@ public class TicController implements Initializable {
         Optional<ButtonType> result = alert.showAndWait();
         if (result.get() == yesButton) {
             informClosing();
-            Platform.exit();
+            
         } else if (result.get() == BackButtonType) {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("MainMenu.fxml"));
             Parent root;
@@ -581,5 +582,14 @@ public class TicController implements Initializable {
         Stage primaryStage = (Stage) rootNode.getScene().getWindow();
         primaryStage.setX(event.getScreenX() + deltaX);
         primaryStage.setY(event.getScreenY() + deltaY);
+    }
+    public void logout() {
+        Sjson = new JSONObject();
+        Sjson.put("code", "LOGOUT");
+        serverPrintStream.println(Sjson);
+        Client.listeningThread.stop();
+        closeConnection();
+        Stage stage = (Stage) exit.getScene().getWindow();
+        stage.close();
     }
 }

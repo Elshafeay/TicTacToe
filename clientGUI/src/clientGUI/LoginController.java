@@ -208,13 +208,11 @@ public class LoginController implements Initializable {
     }
     
     public void logout() {
-        if(Client.serverSocket != null){
-            Sjson = new JSONObject();
-            Sjson.put("code", "LOGOUT");
-            serverPrintStream.println(Sjson);
-            Client.listeningThread.stop();
-            closeConnection();
-        }
+        Sjson = new JSONObject();
+        Sjson.put("code", "LOGOUT");
+        serverPrintStream.println(Sjson);
+        Client.listeningThread.stop();
+        closeConnection();
         Stage stage = (Stage) closelogin.getScene().getWindow();
         stage.close();
     }

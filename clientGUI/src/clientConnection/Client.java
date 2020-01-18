@@ -27,10 +27,6 @@ public class Client {
     public static JSONObject Rjson; //for receiving
     public static JSONObject Sjson; //for sending
     public static boolean runConnection;
-    public static Vector<String> offlineplayers = new Vector<>();
-    public static Vector<String> profplayers = new Vector<>();
-    public static Vector<String> intermediateplayers = new Vector<>();
-    public static Vector<String> beginnerplayers = new Vector<>();
     public static String myUsername; 
     public static String otherPlayerUsername; 
     public static char myChar; 
@@ -168,15 +164,12 @@ public class Client {
                             case "UPDATECLASSIFICATION":
                                 switch(Rjson.getString("level")){
                                     case "prof":
-                                        profplayers.add(Rjson.getString("username"));
-                                        intermediateplayers.remove(Rjson.getString("username"));
+                                        MainMenuController.profList.getItems().add(Rjson.getString("username"));
+                                        MainMenuController.intermediateList.getItems().remove(Rjson.getString("username"));
                                         break;
                                     case "intermediate":
-                                        intermediateplayers.add(Rjson.getString("username"));
-                                        beginnerplayers.remove(Rjson.getString("username"));
-                                        break;
-                                    case "beginner":
-//                                        beginnerplayers.add(Rjson.getString("username"));
+                                        MainMenuController.intermediateList.getItems().add(Rjson.getString("username"));
+                                        MainMenuController.beginnerList.getItems().remove(Rjson.getString("username"));
                                         break;
                                 }
                                 // should here refresh the lists in the GUI to display the updates
@@ -210,17 +203,17 @@ public class Client {
                                 makes a successful login */
                                 
                                 for(Object player:Rjson.getJSONArray("offline")){
-                                    offlineplayers.add((String) player);
+                                    MainMenuController.offlineList.getItems().add((String) player);
                                 }
                                 JSONObject tempJson = (JSONObject) Rjson.get("online");
                                 for(Object player:tempJson.getJSONArray("prof")){
-                                    profplayers.add((String) player);
+                                    MainMenuController.profList.getItems().add((String) player);
                                 }
                                 for(Object player:tempJson.getJSONArray("intermediate")){
-                                    intermediateplayers.add((String) player);
+                                    MainMenuController.intermediateList.getItems().add((String) player);
                                 }
                                 for(Object player:tempJson.getJSONArray("beginner")){
-                                    beginnerplayers.add((String) player);
+                                    MainMenuController.beginnerList.getItems().add((String) player);
                                 }
                                 for(Object player:Rjson.getJSONArray("busy")){
 //                                        makePlayerUnavailable((string) player);
@@ -236,15 +229,12 @@ public class Client {
                                     offlineplayers.remove(Rjson.getString("username"));
                                     switch(Rjson.getString("classification")){
                                         case "prof":
-                                            profplayers.add(Rjson.getString("username"));
                                             MainMenuController.profList.getItems().add(Rjson.getString("username"));
                                             break;
                                         case "intermediate":
-                                            intermediateplayers.add(Rjson.getString("username"));
                                             MainMenuController.intermediateList.getItems().add(Rjson.getString("username"));
                                             break;
                                         case "beginner":
-                                            beginnerplayers.add(Rjson.getString("username"));
                                             MainMenuController.beginnerList.getItems().add(Rjson.getString("username"));
                                             break;
                                     }
@@ -252,15 +242,12 @@ public class Client {
                                     offlineplayers.add(Rjson.getString("username"));
                                     switch(Rjson.getString("classification")){
                                         case "prof":
-                                            profplayers.remove(Rjson.getString("username"));
                                             MainMenuController.profList.getItems().remove(Rjson.getString("username"));
                                             break;
                                         case "intermediate":
-                                            intermediateplayers.remove(Rjson.getString("username"));
                                             MainMenuController.intermediateList.getItems().remove(Rjson.getString("username"));
                                             break;
                                         case "beginner":
-                                            beginnerplayers.remove(Rjson.getString("username"));
                                             MainMenuController.beginnerList.getItems().remove(Rjson.getString("username"));
                                             break;
                                     }

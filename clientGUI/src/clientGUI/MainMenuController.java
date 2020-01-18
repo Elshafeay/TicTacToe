@@ -60,19 +60,11 @@ public class MainMenuController implements Initializable {
     double deltaX;
     double deltaY;
     Stage primaryStage;
-
-    ObservableList<String> profplayers;
-    TableView<String> proflayersTable;
-    ObservableList<String> intermediateplayers;
-    TableView<String> intermediateplayersTable;
-    ObservableList<String> beginnerplayers;
-    TableView<String> beginnerplayersTable;
-    ObservableList<String> offlineplayers;
-    TableView<String> offlineplayersTable;
-    public static ListView<String> offlineList;
-    public static ListView<String> profList;
-    public static ListView<String> intermediateList;
-    public static ListView<String> beginnerList;
+    
+    public static ListView<String> offlineList = new ListView<>();
+    public static ListView<String> profList = new ListView<>();
+    public static ListView<String> intermediateList = new ListView<>();
+    public static ListView<String> beginnerList = new ListView<>();
 
     @FXML
     private void btnSinglePlayerClick(ActionEvent event) throws IOException {
@@ -103,26 +95,11 @@ public class MainMenuController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        //Initialize Observable Lists
-        offlineplayers = FXCollections.observableList(Client.offlineplayers);
-        profplayers = FXCollections.observableList(Client.profplayers);
-        intermediateplayers = FXCollections.observableList(Client.intermediateplayers);
-        beginnerplayers = FXCollections.observableList(Client.beginnerplayers);
-        //initiliaze view lists
-        offlineList = new ListView<>();
-        profList = new ListView<>();
-        intermediateList = new ListView<>();
-        beginnerList = new ListView<>();
         //set list width
         offlineList.setPrefWidth(461.0);
         profList.setPrefWidth(461.0);
         intermediateList.setPrefWidth(461.0);
         beginnerList.setPrefWidth(461.0);
-        //assiging items to the list
-        offlineList.setItems(offlineplayers);
-        profList.setItems(profplayers);
-        intermediateList.setItems(intermediateplayers);
-        beginnerList.setItems(beginnerplayers);
         //on click events
         offlineList.getSelectionModel().selectedItemProperty().addListener(
                 (ObservableValue<? extends String> ov, String old_val, String new_val) -> {
