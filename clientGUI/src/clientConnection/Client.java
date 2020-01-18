@@ -226,7 +226,7 @@ public class Client {
                                 break;
                             case "UPDATEONLINE":
                                 if(Rjson.getString("type").equalsIgnoreCase("ADD")){
-                                    offlineplayers.remove(Rjson.getString("username"));
+                                    MainMenuController.offlineList.getItems().remove(Rjson.getString("username"));
                                     switch(Rjson.getString("classification")){
                                         case "prof":
                                             MainMenuController.profList.getItems().add(Rjson.getString("username"));
@@ -239,7 +239,7 @@ public class Client {
                                             break;
                                     }
                                 }else{
-                                    offlineplayers.add(Rjson.getString("username"));
+                                    MainMenuController.offlineList.getItems().add(Rjson.getString("username"));
                                     switch(Rjson.getString("classification")){
                                         case "prof":
                                             MainMenuController.profList.getItems().remove(Rjson.getString("username"));
