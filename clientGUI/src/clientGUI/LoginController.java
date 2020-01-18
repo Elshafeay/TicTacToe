@@ -16,6 +16,7 @@ import javafx.stage.Stage;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import clientConnection.Client;
+import static clientConnection.Client.Rjson;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import org.json.JSONObject;
@@ -29,13 +30,14 @@ public class LoginController implements Initializable {
     private PasswordField txtPassword;
     @FXML
     private TextField txtUserName;
-    
+    Thread thread;
     PlayerData.Player player = new PlayerData.Player();//added for testing only
     @FXML
     private Button closelogin;
     @FXML
     private Button minimizelogin;
-   
+    public static JSONObject tempJson;
+    
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         try {
@@ -47,11 +49,48 @@ public class LoginController implements Initializable {
 
     @FXML
     private void btnLoginClick(ActionEvent event) throws IOException {
-            JSONObject Sjson = new JSONObject();
-            Sjson.put("code", "LOGIN");
-            Sjson.put("username", txtUserName.getText());
-            Sjson.put("password", txtPassword.getText());
-            Client.serverPrintStream.println(Sjson);
+        JSONObject Sjson = new JSONObject();
+        Sjson.put("code", "LOGIN");
+        Sjson.put("username", txtUserName.getText());
+        Sjson.put("password", txtPassword.getText());
+        Client.serverPrintStream.println(Sjson);
+        thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while(true){
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            if(tempJson != null){
+                                if(tempJson.getInt("response")==1){
+                                    try {
+                                        loadMainMenu();
+                                        System.out.println("main menu should show up");
+                                        destroyThread();
+                                    } catch (IOException ex) {
+                                        Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, ex);
+                                    }
+                                }
+                                else{
+                                    tempJson = null;
+                                    destroyThread();
+                                }
+                            }
+                        }
+                    });
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+            }
+        });
+        thread.start();
+    }
+    public void destroyThread(){
+        thread.stop();
+        System.out.println("thread has been stopped");
     }
 
     @FXML
@@ -100,9 +139,6 @@ public class LoginController implements Initializable {
                 Alert a = new Alert(Alert.AlertType.INFORMATION);
                 a.setContentText(message);
                 a.show();
-//                if (Client.Rjson.getInt("response")==1){
-//                  loadMainMenu();
-//                }
            }
        });  
     }

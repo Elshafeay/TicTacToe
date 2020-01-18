@@ -47,25 +47,7 @@ public class Client {
                         switch(Rjson.getString("code")){
                             case "LOGIN":
                                 LoginController.showAlert(Rjson.getString("message"));
-                                if(Rjson.getInt("response") == 1){
-                                    /*
-                                    successful login and should be
-                                    redirect to our main page 
-                                    and there is a welcoming message
-                                    you can use if you like
-                                    and you can access it using 
-                                    Rjson.getString("message")
-                                    */ 
-                                }
-                                else{
-                                    /*
-                                    un successful login and there is
-                                    a message tells you for what reason
-                                    you can access it using 
-                                    Rjson.getString("message")
-                                    and do what ever you like with it 
-                                    */
-                                }
+                                LoginController.tempJson = Rjson;
                                 break;
                             case "SIGNUP":
                                 if(Rjson.getInt("response") == 1){
