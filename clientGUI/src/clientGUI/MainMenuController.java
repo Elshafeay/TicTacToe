@@ -69,6 +69,10 @@ public class MainMenuController implements Initializable {
     TableView<String> beginnerplayersTable;
     ObservableList<String> offlineplayers;
     TableView<String> offlineplayersTable;
+    public static ListView<String> offlineList;
+    public static ListView<String> profList;
+    public static ListView<String> intermediateList;
+    public static ListView<String> beginnerList;
 
     @FXML
     private void btnSinglePlayerClick(ActionEvent event) throws IOException {
@@ -105,20 +109,20 @@ public class MainMenuController implements Initializable {
         intermediateplayers = FXCollections.observableList(Client.intermediateplayers);
         beginnerplayers = FXCollections.observableList(Client.beginnerplayers);
         //initiliaze view lists
-        ListView<String> offlineList = new ListView<>();
-        ListView<String> profList = new ListView<>();
-        ListView<String> intermediateList = new ListView<>();
-        ListView<String> begginerList = new ListView<>();
+        offlineList = new ListView<>();
+        profList = new ListView<>();
+        intermediateList = new ListView<>();
+        beginnerList = new ListView<>();
         //set list width
         offlineList.setPrefWidth(461.0);
         profList.setPrefWidth(461.0);
         intermediateList.setPrefWidth(461.0);
-        begginerList.setPrefWidth(461.0);
+        beginnerList.setPrefWidth(461.0);
         //assiging items to the list
         offlineList.setItems(offlineplayers);
         profList.setItems(profplayers);
         intermediateList.setItems(intermediateplayers);
-        begginerList.setItems(beginnerplayers);
+        beginnerList.setItems(beginnerplayers);
         //on click events
         offlineList.getSelectionModel().selectedItemProperty().addListener(
                 (ObservableValue<? extends String> ov, String old_val, String new_val) -> {
@@ -139,16 +143,16 @@ public class MainMenuController implements Initializable {
                     sendInvitation(selectedItem);
                 });
 
-        begginerList.getSelectionModel().selectedItemProperty().addListener(
+        beginnerList.getSelectionModel().selectedItemProperty().addListener(
                 (ObservableValue<? extends String> ov, String old_val, String new_val) -> {
-                    String selectedItem = begginerList.getSelectionModel().getSelectedItem();//Get the selected UserName
+                    String selectedItem = beginnerList.getSelectionModel().getSelectedItem();//Get the selected UserName
                     sendInvitation(selectedItem);
                 });
         //Scroll Pane Show
         offlinePane.setContent(offlineList);
         professionalPane.setContent(profList);
         intermediatePane.setContent(intermediateList);
-        beginnersPane.setContent(begginerList);
+        beginnersPane.setContent(beginnerList);
     }
 
     @FXML
@@ -200,4 +204,5 @@ public class MainMenuController implements Initializable {
         primaryStage.setX(event.getScreenX() + deltaX);
         primaryStage.setY(event.getScreenY() + deltaY);
     }
+    
 }

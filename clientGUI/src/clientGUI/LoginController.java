@@ -17,6 +17,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import clientConnection.Client;
 import static clientConnection.Client.Rjson;
+import static clientConnection.Client.Sjson;
+import static clientConnection.Client.closeConnection;
+import static clientConnection.Client.serverPrintStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import javafx.application.Platform;
@@ -144,8 +147,7 @@ public class LoginController implements Initializable {
 
     @FXML
     private void closeloginbutton(ActionEvent event) {
-        Stage stage = (Stage) closelogin.getScene().getWindow();
-        stage.close();
+        logout();
     }
 
     @FXML
@@ -203,5 +205,17 @@ public class LoginController implements Initializable {
         Stage primaryStage = (Stage) rootNode.getScene().getWindow();
         primaryStage.setX(event.getScreenX() + deltaX);
         primaryStage.setY(event.getScreenY() + deltaY);
+    }
+    
+    public void logout() {
+        if(Client.serverSocket != null){
+            Sjson = new JSONObject();
+            Sjson.put("code", "LOGOUT");
+            serverPrintStream.println(Sjson);
+            Client.listeningThread.stop();
+            closeConnection();
+        }
+        Stage stage = (Stage) closelogin.getScene().getWindow();
+        stage.close();
     }
 }

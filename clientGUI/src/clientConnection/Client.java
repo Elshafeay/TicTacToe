@@ -5,6 +5,7 @@ import static clientConnection.Client.serverDataInputStream;
 import static clientConnection.Client.serverPrintStream;
 import static clientConnection.Client.serverSocket;
 import clientGUI.LoginController;
+import clientGUI.MainMenuController;
 import clientGUI.TicController;
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -175,7 +176,7 @@ public class Client {
                                         beginnerplayers.remove(Rjson.getString("username"));
                                         break;
                                     case "beginner":
-                                        beginnerplayers.add(Rjson.getString("username"));
+//                                        beginnerplayers.add(Rjson.getString("username"));
                                         break;
                                 }
                                 // should here refresh the lists in the GUI to display the updates
@@ -236,12 +237,15 @@ public class Client {
                                     switch(Rjson.getString("classification")){
                                         case "prof":
                                             profplayers.add(Rjson.getString("username"));
+                                            MainMenuController.profList.getItems().add(Rjson.getString("username"));
                                             break;
                                         case "intermediate":
                                             intermediateplayers.add(Rjson.getString("username"));
+                                            MainMenuController.intermediateList.getItems().add(Rjson.getString("username"));
                                             break;
                                         case "beginner":
                                             beginnerplayers.add(Rjson.getString("username"));
+                                            MainMenuController.beginnerList.getItems().add(Rjson.getString("username"));
                                             break;
                                     }
                                 }else{
@@ -249,12 +253,15 @@ public class Client {
                                     switch(Rjson.getString("classification")){
                                         case "prof":
                                             profplayers.remove(Rjson.getString("username"));
+                                            MainMenuController.profList.getItems().remove(Rjson.getString("username"));
                                             break;
                                         case "intermediate":
                                             intermediateplayers.remove(Rjson.getString("username"));
+                                            MainMenuController.intermediateList.getItems().remove(Rjson.getString("username"));
                                             break;
                                         case "beginner":
                                             beginnerplayers.remove(Rjson.getString("username"));
+                                            MainMenuController.beginnerList.getItems().remove(Rjson.getString("username"));
                                             break;
                                     }
                                 }

@@ -294,33 +294,30 @@ public class TicController implements Initializable {
             }
         }
         /*
-if(isGameEnds == true)
-{
-if(isFirstPlayerTurn)
-playerOneScore.setText(Integer.valueOf(playerOneScore.getText()) + 1 + "");
-
-else
-playerTwoScore.setText(Integer.valueOf(playerTwoScore.getText()) + 1 + "");
-
-XOCounter = 0;
-start.requestFocus();
-}
-         */
-
+        if(isGameEnds == true)
+        {
+            if(isFirstPlayerTurn)
+                playerOneScore.setText(Integer.valueOf(playerOneScore.getText()) + 1 + "");
+            else
+                playerTwoScore.setText(Integer.valueOf(playerTwoScore.getText()) + 1 + "");
+                XOCounter = 0;
+                start.requestFocus();
+            }
+        */
     }
 
-    /*
-private void setCurrentPlayerSymbol() {
+        /*
+    private void setCurrentPlayerSymbol() {
 
-if (isFirstPlayerTurn == true) {
-currentPlayerSymbol.setText("X");
-currentPlayerSymbol.setTextFill(xForeground);
-} else {
-currentPlayerSymbol.setText("O");
-currentPlayerSymbol.setTextFill(oForeground);
-}
+        if (isFirstPlayerTurn == true) {
+            currentPlayerSymbol.setText("X");
+            currentPlayerSymbol.setTextFill(xForeground);
+        } else {
+            currentPlayerSymbol.setText("O");
+            currentPlayerSymbol.setTextFill(oForeground);
+        }
 
-}
+    }
      */
 //Single Player Mode Functions
 //Switch Character Fn
@@ -515,17 +512,16 @@ currentPlayerSymbol.setTextFill(oForeground);
                 Optional<ButtonType> result = alert.showAndWait();
             }
         });
-
-// if (result.get() == Accept) {
-// try {
-// RedirectToGameBoard();
-// } catch (IOException ex) {
-// Logger.getLogger(TicController.class.getName()).log(Level.SEVERE, null, ex);
-// }
-// }
-// else if (result.get()==Reject){
-// System.out.println("REject");
-// }
+        // if (result.get() == Accept) {
+        // try {
+        // RedirectToGameBoard();
+        // } catch (IOException ex) {
+        // Logger.getLogger(TicController.class.getName()).log(Level.SEVERE, null, ex);
+        // }
+        // }
+        // else if (result.get()==Reject){
+        // System.out.println("REject");
+        // }
     }
 
     @FXML
@@ -555,7 +551,6 @@ currentPlayerSymbol.setTextFill(oForeground);
         playerCloseJson.put("code", "CLOSING");
         Client.startConnection();
         Client.serverPrintStream.println(playerCloseJson.toString());
-//        System.out.println(playerCloseJson.toString());
     }
 
     public void informWinnig() throws IOException {
@@ -563,7 +558,6 @@ currentPlayerSymbol.setTextFill(oForeground);
         playerWinJson.put("code", "WINNING");
         Client.startConnection();
         Client.serverPrintStream.println(playerWinJson.toString());
-//        System.out.println(playerWinJson.toString());
     }
 
     public void informTIE() throws IOException {
@@ -571,7 +565,6 @@ currentPlayerSymbol.setTextFill(oForeground);
         playerTieJson.put("code", "TIE");
         Client.startConnection();
         Client.serverPrintStream.println(playerTieJson.toString());
-//        System.out.println(playerTieJson.toString());
     }
 
     @FXML
