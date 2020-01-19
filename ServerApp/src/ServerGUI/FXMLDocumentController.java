@@ -15,15 +15,11 @@ import javafx.scene.control.ListView;
 
 import serverpckg.Server;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
-import DBManager.DBManager;
 import java.sql.SQLException;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.collections.FXCollections;
@@ -31,6 +27,9 @@ import javafx.collections.ObservableList;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
+import javafx.application.Platform;
 
 /**
  *
@@ -42,6 +41,7 @@ public class FXMLDocumentController implements Initializable {
     ServThread servThread;
     Timer timer;
     RefreshLists refreshLists;
+    Stage primaryStage;
 
     @FXML
     Button stop;
@@ -94,11 +94,11 @@ public class FXMLDocumentController implements Initializable {
 
         onlinePlayers.setContent(onlinePlayersTable);
         offlinePlayers.setContent(offlinePlayersTable);
-        
-        if(refreshLists == null)
+
+        if (refreshLists == null) {
             refreshLists = new RefreshLists();
-        if(timer == null)
-        {
+        }
+        if (timer == null) {
             timer = new Timer();
             timer.schedule(refreshLists, 0, 1000);
         }
@@ -114,14 +114,13 @@ public class FXMLDocumentController implements Initializable {
             System.out.println("Server Closing from button");
         }
 
-        if(timer != null)
-        {
+        if (timer != null) {
             refreshLists.cancel();
             refreshLists = null;
             timer.cancel();
             timer = null;
         }
-        
+
         ListView<String> offlinePlayersList = new ListView<>();
         ListView<String> onlinePlayersList = new ListView<>();
         onlinePlayers.setContent(onlinePlayersList);
@@ -133,6 +132,28 @@ public class FXMLDocumentController implements Initializable {
         // TODO
         onlinePlayersList = FXCollections.observableArrayList(Server.onlinePlayersWthPoints.entrySet());
         offlinePlayersList = FXCollections.observableArrayList(Server.offlinePlayersWthPoints.entrySet());
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                primaryStage = (Stage) start.getScene().getWindow();
+                primaryStage.addEventFilter(WindowEvent.WINDOW_CLOSE_REQUEST, e -> {
+                    if (server != null) {
+                        server.closeServer();
+                        server = null;
+                        servThread.stop();
+                        servThread = null;
+                        System.out.println("Server Closing from button");
+                    }
+
+                    if (timer != null) {
+                        refreshLists.cancel();
+                        refreshLists = null;
+                        timer.cancel();
+                        timer = null;
+                    }
+                });
+            }
+        });
     }
 
     class ServThread extends Thread {

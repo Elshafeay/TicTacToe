@@ -21,7 +21,6 @@ import org.json.JSONObject;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import java.util.HashMap;
-import java.util.concurrent.TimeUnit;
 
 public class Server {
 
@@ -226,7 +225,13 @@ public class Server {
                 pTemp = dBManager.getPlayer(username);
                 if (pTemp == null) {
                     message = "User Not Found!";
-                } else if (pTemp != null && pTemp.getPass().equals(password)) {
+                }
+                else if (activePlayersPrintStreams.keySet().contains(username))
+                {
+                    result = 0;
+                    message = "Sorry " + username +". You are already logged in.";
+                }
+                else if (pTemp != null && pTemp.getPass().equals(password)) {
                     currentPlayerUsername = username;
                     activePlayersSockets.put(username, clientSocket);
                     activePlayersPrintStreams.put(username, clientPrintStream);
@@ -463,7 +468,7 @@ public class Server {
             }
         }
 
-        public void getPlayers() {
+        public void getPlayers() throws JSONException {
             Sjson = new JSONObject();
             JSONObject onlineP = new JSONObject();
             List<String> profP = new ArrayList<>();
