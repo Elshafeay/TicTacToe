@@ -112,13 +112,11 @@ public class TicController implements Initializable {
     @FXML
     public void paneAction1(ActionEvent event) {
         actionPerformed(event);
-        System.out.println("btnClick");
     }
 
     @FXML
     public void paneAction2(ActionEvent event) {
         actionPerformed(event);
-        System.out.println("btnClick");
     }
 
     @FXML
@@ -183,10 +181,9 @@ public class TicController implements Initializable {
 
     private void colorBackgroundWinnerButtons(Button b1, Button b2, Button b3) {
         winner = true;
-
-// b1.setStyle("-fx-background-color: yellow;");
-// b2.setStyle("-fx-background-color: yellow;");
-// b3.setStyle("-fx-background-color: yellow;");
+        // b1.setStyle("-fx-background-color: yellow;");
+        // b2.setStyle("-fx-background-color: yellow;");
+        // b3.setStyle("-fx-background-color: yellow;");
         endGamePane.setVisible(true);
         p.setOpacity(0.2);
         linePane.setOpacity(0.2);
@@ -212,7 +209,7 @@ public class TicController implements Initializable {
                 linePane.setVisible(true);
                 lineRow1.setVisible(true);
                 if (Game.challengeComputer == false) {
-                informWinnig();
+                informWinning();
 
             }
             }
@@ -223,7 +220,7 @@ public class TicController implements Initializable {
                 linePane.setVisible(true);
                 lineRow2.setVisible(true);
                 if (Game.challengeComputer == false) {
-                informWinnig();
+                informWinning();
 
             }
             }
@@ -234,7 +231,7 @@ public class TicController implements Initializable {
                 linePane.setVisible(true);
                 lineRow3.setVisible(true);
                 if (Game.challengeComputer == false) {
-                informWinnig();
+                informWinning();
 
             }
             }
@@ -245,7 +242,7 @@ public class TicController implements Initializable {
                 linePane.setVisible(true);
                 lineColumn1.setVisible(true);
                 if (Game.challengeComputer == false) {
-                informWinnig();
+                informWinning();
 
             }
             }
@@ -256,7 +253,7 @@ public class TicController implements Initializable {
                 linePane.setVisible(true);
                 lineColumn2.setVisible(true);
                 if (Game.challengeComputer == false) {
-                informWinnig();
+                informWinning();
 
             }
             }
@@ -267,7 +264,7 @@ public class TicController implements Initializable {
                 linePane.setVisible(true);
                 lineColumn3.setVisible(true);
                 if (Game.challengeComputer == false) {
-                informWinnig();
+                informWinning();
 
             }
             }
@@ -278,7 +275,7 @@ public class TicController implements Initializable {
                 linePane.setVisible(true);
                 lineDiagonal1.setVisible(true);
                 if (Game.challengeComputer == false) {
-                informWinnig();
+                informWinning();
 
             }
             }
@@ -289,7 +286,7 @@ public class TicController implements Initializable {
                 linePane.setVisible(true);
                 lineDiagonal2.setVisible(true);
                 if (Game.challengeComputer == false) {
-                informWinnig();
+                informWinning();
 
             }
             }
@@ -300,7 +297,7 @@ public class TicController implements Initializable {
                 XOCounter = 0;
                 tie();
                 if (Game.challengeComputer == false) {
-                    informWinnig();
+                    informWinning();
 
             }
             }
@@ -356,7 +353,6 @@ public class TicController implements Initializable {
         while (board.charAt(rnd) != '_') {
             rnd = random.nextInt(9);
         }
-// firing(cells.inde);
         firing(cells.get(rnd));
         checkIfGameEnds();
     }
@@ -383,17 +379,13 @@ public class TicController implements Initializable {
         } catch (Exception e) {
             System.err.println("Don't worry Continue");
         }
-
         setBoard(cells.indexOf(b), curChar);
-
         printBoard();
     }
 
 //restart gui or new game
     @FXML
     public void Restart(MouseEvent event) {
-
-        System.out.println("Game Scene Voila!!");
         try {
             RedirectToGameBoard();
         } catch (IOException ex) {
@@ -422,32 +414,35 @@ public class TicController implements Initializable {
         Optional<ButtonType> result = alert.showAndWait();
         if (result.get() == yesButton) {
             if (Game.challengeComputer == false) {
-            informClosing();
-            
+                informClosing();
             }
             logout();
         } else if (result.get() == BackButtonType) {
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("MainMenu.fxml"));
-            Parent root;
-            try {
-                root = (Parent) fxmlLoader.load();
-                Scene scene = new Scene(root);
-                Stage stage = (Stage) exit.getScene().getWindow();
-                stage.setScene(scene);
-                if (Game.challengeComputer == false) {
-                informClosing();
-
-                }
-                stage.show();
-
-            } catch (IOException ex) {
-                Logger.getLogger(TicController.class.getName()).log(Level.SEVERE, null, ex);
-            }
-
+            redirectToMainMenu();
         }
-
     }
 
+    public void redirectToMainMenu(){
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("MainMenu.fxml"));
+        Parent root;
+        try {
+            if (Game.challengeComputer == false) {
+                try {
+                    informClosing();
+                } catch (IOException ex) {
+                    Logger.getLogger(TicController.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+            root = (Parent) fxmlLoader.load();
+            Scene scene = new Scene(root);
+            Stage stage = (Stage) exit.getScene().getWindow();
+            stage.setScene(scene);
+            stage.show();
+        } catch (IOException ex) {
+            Logger.getLogger(TicController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
     public void logout() {
         Sjson = new JSONObject();
         Sjson.put("code", "LOGOUT");
@@ -500,7 +495,7 @@ public class TicController implements Initializable {
 
         }
 
-//Single Player Mode
+    //Single Player Mode
         if (GameData.Game.challengeComputer == true) {
             firing(clickedButton);
             checkIfGameEnds();
@@ -517,24 +512,15 @@ public class TicController implements Initializable {
         alert.setHeaderText("Draw");
         alert.setContentText("Fair Game");
         Optional<ButtonType> result = alert.showAndWait();
-
-// Sjson.put("code", "TIE");
-// serverPrintStream.println(Sjson);
+        if (Game.challengeComputer == false){
+            try {
+                informTIE();
+            } catch (IOException ex) {
+                Logger.getLogger(TicController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
     }
-
-// recieve invitation ()
-
-
-        // if (result.get() == Accept) {
-        // try {
-        // RedirectToGameBoard();
-        // } catch (IOException ex) {
-        // Logger.getLogger(TicController.class.getName()).log(Level.SEVERE, null, ex);
-        // }
-        // }
-        // else if (result.get()==Reject){
-        // System.out.println("REject");
-        // }
+    
     @FXML
     private void minimizegamebutton(ActionEvent event) {
         Stage stage = (Stage) minimizegame.getScene().getWindow();
@@ -542,7 +528,7 @@ public class TicController implements Initializable {
     }
 
     public void SendMove(int index) {
-        System.out.print("Index " + index + "\n");
+        Sjson = new JSONObject();
         Sjson.put("code", "MOVE");
         Sjson.put("index", index); //index here should represent the index of the clicked button
         serverPrintStream.println(Sjson);
@@ -551,6 +537,7 @@ public class TicController implements Initializable {
 
     public void SaveGame() {
         System.out.println("SAVED BOARD : " + board);
+        Sjson = new JSONObject();
         Sjson.put("code", "SAVING");
         Sjson.put("board", board);
         serverPrintStream.println(Sjson);
@@ -558,24 +545,21 @@ public class TicController implements Initializable {
     }
 
     public void informClosing() throws IOException {
-        JSONObject playerCloseJson = new JSONObject();
-        playerCloseJson.put("code", "CLOSING");
-        Client.startConnection();
-        Client.serverPrintStream.println(playerCloseJson.toString());
+        Sjson = new JSONObject();
+        Sjson.put("code", "CLOSING");
+        Client.serverPrintStream.println(Sjson);
     }
 
-    public void informWinnig() throws IOException {
-        JSONObject playerWinJson = new JSONObject();
-        playerWinJson.put("code", "WINNING");
-        Client.startConnection();
-        Client.serverPrintStream.println(playerWinJson.toString());
+    public void informWinning() throws IOException {
+        Sjson = new JSONObject();
+        Sjson.put("code", "WINNING");
+        Client.serverPrintStream.println(Sjson);
     }
 
     public void informTIE() throws IOException {
-        JSONObject playerTieJson = new JSONObject();
-        playerTieJson.put("code", "TIE");
-        Client.startConnection();
-        Client.serverPrintStream.println(playerTieJson.toString());
+        Sjson = new JSONObject();
+        Sjson.put("code", "TIE");
+        Client.serverPrintStream.println(Sjson);
     }
 
     @FXML

@@ -148,18 +148,21 @@ public class Client {
                                 // drawChar(Rjson.get("index"));
                                 break;
                             case "UPDATECLASSIFICATION":
-                                switch (Rjson.getString("level")) {
-                                    case "prof":
-                                        MainMenuController.profList.getItems().add(Rjson.getString("username"));
-                                        MainMenuController.intermediateList.getItems().remove(Rjson.getString("username"));
-                                        break;
-                                    case "intermediate":
-                                        MainMenuController.intermediateList.getItems().add(Rjson.getString("username"));
-                                        MainMenuController.beginnerList.getItems().remove(Rjson.getString("username"));
-                                        break;
-                                }
-                                // should here refresh the lists in the GUI to display the updates
-                                // refresh();
+                                Platform.runLater(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        switch (Rjson.getString("level")) {
+                                            case "prof":
+                                                MainMenuController.profList.getItems().add(Rjson.getString("username"));
+                                                MainMenuController.intermediateList.getItems().remove(Rjson.getString("username"));
+                                                break;
+                                            case "intermediate":
+                                                MainMenuController.intermediateList.getItems().add(Rjson.getString("username"));
+                                                MainMenuController.beginnerList.getItems().remove(Rjson.getString("username"));
+                                                break;
+                                        }
+                                    }
+                                });
                                 break;
                             case "UPDATEBUSY":
                                 switch (Rjson.getString("type")) {
@@ -182,12 +185,6 @@ public class Client {
                                 }
                                 break;
                             case "GETPLAYERS":
-                                /* this is responsible for getting
-                                 all the players from the server
-                                 and storing them in vectors to be used later
-                                 this one happens once the user
-                                 makes a successful login */
-
                                 for (Object player : Rjson.getJSONArray("offline")) {
                                     MainMenuController.offlineList.getItems().add((String) player);
                                 }
@@ -211,35 +208,38 @@ public class Client {
                                  */
                                 break;
                             case "UPDATEONLINE":
-                                if (Rjson.getString("type").equalsIgnoreCase("ADD")) {
-                                    MainMenuController.offlineList.getItems().remove(Rjson.getString("username"));
-                                    switch (Rjson.getString("classification")) {
-                                        case "prof":
-                                            MainMenuController.profList.getItems().add(Rjson.getString("username"));
-                                            break;
-                                        case "intermediate":
-                                            MainMenuController.intermediateList.getItems().add(Rjson.getString("username"));
-                                            break;
-                                        case "beginner":
-                                            MainMenuController.beginnerList.getItems().add(Rjson.getString("username"));
-                                            break;
+                                Platform.runLater(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        if (Rjson.getString("type").equalsIgnoreCase("ADD")) {
+                                        MainMenuController.offlineList.getItems().remove(Rjson.getString("username"));
+                                        switch (Rjson.getString("classification")) {
+                                            case "prof":
+                                                MainMenuController.profList.getItems().add(Rjson.getString("username"));
+                                                break;
+                                            case "intermediate":
+                                                MainMenuController.intermediateList.getItems().add(Rjson.getString("username"));
+                                                break;
+                                            case "beginner":
+                                                MainMenuController.beginnerList.getItems().add(Rjson.getString("username"));
+                                                break;
+                                        }
+                                        } else {
+                                            MainMenuController.offlineList.getItems().add(Rjson.getString("username"));
+                                            switch (Rjson.getString("classification")) {
+                                                case "prof":
+                                                    MainMenuController.profList.getItems().remove(Rjson.getString("username"));
+                                                    break;
+                                                case "intermediate":
+                                                    MainMenuController.intermediateList.getItems().remove(Rjson.getString("username"));
+                                                    break;
+                                                case "beginner":
+                                                    MainMenuController.beginnerList.getItems().remove(Rjson.getString("username"));
+                                                    break;
+                                            }
+                                        }
                                     }
-                                } else {
-                                    MainMenuController.offlineList.getItems().add(Rjson.getString("username"));
-                                    switch (Rjson.getString("classification")) {
-                                        case "prof":
-                                            MainMenuController.profList.getItems().remove(Rjson.getString("username"));
-                                            break;
-                                        case "intermediate":
-                                            MainMenuController.intermediateList.getItems().remove(Rjson.getString("username"));
-                                            break;
-                                        case "beginner":
-                                            MainMenuController.beginnerList.getItems().remove(Rjson.getString("username"));
-                                            break;
-                                    }
-                                }
-                                // should here refresh the lists in the GUI to display the updates
-                                // refresh();
+                                });
                                 break;
                             case "WINNING":
                                 if (Rjson.getInt("response") == 1) {

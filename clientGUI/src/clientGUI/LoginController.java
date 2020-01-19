@@ -90,7 +90,6 @@ public class LoginController implements Initializable {
                                     if (tempJson.getInt("response") == 1) {
                                         try {
                                             loadMainMenu();
-                                            System.out.println("main menu should show up");
                                             destroyThread();
                                         } catch (IOException ex) {
                                             Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, ex);
@@ -116,7 +115,6 @@ public class LoginController implements Initializable {
 
     public void destroyThread() {
         thread.stop();
-        System.out.println("thread has been stopped");
     }
 
     @FXML

@@ -21,7 +21,9 @@ import javafx.stage.StageStyle;
 import clientConnection.Client;
 import static clientConnection.Client.Sjson;
 import static clientConnection.Client.closeConnection;
+import static clientConnection.Client.otherPlayerUsername;
 import static clientConnection.Client.serverPrintStream;
+import static clientGUI.LoginController.tempJson;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -65,6 +67,8 @@ public class MainMenuController implements Initializable {
     private ScrollPane offlinePane;
     @FXML
     private VBox rootNode;
+    private static int redirectFlag;
+    public static Thread thread;
 
     double xOffset;
     double yOffset;
@@ -106,6 +110,7 @@ public class MainMenuController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        redirectFlag=0;
         //set list width
         offlineList.setPrefWidth(461.0);
         profList.setPrefWidth(461.0);
@@ -141,8 +146,41 @@ public class MainMenuController implements Initializable {
         professionalPane.setContent(profList);
         intermediatePane.setContent(intermediateList);
         beginnersPane.setContent(beginnerList);
+        startThread();
     }
-
+    
+    public void startThread(){
+        thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (true) {
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            if(redirectFlag == 1){
+                                try {
+                                    loadGameFxml();
+                                    destroyThread();
+                                } catch (IOException ex) {
+                                    Logger.getLogger(MainMenuController.class.getName()).log(Level.SEVERE, null, ex);
+                                }
+                            }
+                        }
+                    });
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+            }
+        });
+        thread.start();
+    }
+    public void destroyThread() {
+        thread.stop();
+    }
+    
     @FXML
     private void cclosemenu(ActionEvent event) {
         playerspane.setVisible(false);
@@ -193,7 +231,7 @@ public class MainMenuController implements Initializable {
         primaryStage.setY(event.getScreenY() + deltaY);
     }
     
-     public static void rejectionMessage(String message) {
+    public static void rejectionMessage(String message) {
             Platform.runLater(new Runnable() {
             @Override
             public void run() {
@@ -211,8 +249,8 @@ public class MainMenuController implements Initializable {
             });}
      
       
-     public static void acceptanceMessage(String message) {
-            Platform.runLater(new Runnable() {
+    public static void acceptanceMessage(String message) {
+        Platform.runLater(new Runnable() {
             @Override
             public void run() {
                 Alert alert = new Alert(Alert.AlertType.WARNING);
@@ -221,15 +259,11 @@ public class MainMenuController implements Initializable {
                 alert.setContentText(message);
                 ButtonType cancelButton = new ButtonType("Ok", ButtonBar.ButtonData.CANCEL_CLOSE);
                 alert.getButtonTypes().setAll(cancelButton);
-
-                 Optional<ButtonType> result = alert.showAndWait();
-                        if (result.get() == cancelButton) {
-            
-//  REDIRECT TO GAME BOARD
-                        }
-
+                alert.show();
+                redirectFlag=1;
             }
-            });}
+        });
+    }
   
          
         @FXML
@@ -243,14 +277,28 @@ public class MainMenuController implements Initializable {
                 alert.setContentText(message);
                 ButtonType Accept = new ButtonType("Accept");
                 ButtonType Reject = new ButtonType("Reject");
-                ButtonType cancelButton = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
-                alert.getButtonTypes().setAll(Accept, Reject, cancelButton);
+                alert.getButtonTypes().setAll(Accept, Reject);
                 Optional<ButtonType> result = alert.showAndWait();
+                        if (result.get() == Accept) {
+                            sendReply("ACCEPT");
+                            redirectFlag = 1;
+                        }
+                        else{
+                            sendReply("REJECT");
+                        }
             }
         });
     }
-
+    
+    public static void sendReply(String reply){
+        Sjson = new JSONObject();
+        Sjson.put("code", "INVITATION");
+        Sjson.put("type", reply);
+        Sjson.put("username", otherPlayerUsername);
+        serverPrintStream.println(Sjson);
     }
+
+}
 
 
 
