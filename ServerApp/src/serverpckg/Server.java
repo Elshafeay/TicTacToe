@@ -165,7 +165,7 @@ public class Server {
                         case "WINNING":
                             Sjson = new JSONObject();
                             Sjson.put("code", "WINNING");
-                            if (setPlayerPoints(Rjson.getString("username"))) {
+                            if (setPlayerPoints()) {
                                 Sjson.put("response", 1); //adding points successfully
                                 Sjson.put("message", "points has been added successfully");
                             } else {
@@ -384,20 +384,20 @@ public class Server {
             }
         }
 
-        public boolean setPlayerPoints(String winnerUsername) {
+        public boolean setPlayerPoints() {
             try {
-                dBManager.addingBouns(winnerUsername);
-                Player p = dBManager.getPlayer(winnerUsername);
-                if (p.getPoints() >= 1500 && !DBManager.profPlayers.contains(winnerUsername)) {
+                dBManager.addingBouns(currentPlayerUsername);
+                Player p = dBManager.getPlayer(currentPlayerUsername);
+                if (p.getPoints() >= 1500 && !DBManager.profPlayers.contains(currentPlayerUsername)) {
                     DBManager.profPlayers.add(p.getUsername());
                     DBManager.intermediatePlayers.remove(p.getUsername());
-                    sendClassificationUpdates(winnerUsername, "prof");
-                } else if (p.getPoints() >= 1000 && !DBManager.intermediatePlayers.contains(winnerUsername)) {
+                    sendClassificationUpdates(currentPlayerUsername, "prof");
+                } else if (p.getPoints() >= 1000 && !DBManager.intermediatePlayers.contains(currentPlayerUsername)) {
                     DBManager.intermediatePlayers.add(p.getUsername());
                     DBManager.beginnerPlayers.remove(p.getUsername());
-                    sendClassificationUpdates(winnerUsername, "intermediate");
+                    sendClassificationUpdates(currentPlayerUsername, "intermediate");
                 }
-                onlinePlayersWthPoints.put(winnerUsername, onlinePlayersWthPoints.get(winnerUsername) + 100);
+                onlinePlayersWthPoints.put(currentPlayerUsername, onlinePlayersWthPoints.get(currentPlayerUsername) + 100);
                 updateBusyPlayers("REMOVE");
                 return true;
             } catch (SQLException ex) {
