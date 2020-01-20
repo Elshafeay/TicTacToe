@@ -228,47 +228,24 @@ public class Client {
                                 break;
                 /////6
                             case "WINNING":
-                                if (Rjson.getInt("response") == 1) {
-                                    /* this means that the points has been
-                                     added succesfully to the player points after
-                                     winning a game and ther is a message you can
-                                     use from here
-                                     Rjson.getString("message");                                 
-                                     */
-                                } else {
-                                    // there was a problem in saving
-                                }
+                                if (Rjson.getInt("response") == 1) 
+                                    MultiplayerController.showalert(Rjson.getString("message"));
                                 break;
                                 
                     /////3
                             case "CLOSING":
-                                /* this means that the opponent closed the game
-                                 so we sould display a pop up tells the user that
-                                 the other player has closed the game
-                                 there is a message you can use from 
-                                 Rjson.getString("message");
-                                 */
+                           
+                                MultiplayerController.inform(Rjson.getString("message"));
                                 break;
                     /////4
                             case "SAVING":
-                                if (Rjson.getInt("response") == 1) {
-                                    /* game has been saved successfully
-                                     there is a message you can use
-                                     Rjson.getString("message");
-                                     and you must disable the save button */
-                                } else {
-                                    // failed to save
-                                }
+                                if (Rjson.getInt("response") == 1) 
+                                    MultiplayerController.showalert(Rjson.getString("message"));
+                                
                                 break;
                     /////5
                             case "INFORMSAVING":
-                                /* here means that the other player
-                                 has saved the game and we should disable the
-                                 save button and display a message tells him
-                                 that the other player saved the game
-                                 thers is a message you can use from
-                                 Rjson.getString("message");
-                                 */
+                                MultiplayerController.showalert(Rjson.getString("message"));
                                 break;
                         }
                     } catch (IOException ex) {

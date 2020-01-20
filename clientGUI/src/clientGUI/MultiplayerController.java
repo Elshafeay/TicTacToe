@@ -455,4 +455,38 @@ public class MultiplayerController implements Initializable {
         a.setContentText("It's not your turn, please wait for your opponent move");
         a.show();
     }
+    
+        public static void showalert(String message) {
+        Platform.runLater(new Runnable() {
+            public void run() {
+
+                Alert alert = new Alert(Alert.AlertType.WARNING);
+                alert.setTitle("Alert");
+                alert.setHeaderText(null);
+                alert.getDialogPane().setStyle("-fx-background-color:lightgrey;-fx-border-color:#2bbba7; -fx-border-width:5;");
+                alert.setContentText(message);
+                ButtonType cancelButton = new ButtonType("Ok", ButtonBar.ButtonData.CANCEL_CLOSE);
+                alert.getButtonTypes().setAll(cancelButton);
+                alert.show();
+            }
+        });
+    }
+
+    public static void inform(String message) {
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+
+                Alert alert = new Alert(Alert.AlertType.WARNING);
+                alert.setTitle("I");
+                alert.setHeaderText(null);
+                alert.getDialogPane().setStyle("-fx-background-color:lightgrey;-fx-border-color:#2bbba7; -fx-border-width:5;");
+                alert.setContentText(message);
+                ButtonType cancelButton = new ButtonType("Ok", ButtonBar.ButtonData.CANCEL_CLOSE);
+                alert.getButtonTypes().setAll(cancelButton);
+                alert.show();
+//                redirectFlag=1;
+            }
+        });
+    }
 }
