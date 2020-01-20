@@ -196,6 +196,10 @@ public class Server {
                         case "CLOSING":
                             informClosing();
                             break;
+                            
+                        case "CHAT":
+                            exchangeMessages(Rjson.getString("message"));
+                            break;
                     }
                 } catch (IOException | JSONException ex) {
                     runConnection = false;
@@ -579,6 +583,13 @@ public class Server {
             } catch (JSONException ex) {
                 Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
             }
+        }
+        
+        public void exchangeMessages(String message) throws JSONException
+        {
+            Sjson.put("code", "CHAT");
+            Sjson.put("message", message);
+            activePlayersPrintStreams.get(otherPlayerUsername).println(Sjson);
         }
     }
 }
