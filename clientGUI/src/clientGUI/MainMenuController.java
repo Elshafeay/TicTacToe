@@ -40,6 +40,7 @@ import javafx.scene.layout.VBox;
 import org.json.JSONObject;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import PlayerData.Player;
 
 public class MainMenuController implements Initializable {
 
@@ -127,19 +128,58 @@ public class MainMenuController implements Initializable {
         profList.getSelectionModel().selectedItemProperty().addListener(
                 (ObservableValue<? extends String> ov, String old_val, String new_val) -> {
                     String selectedItem = profList.getSelectionModel().getSelectedItem();//Get the selected UserName
-                    sendInvitation(selectedItem);
+                    if(!Player.Busy(selectedItem))
+                        sendInvitation(selectedItem);
+                    else
+                    {
+                        Platform.runLater(new Runnable() 
+                        {
+                        public void run()
+                           {
+                            Alert busyAlert = new Alert(Alert.AlertType.INFORMATION);
+                            busyAlert.setContentText(selectedItem + " is busy");
+                            busyAlert.show();
+                            }
+                        });
+                    }
                 });
 
         intermediateList.getSelectionModel().selectedItemProperty().addListener(
                 (ObservableValue<? extends String> ov, String old_val, String new_val) -> {
                     String selectedItem = intermediateList.getSelectionModel().getSelectedItem();//Get the selected UserName
-                    sendInvitation(selectedItem);
+                    if(!Player.Busy(selectedItem))
+                        sendInvitation(selectedItem);
+                    else
+                    {
+                        Platform.runLater(new Runnable() 
+                        {
+                        public void run()
+                           {
+                            Alert busyAlert = new Alert(Alert.AlertType.INFORMATION);
+                            busyAlert.setContentText(selectedItem + " is busy");
+                            busyAlert.show();
+                            }
+                        });
+                    }
                 });
 
         beginnerList.getSelectionModel().selectedItemProperty().addListener(
                 (ObservableValue<? extends String> ov, String old_val, String new_val) -> {
                     String selectedItem = beginnerList.getSelectionModel().getSelectedItem();//Get the selected UserName
-                    sendInvitation(selectedItem);
+                    if(!Player.Busy(selectedItem))
+                        sendInvitation(selectedItem);
+                    else
+                    {
+                        Platform.runLater(new Runnable() 
+                        {
+                        public void run()
+                           {
+                            Alert busyAlert = new Alert(Alert.AlertType.INFORMATION);
+                            busyAlert.setContentText(selectedItem + " is busy");
+                            busyAlert.show();
+                            }
+                        });
+                    }
                 });
         //Scroll Pane Show
         offlinePane.setContent(offlineList);

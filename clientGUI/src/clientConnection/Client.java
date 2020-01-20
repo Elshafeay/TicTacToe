@@ -19,6 +19,7 @@ import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import org.json.JSONException;
 import org.json.JSONObject;
+import PlayerData.Player;
 
 public class Client {
 
@@ -157,20 +158,12 @@ public class Client {
                             case "UPDATEBUSY":
                                 switch (Rjson.getString("type")) {
                                     case "ADD":
-                                        /* here we should make the two players
-                                         unavailable for anyone to invite them
-                                         so you should edit them in the GUI
-                                         to be in a gray color or something
-                                         it's up to you */
-
-//                                        makePlayerUnavailable(Rjson.getString(player1));
-//                                        makePlayerUnavailable(Rjson.getString(player2));
+                                        Player.makePlayerUnavailable(Rjson.getString("player1"));
+                                        Player.makePlayerUnavailable(Rjson.getString("player2"));
                                         break;
                                     case "REMOVE":
-                                        /* here we should make them available again */
-
-//                                        makePlayerAvailable(Rjson.getString(player1));
-//                                        makePlayerAvailable(Rjson.getString(player2));
+                                        Player.makePlayerAvailable(Rjson.getString("player1"));
+                                        Player.makePlayerAvailable(Rjson.getString("player2"));
                                         break;
                                 }
                                 break;
@@ -189,7 +182,7 @@ public class Client {
                                     MainMenuController.beginnerList.getItems().add((String) player);
                                 }
                                 for (Object player : Rjson.getJSONArray("busy")) {
-//                                        makePlayerUnavailable((string) player);
+                                    Player.makePlayerUnavailable((String) player);
                                 }
                                 break;
                             case "UPDATEONLINE":
