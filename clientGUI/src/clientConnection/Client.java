@@ -7,6 +7,7 @@ import static clientConnection.Client.serverSocket;
 import clientGUI.LoginController;
 import clientGUI.MainMenuController;
 import clientGUI.TicController;
+import clientGUI.MultiplayerController;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.PrintStream;
@@ -30,12 +31,13 @@ public class Client {
     public static String myUsername;
     public static String otherPlayerUsername;
     public static char myChar;
+    public static int myPoints; 
     public static char otherPlayerChar;
     public static Thread listeningThread;
 
     static public void startConnection() throws IOException {
         System.out.println("Connection Started");
-        serverSocket = new Socket("192.168.1.5", 5005);
+        serverSocket = new Socket("127.0.0.1", 5005);
         serverDataInputStream = new DataInputStream(serverSocket.getInputStream());
         serverPrintStream = new PrintStream(serverSocket.getOutputStream());
         runConnection = true;
@@ -93,8 +95,10 @@ public class Client {
                                      */
                                 }
                                 break;
+                    /////7
                             case "INVITATION":
                                 switch (Rjson.getString("type")) {
+                                    ////// 2
                                     case "SEND":
                                         if (Rjson.getInt("response") == 1) {
                                             /*
@@ -114,15 +118,6 @@ public class Client {
                                         break;
                                     case "RECEIVE":
                                         otherPlayerUsername = Rjson.getString("sender");
-                                        /*
-                                         this means that some one send you 
-                                         an invitation and there is a message
-                                         you can use in your alert or 
-                                         pop up or whatever from
-                                         Rjson.getString("message")
-                                        
-                                         //receiveInvitation(Rjson.getString("message"));
-                                         */
                                         MainMenuController.RecieveInvitation(Rjson.getString("message"));
                                         break;
                                     case "ACCEPT":
@@ -140,12 +135,7 @@ public class Client {
                                 }
                                 break;
                             case "MOVE":
-                                /*
-                                 the function to draw charachter which takes
-                                 an index should be put here
-                                 */
-
-                                // drawChar(Rjson.get("index"));
+                                MultiplayerController.index = Rjson.getInt("index");
                                 break;
                             case "UPDATECLASSIFICATION":
                                 Platform.runLater(new Runnable() {
@@ -201,11 +191,6 @@ public class Client {
                                 for (Object player : Rjson.getJSONArray("busy")) {
 //                                        makePlayerUnavailable((string) player);
                                 }
-
-                                /* here you should display all the players in
-                                 their classification Titled lists in the GUI
-                                 and make sure to make the busy ones unavailable
-                                 */
                                 break;
                             case "UPDATEONLINE":
                                 Platform.runLater(new Runnable() {
@@ -241,6 +226,7 @@ public class Client {
                                     }
                                 });
                                 break;
+                /////6
                             case "WINNING":
                                 if (Rjson.getInt("response") == 1) {
                                     /* this means that the points has been
@@ -253,6 +239,8 @@ public class Client {
                                     // there was a problem in saving
                                 }
                                 break;
+                                
+                    /////3
                             case "CLOSING":
                                 /* this means that the opponent closed the game
                                  so we sould display a pop up tells the user that
@@ -261,6 +249,7 @@ public class Client {
                                  Rjson.getString("message");
                                  */
                                 break;
+                    /////4
                             case "SAVING":
                                 if (Rjson.getInt("response") == 1) {
                                     /* game has been saved successfully
@@ -271,6 +260,7 @@ public class Client {
                                     // failed to save
                                 }
                                 break;
+                    /////5
                             case "INFORMSAVING":
                                 /* here means that the other player
                                  has saved the game and we should disable the

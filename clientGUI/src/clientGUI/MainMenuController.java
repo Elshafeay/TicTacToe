@@ -170,7 +170,7 @@ public class MainMenuController implements Initializable {
                     try {
                         Thread.sleep(1000);
                     } catch (InterruptedException ex) {
-                        Logger.getLogger(LoginController.class.getName()).log(Level.SEVERE, null, ex);
+                        Logger.getLogger(MainMenuController.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
             }
@@ -213,6 +213,7 @@ public class MainMenuController implements Initializable {
         closeConnection();
         Stage stage = (Stage) closemenu.getScene().getWindow();
         stage.close();
+        System.exit(0);
     }
 
     @FXML
@@ -232,7 +233,7 @@ public class MainMenuController implements Initializable {
     }
     
     public static void rejectionMessage(String message) {
-            Platform.runLater(new Runnable() {
+        Platform.runLater(new Runnable() {
             @Override
             public void run() {
                 Alert alert = new Alert(Alert.AlertType.WARNING);
@@ -241,12 +242,9 @@ public class MainMenuController implements Initializable {
                 alert.setContentText(message);
                 ButtonType cancelButton = new ButtonType("Ok", ButtonBar.ButtonData.CANCEL_CLOSE);
                 alert.getButtonTypes().setAll(cancelButton);
-
-
-                 Optional<ButtonType> result = alert.showAndWait();
-
-}
-            });}
+            }
+        });
+    }
      
       
     public static void acceptanceMessage(String message) {
@@ -266,7 +264,7 @@ public class MainMenuController implements Initializable {
     }
   
          
-        @FXML
+    @FXML
     public static void RecieveInvitation(String message) {
         Platform.runLater(new Runnable() {
             @Override
@@ -279,13 +277,15 @@ public class MainMenuController implements Initializable {
                 ButtonType Reject = new ButtonType("Reject");
                 alert.getButtonTypes().setAll(Accept, Reject);
                 Optional<ButtonType> result = alert.showAndWait();
-                        if (result.get() == Accept) {
-                            sendReply("ACCEPT");
-                            redirectFlag = 1;
-                        }
-                        else{
-                            sendReply("REJECT");
-                        }
+                if (result.get() == Accept) {
+                    sendReply("ACCEPT");
+                    Client.myChar='O';
+                    Client.otherPlayerChar='X';
+                    redirectFlag = 1;
+                }
+                else{
+                    sendReply("REJECT");
+                }
             }
         });
     }

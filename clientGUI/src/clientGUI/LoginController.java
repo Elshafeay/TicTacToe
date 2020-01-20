@@ -73,7 +73,6 @@ public class LoginController implements Initializable {
             alert.setContentText("Username or Password is missing. Please make sure that you entered both.");
             alert.showAndWait();
         } else {
-//            loadMainMenu();
             JSONObject Sjson = new JSONObject();
             Sjson.put("code", "LOGIN");
             Sjson.put("username", txtUserName.getText());
@@ -89,6 +88,8 @@ public class LoginController implements Initializable {
                                 if (tempJson != null) {
                                     if (tempJson.getInt("response") == 1) {
                                         try {
+//                                            Client.myPoints = tempJson.getInt("points");
+                                            Client.myUsername=txtUserName.getText();
                                             loadMainMenu();
                                             destroyThread();
                                         } catch (IOException ex) {
