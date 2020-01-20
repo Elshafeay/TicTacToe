@@ -242,6 +242,7 @@ public class Server {
                     offlinePlayersWthPoints.remove(currentPlayerUsername);
                     result = 1;
                     message = "Welcome " + username;
+                    Sjson.put("points", onlinePlayersWthPoints.get(username));
                 } else {
                     message = "Wrong Password!";
                 }
