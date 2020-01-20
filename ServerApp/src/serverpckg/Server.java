@@ -28,7 +28,6 @@ public class Server {
     //carries sokects and their username
     public static BiMap<String, Socket> activePlayersSockets = HashBiMap.create();
     public static BiMap<String, PrintStream> activePlayersPrintStreams = HashBiMap.create();
-    public static BiMap<String, DataInputStream> activePlayersInputStreams = HashBiMap.create();
     public static Vector<String> offlinePlayers = new Vector<>();
     public static Vector<String> onlinePlayers = new Vector<>();
     public static Vector<String> busyPlayers = new Vector<>();
@@ -39,9 +38,8 @@ public class Server {
     ServerSocket serverSocket;
     volatile boolean runServer;
 
-	
     public Server() {
-        
+
     }
 
     public void startServer() throws SQLException, ClassNotFoundException {
@@ -204,11 +202,17 @@ public class Server {
                 }
             }
             try {
-                clientDataInputStream.close();
-                clientPrintStream.close();
-                clientSocket.close();
+                if (onlinePlayers.contains(currentPlayerUsername)) {
+                    acceptLogOut();
+                } else {
+                    clientDataInputStream.close();
+                    clientPrintStream.close();
+                    clientSocket.close();
+                }
                 System.out.println("socket has been successfully closed");
             } catch (IOException ex) {
+                Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (JSONException ex) {
                 Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
@@ -225,17 +229,13 @@ public class Server {
                 pTemp = dBManager.getPlayer(username);
                 if (pTemp == null) {
                     message = "User Not Found!";
-                }
-                else if (activePlayersPrintStreams.keySet().contains(username))
-                {
+                } else if (activePlayersPrintStreams.keySet().contains(username)) {
                     result = 0;
-                    message = "Sorry " + username +". You are already logged in.";
-                }
-                else if (pTemp != null && pTemp.getPass().equals(password)) {
+                    message = "Sorry " + username + ". You are already logged in.";
+                } else if (pTemp != null && pTemp.getPass().equals(password)) {
                     currentPlayerUsername = username;
                     activePlayersSockets.put(username, clientSocket);
                     activePlayersPrintStreams.put(username, clientPrintStream);
-                    activePlayersInputStreams.put(username, clientDataInputStream);
                     offlinePlayers.remove(username);
                     onlinePlayers.add(username);
                     onlinePlayersWthPoints.put(currentPlayerUsername, DBManager.playerPoints.get(currentPlayerUsername));
@@ -267,7 +267,6 @@ public class Server {
             try {
                 dBManager.addPlayer(p);
                 DBManager.beginnerPlayers.add(p.getUsername());
-                sendClassificationUpdates(p.getUsername(), "beginner");
                 Sjson.put("response", 1); //successful signup
             } catch (SQLException ex) {
                 Sjson.put("response", 0); //unsuccessful signup
@@ -292,7 +291,6 @@ public class Server {
                 //remove the socket and the print stream from their lists
                 activePlayersSockets.remove(currentPlayerUsername);
                 activePlayersPrintStreams.remove(currentPlayerUsername);
-                activePlayersInputStreams.remove(currentPlayerUsername);
                 runConnection = false; //this should close the client's thread
                 offlinePlayersWthPoints.put(currentPlayerUsername, DBManager.playerPoints.get(currentPlayerUsername));
                 onlinePlayersWthPoints.remove(currentPlayerUsername);
@@ -435,10 +433,9 @@ public class Server {
             try {
                 Game g = dBManager.getGame(gameID);
                 PrintStream player2PS;
-                if (g.getP1().equals(currentPlayerUsername)){
+                if (g.getP1().equals(currentPlayerUsername)) {
                     player2PS = activePlayersPrintStreams.get(g.getP2());
-                }
-                else{
+                } else {
                     player2PS = activePlayersPrintStreams.get(g.getP1());
                 }
                 String board = g.getBoard();
@@ -474,17 +471,15 @@ public class Server {
             List<String> profP = new ArrayList<>();
             List<String> intermediateP = new ArrayList<>();
             List<String> beginnerP = new ArrayList<>();
-            for(Map.Entry<String, Integer> item : onlinePlayersWthPoints.entrySet()){                
-                if(item.getKey().equals(currentPlayerUsername)){
+            for (Map.Entry<String, Integer> item : onlinePlayersWthPoints.entrySet()) {
+                if (item.getKey().equals(currentPlayerUsername)) {
                     continue;
                 }
-                if(item.getValue()>= 1500){
+                if (item.getValue() >= 1500) {
                     profP.add(item.getKey());
-                }
-                else if(item.getValue() >= 1000){
+                } else if (item.getValue() >= 1000) {
                     intermediateP.add(item.getKey());
-                }
-                else{
+                } else {
                     beginnerP.add(item.getKey());
                 }
             }
@@ -538,7 +533,7 @@ public class Server {
                 PrintStream ps;
                 for (Map.Entry<String, PrintStream> item : activePlayersPrintStreams.entrySet()) {
                     ps = item.getValue();
-                    if(ps == clientPrintStream || ps == secondPlayerPrintStream){
+                    if (ps == clientPrintStream || ps == secondPlayerPrintStream) {
                         continue;
                     }
                     JSONObject invitationObject = new JSONObject();
@@ -570,7 +565,7 @@ public class Server {
                 PrintStream ps;
                 for (Map.Entry<String, PrintStream> item : activePlayersPrintStreams.entrySet()) {
                     ps = item.getValue();
-                    if(ps == clientPrintStream){
+                    if (ps == clientPrintStream) {
                         continue;
                     }
                     JSONObject invitationObject = new JSONObject();
