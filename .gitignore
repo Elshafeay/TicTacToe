@@ -1,4 +1,6 @@
-/clientGUI/build/
-/clientGUI/dist/
+/build
+/dist
 /video
 /lib
+/ClientApp/build/
+/ClientApp/dist/
