@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane id="AnchorPane" fx:id="rootNode" onMouseDragged="#onMouseDrag" onMousePressed="#onMousePressed" prefHeight="700.0" prefWidth="600.0" style="-fx-background-color: gainsboro;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="clientGUI.LoginController">
+   <children>
+      <ImageView fitHeight="700.0" fitWidth="787.0">
+         <image>
+            <Image url="@images/pngtree-simple-memphis-geometric-background-image_57600.jpg" />
+         </image>
+      </ImageView>
+      <ImageView fitHeight="685.0" fitWidth="787.0" layoutY="1.0">
+         <image>
+            <Image url="@images/frame.png" />
+         </image>
+      </ImageView>
+      <ImageView fitHeight="200.0" fitWidth="200.0" layoutX="284.0" layoutY="126.0">
+         <image>
+            <Image url="@images/2227-512.png" />
+         </image>
+      </ImageView>
+      <Button fx:id="login" layoutX="119.0" layoutY="575.0" mnemonicParsing="false" onAction="#btnLoginClick" prefHeight="46.0" prefWidth="205.0" style="-fx-background-color: transparent; -fx-border-color: white; -fx-border-radius: 10;" text="Login" textAlignment="CENTER" textFill="WHITE">
+         <font>
+            <Font name="Calisto MT Bold" size="24.0" />
+         </font>
+      </Button>
+      <PasswordField fx:id="txtPassword" layoutX="262.0" layoutY="469.0" prefHeight="54.0" prefWidth="291.0" promptText="Enter your password" style="-fx-background-color: white; -fx-border-color: white;">
+         <font>
+            <Font name="Bookman Old Style" size="18.0" />
+         </font>
+         <opaqueInsets>
+            <Insets />
+         </opaqueInsets>
+      </PasswordField>
+      <TextField fx:id="txtUserName" layoutX="263.0" layoutY="378.0" prefHeight="54.0" prefWidth="291.0" promptText="Enter your username" style="-fx-background-color: white; -fx-border-color: white;">
+         <font>
+            <Font name="Bookman Old Style" size="18.0" />
+         </font>
+      </TextField>
+      <Button fx:id="signUp" layoutX="475.0" layoutY="577.0" mnemonicParsing="false" onAction="#btnSignUpClick" prefHeight="46.0" prefWidth="205.0" style="-fx-border-radius: 10; -fx-background-color: transparent; -fx-border-color: white;" text="Sign Up" textFill="#faf7f9">
+         <font>
+            <Font name="Calisto MT Bold" size="24.0" />
+         </font>
+      </Button>
+      <ImageView fitHeight="54.0" fitWidth="45.0" layoutX="217.0" layoutY="469.0">
+         <image>
+            <Image url="@images/images%20(17).jpg" />
+         </image>
+      </ImageView>
+      <AnchorPane layoutX="217.0" layoutY="378.0" prefHeight="54.0" prefWidth="46.0" style="-fx-background-color: white;" />
+      <ImageView fitHeight="50.0" fitWidth="39.0" layoutX="219.0" layoutY="380.0">
+         <image>
+            <Image url="@images/43ff64072e598f6ed6b2ac2afd6907d9_user-icon-vector-clip-art-clipart-free-clipart_600-916.png" />
+         </image>
+      </ImageView>
+      <Separator layoutX="258.0" layoutY="378.0" orientation="VERTICAL" prefHeight="54.0" prefWidth="6.0" />
+      <Button fx:id="minimizelogin" layoutX="684.0" layoutY="2.0" mnemonicParsing="false" onAction="#minimizeloginbutton" prefHeight="47.0" prefWidth="47.0" style="-fx-background-image: url('/clientGUI/images/minimize.png'); -fx-background-repeat: no-repeat; -fx-background-color: transparent; -fx-background-position: center;" />
+      <Button fx:id="closelogin" layoutX="734.0" layoutY="2.0" mnemonicParsing="false" onAction="#closeloginbutton" prefHeight="47.0" prefWidth="47.0" style="-fx-background-image: url('/clientGUI/images/PINKo.png'); -fx-background-color: transparent; -fx-background-position: center;" />
+   </children>
+</AnchorPane>
