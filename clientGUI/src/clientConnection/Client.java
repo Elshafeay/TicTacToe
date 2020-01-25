@@ -219,26 +219,19 @@ public class Client {
                                     }
                                 });
                                 break;
-                /////6
                             case "WINNING":
                                 if (Rjson.getInt("response") == 1) 
                                     MultiplayerController.showalert(Rjson.getString("message"));
                                 break;
-                                
-                    /////3
                             case "CLOSING":
-                           
                                 MultiplayerController.inform(Rjson.getString("message"));
                                 break;
-                    /////4
                             case "SAVING":
                                 if (Rjson.getInt("response") == 1) 
-                                    MultiplayerController.showalert(Rjson.getString("message"));
-                                
+//                                    MultiplayerController.showalert(Rjson.getString("message"));
                                 break;
-                    /////5
                             case "INFORMSAVING":
-                                MultiplayerController.showalert(Rjson.getString("message"));
+//                                MultiplayerController.showalert(Rjson.getString("message"));
                                 break;
                         }
                     } catch (IOException ex) {

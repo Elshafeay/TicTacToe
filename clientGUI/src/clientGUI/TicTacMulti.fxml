@@ -16,7 +16,7 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="rootNode" onMouseDragged="#onMouseDrag" onMousePressed="#onMousePressed" prefHeight="700.0" prefWidth="700.0" stylesheets="@cssfile.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="clientGUI.TicController">
+<AnchorPane fx:id="rootNode" onMouseDragged="#onMouseDrag" onMousePressed="#onMousePressed" prefHeight="700.0" prefWidth="700.0" stylesheets="@cssfile.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="clientGUI.MultiplayerController">
    <children>
       <ImageView fitHeight="723.0" fitWidth="1084.0" layoutX="-50.0">
          <image>
@@ -48,42 +48,42 @@
                         <Glow level="0.58" />
                     </effect>
                     <children>
-                        <Pane fx:id="p2" onMouseClicked="#paneAction2" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                        <Pane fx:id="p2" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="0">
                      <children>
-                        <Button fx:id="b2" mnemonicParsing="false" onAction="#paneAction2" prefHeight="128.0" prefWidth="132.0" styleClass="btn" stylesheets="@cssfile.css" textFill="WHITE" />
+                        <Button fx:id="b2" mnemonicParsing="false" prefHeight="128.0" prefWidth="132.0" styleClass="btn" stylesheets="@cssfile.css" textFill="WHITE" />
                        
                      </children></Pane>
-                        <Pane fx:id="p3" onMouseClicked="#paneAction3" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: white;" GridPane.columnIndex="2" GridPane.rowIndex="0">
+                        <Pane fx:id="p3" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: white;" GridPane.columnIndex="2" GridPane.rowIndex="0">
                      <children>
-                        <Button fx:id="b3" mnemonicParsing="false" onAction="#paneAction3" prefHeight="128.0" prefWidth="132.0" styleClass="btn" textFill="WHITE" />
+                        <Button fx:id="b3" mnemonicParsing="false" prefHeight="128.0" prefWidth="132.0" styleClass="btn" textFill="WHITE" />
                      </children></Pane>
-                        <Pane fx:id="p4" onMouseClicked="#paneAction4" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: white;" GridPane.rowIndex="1">
+                        <Pane fx:id="p4" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: white;" GridPane.rowIndex="1">
                      <children>
-                        <Button fx:id="b4" mnemonicParsing="false" onAction="#paneAction4" prefHeight="128.0" prefWidth="132.0" styleClass="btn" textFill="WHITE" />
+                        <Button fx:id="b4" mnemonicParsing="false" prefHeight="128.0" prefWidth="132.0" styleClass="btn" textFill="WHITE" />
                      </children></Pane>
-                        <Pane fx:id="p5" onMouseClicked="#paneAction5" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: white;" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                        <Pane fx:id="p5" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: white;" GridPane.columnIndex="1" GridPane.rowIndex="1">
                      <children>
-                        <Button fx:id="b5" mnemonicParsing="false" onAction="#paneAction5" prefHeight="128.0" prefWidth="132.0" styleClass="btn" textFill="WHITE" />
+                        <Button fx:id="b5" mnemonicParsing="false" prefHeight="128.0" prefWidth="132.0" styleClass="btn" textFill="WHITE" />
                      </children></Pane>
-                        <Pane fx:id="p6" onMouseClicked="#paneAction6" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: white;" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                        <Pane fx:id="p6" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: white;" GridPane.columnIndex="2" GridPane.rowIndex="1">
                      <children>
-                        <Button fx:id="b6" mnemonicParsing="false" onAction="#paneAction6" prefHeight="128.0" prefWidth="132.0" styleClass="btn" textFill="WHITE" />
+                        <Button fx:id="b6" mnemonicParsing="false" prefHeight="128.0" prefWidth="132.0" styleClass="btn" textFill="WHITE" />
                      </children></Pane>
-                        <Pane fx:id="p7" onMouseClicked="#paneAction7" prefHeight="147.0" prefWidth="135.0" style="-fx-background-color: white;" GridPane.rowIndex="2">
+                        <Pane fx:id="p7" prefHeight="147.0" prefWidth="135.0" style="-fx-background-color: white;" GridPane.rowIndex="2">
                      <children>
-                        <Button fx:id="b7" mnemonicParsing="false" onAction="#paneAction7" prefHeight="128.0" prefWidth="132.0" styleClass="btn" textFill="WHITE" />
+                        <Button fx:id="b7" mnemonicParsing="false" prefHeight="128.0" prefWidth="132.0" styleClass="btn" textFill="WHITE" />
                      </children></Pane>
-                        <Pane fx:id="p8" onMouseClicked="#paneAction8" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: white;" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                        <Pane fx:id="p8" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: white;" GridPane.columnIndex="1" GridPane.rowIndex="2">
                      <children>
-                        <Button fx:id="b8" mnemonicParsing="false" onAction="#paneAction8" prefHeight="128.0" prefWidth="132.0" styleClass="btn" textFill="WHITE" />
+                        <Button fx:id="b8" mnemonicParsing="false" prefHeight="128.0" prefWidth="132.0" styleClass="btn" textFill="WHITE" />
                      </children></Pane>
-                        <Pane fx:id="p9" onMouseClicked="#paneAction9" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: white;" GridPane.columnIndex="2" GridPane.rowIndex="2">
+                        <Pane fx:id="p9" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: white;" GridPane.columnIndex="2" GridPane.rowIndex="2">
                      <children>
-                        <Button fx:id="b9" mnemonicParsing="false" onAction="#paneAction9" prefHeight="128.0" prefWidth="132.0" styleClass="btn" textFill="WHITE" />
+                        <Button fx:id="b9" mnemonicParsing="false" prefHeight="128.0" prefWidth="132.0" styleClass="btn" textFill="WHITE" />
                      </children></Pane>
                   <Pane>
                      <children>
-                        <Button fx:id="b1" mnemonicParsing="false" onAction="#paneAction1" prefHeight="128.0" prefWidth="132.0" styleClass="btn" stylesheets="@cssfile.css" textFill="#46898c" />
+                        <Button fx:id="b1" mnemonicParsing="false" prefHeight="128.0" prefWidth="132.0" styleClass="btn" stylesheets="@cssfile.css" textFill="#46898c" />
                      </children>
                   </Pane>
                     </children>
@@ -93,10 +93,10 @@
                 </GridPane>
             </center>
          <top>
-            <Pane onMouseClicked="#paneAction1" prefHeight="225.0" prefWidth="700.0" BorderPane.alignment="CENTER">
+            <Pane prefHeight="225.0" prefWidth="700.0" BorderPane.alignment="CENTER">
                <children>
-                  <Circle fx:id="playeronecirclesingle" fill="WHITE" layoutX="193.0" layoutY="164.0" radius="60.0" stroke="#ea25a5" strokeType="INSIDE" strokeWidth="15.0" />
-                  <Circle fx:id="playertwocirclesingle" fill="WHITE" layoutX="518.0" layoutY="166.0" radius="60.0" stroke="#2fdac0" strokeType="INSIDE" strokeWidth="15.0" />
+                  <Circle fx:id="playeronecircle" fill="WHITE" layoutX="193.0" layoutY="164.0" radius="60.0" stroke="#ea25a5" strokeType="INSIDE" strokeWidth="15.0" />
+                  <Circle fx:id="playertwocircle" fill="WHITE" layoutX="518.0" layoutY="166.0" radius="60.0" stroke="#2fdac0" strokeType="INSIDE" strokeWidth="15.0" />
                   <ImageView fitHeight="104.0" fitWidth="104.0" layoutX="141.0" layoutY="112.0">
                      <image>
                         <Image url="@images/n.png" />
@@ -107,17 +107,16 @@
                         <Image url="@images/n.png" />
                      </image>
                   </ImageView>
-                  <Label alignment="CENTER" layoutX="132.0" layoutY="229.0" prefHeight="17.0" prefWidth="119.0" text="PLAYER 1" textFill="#f0f0f0">
+                  <Label fx:id="player1" alignment="CENTER" layoutX="132.0" layoutY="229.0" prefHeight="17.0" prefWidth="119.0" text="PLAYER 1" textFill="#f0f0f0">
                      <font>
                         <Font name="Bookman Old Style Bold" size="18.0" />
                      </font>
                   </Label>
-                  <Label alignment="CENTER" layoutX="465.0" layoutY="230.0" prefHeight="17.0" prefWidth="119.0" text="Computer" textFill="#f0f0f0">
+                  <Label fx:id="player2" alignment="CENTER" layoutX="465.0" layoutY="230.0" prefHeight="17.0" prefWidth="119.0" text="PLAYER 2" textFill="#f0f0f0">
                      <font>
                         <Font name="Bookman Old Style Bold" size="20.0" />
                      </font>
                   </Label>
-                  <Circle fill="WHITE" layoutX="152.0" layoutY="197.0" radius="26.0" stroke="#390303" strokeType="INSIDE" />
                   <ImageView fx:id="playeroneiconsingle" fitHeight="29.0" fitWidth="35.0" layoutX="135.0" layoutY="181.0" pickOnBounds="true" preserveRatio="true" />
       
                </children>
@@ -173,7 +172,6 @@
       <Button fx:id="minimizegame" layoutX="931.0" layoutY="2.0" mnemonicParsing="false" onAction="#minimizegamebutton" prefHeight="47.0" prefWidth="47.0" style="-fx-background-color: transparent; -fx-background-image: url('/clientGUI/images/minimize.png'); -fx-background-repeat: no-repeat; -fx-background-position: center;" />
       
       <Button fx:id="exit" layoutX="983.0" layoutY="2.0" mnemonicParsing="false" onMouseClicked="#EXIT" prefHeight="47.0" prefWidth="47.0" style="-fx-background-color: transparent; -fx-background-image: url('/clientGUI/images/PINKo.png'); -fx-background-position: center;" />
-      <Circle fill="WHITE" layoutX="675.0" layoutY="168.0" radius="26.0" stroke="#390303" strokeType="INSIDE" />
       <ImageView fx:id="playertwoiconsingle" fitHeight="29.0" fitWidth="35.0" layoutX="659.0" layoutY="155.0" pickOnBounds="true" preserveRatio="true" />
      
    </children>

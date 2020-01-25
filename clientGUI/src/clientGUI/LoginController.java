@@ -214,5 +214,6 @@ public class LoginController implements Initializable {
         closeConnection();
         Stage stage = (Stage) closelogin.getScene().getWindow();
         stage.close();
+        System.exit(0);
     }
 }

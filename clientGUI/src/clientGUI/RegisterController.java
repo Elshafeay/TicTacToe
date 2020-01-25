@@ -101,6 +101,7 @@ public class RegisterController implements Initializable {
     private void closeregisterbutton(ActionEvent event) {
         Stage stage = (Stage) closeregister.getScene().getWindow();
         stage.close();
+        System.exit(0);
     }
 
     @FXML

@@ -26,6 +26,7 @@ import javafx.stage.Stage;
 import java.util.Random;
 import java.util.Vector;
 import clientConnection.Client;
+import static clientConnection.Client.Rjson;
 import static clientConnection.Client.Sjson;
 import static clientConnection.Client.closeConnection;
 import static clientConnection.Client.myChar;
@@ -44,8 +45,10 @@ import javafx.scene.Parent;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
+import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import static javafx.scene.paint.Color.color;
+import javafx.scene.shape.Circle;
 import static javafx.scene.text.Font.font;
 import org.json.JSONObject;
 
@@ -57,15 +60,9 @@ public class MultiplayerController implements Initializable {
     @FXML
     public Button b1, b2, b3, b4, b5, b6, b7, b8, b9;
     @FXML
-    private Pane endGamePane;
-    @FXML
-    private ImageView endGameImageView;
-    @FXML
     private Label player1;
     @FXML
     private Label player2;
-    @FXML
-    private ImageView okImageView;
     @FXML
     private Line lineRow1;
     @FXML
@@ -108,6 +105,10 @@ public class MultiplayerController implements Initializable {
     private Button minimizegame;
     public boolean winner = false;
     public static Thread thread;
+    @FXML
+    private Circle playeronecircle;
+    @FXML
+    private Circle playertwocircle;
     
     
 //add cells to Vector
@@ -141,7 +142,6 @@ public class MultiplayerController implements Initializable {
                             if(index >= 0){
                                 firing(cells.get(index));
                                 index=-1;
-                                checkIfGameEnds();
                             }
                         }
                     });
@@ -170,6 +170,15 @@ public class MultiplayerController implements Initializable {
                     showFinishedAlert();
                 }
             }});
+        }
+//        resumeGame(new StringBuilder("_XOX__XO_"));
+        if(myChar=='X'){
+            playeronecircle.setStroke(Color.web("#ea25a5")); //red
+            playertwocircle.setStroke(Color.web("#2bbba7")); //green
+        }
+        else{
+            playeronecircle.setStroke(Color.web("#2bbba7")); //green
+            playertwocircle.setStroke(Color.web("#ea25a5")); //red            
         }
     }
     
@@ -357,6 +366,7 @@ public class MultiplayerController implements Initializable {
         closeConnection();
         Stage stage = (Stage) exit.getScene().getWindow();
         stage.close();
+        System.exit(0);
     }
 
     public void RedirectToGameBoard() throws IOException {
@@ -456,7 +466,7 @@ public class MultiplayerController implements Initializable {
         a.show();
     }
     
-        public static void showalert(String message) {
+    public static void showalert(String message) {
         Platform.runLater(new Runnable() {
             public void run() {
 
@@ -478,7 +488,7 @@ public class MultiplayerController implements Initializable {
             public void run() {
 
                 Alert alert = new Alert(Alert.AlertType.WARNING);
-                alert.setTitle("I");
+                alert.setTitle("informing");
                 alert.setHeaderText(null);
                 alert.getDialogPane().setStyle("-fx-background-color:lightgrey;-fx-border-color:#2bbba7; -fx-border-width:5;");
                 alert.setContentText(message);
@@ -489,4 +499,48 @@ public class MultiplayerController implements Initializable {
             }
         });
     }
+    
+    public void resumeGame(StringBuilder gameBoard){
+        board = gameBoard;
+        int xcount=0, ocount=0;
+        for (int i = 0; i < 9; i++) {
+            if (board.charAt(i) == '_') {
+                continue;
+            }
+            else if(board.charAt(i) == 'X'){
+                drawOnBoard('X', cells.get(i));
+                xcount++;
+            }
+            else{
+                drawOnBoard('O', cells.get(i));
+                ocount++;
+            }
+        }
+        if(xcount > ocount){
+            if(myChar=='X'){
+                myTurn = false;
+            }
+            else{
+                myTurn = true;
+            }
+        }
+        else{
+            if(myChar=='O'){
+                myTurn = false;
+            }
+            else{
+                myTurn = true;
+            }
+        }
+        
+    }
+    
+    public void drawOnBoard(char c, Button b){
+        if(c=='X')
+            b.setStyle("-fx-background-image: url('/clientGUI/images/PINK.png')");
+        else
+            b.setStyle("-fx-background-image: url('/clientGUI/images/O1.png')");
+        b.setOnAction(null);
+    }
+
 }

@@ -55,8 +55,6 @@ public class MainMenuController implements Initializable {
     @FXML
     private Button closemenu;
     @FXML
-    private Button exit;
-    @FXML
     private Button minimize;
     @FXML
     private ScrollPane professionalPane;
@@ -81,11 +79,15 @@ public class MainMenuController implements Initializable {
     public static ListView<String> profList = new ListView<>();
     public static ListView<String> intermediateList = new ListView<>();
     public static ListView<String> beginnerList = new ListView<>();
+    @FXML
+    private Button savedgamebutton;
+    @FXML
+    private Pane savedgamespane;
 
     @FXML
     private void btnSinglePlayerClick(ActionEvent event) throws IOException {
-        System.out.println("Game Scene Voila!!");
-        loadGameFxml();
+        destroyThread();
+        loadSingleGameFxml();
         GameData.Game.challengeComputer = true;
     }
 
@@ -100,6 +102,16 @@ public class MainMenuController implements Initializable {
     public void loadGameFxml() throws IOException {
         //Load new FXML and assign it to scene
 
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("TicTacMulti.fxml"));
+        Parent root = (Parent) fxmlLoader.load();
+        Scene scene = new Scene(root);
+        Stage stage = (Stage) btnMulti.getScene().getWindow();
+        stage.setScene(scene);
+
+        stage.show();
+    }
+    
+    public void loadSingleGameFxml() throws IOException{
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("TicTac.fxml"));
         Parent root = (Parent) fxmlLoader.load();
         Scene scene = new Scene(root);
@@ -107,6 +119,7 @@ public class MainMenuController implements Initializable {
         stage.setScene(scene);
 
         stage.show();
+        
     }
 
     @Override
@@ -304,7 +317,6 @@ public class MainMenuController implements Initializable {
     }
   
          
-    @FXML
     public static void RecieveInvitation(String message) {
         Platform.runLater(new Runnable() {
             @Override
@@ -338,10 +350,8 @@ public class MainMenuController implements Initializable {
         serverPrintStream.println(Sjson);
     }
 
+    @FXML
+    private void savedgameclick(ActionEvent event) {
+        savedgamespane.setVisible(true);
+    }
 }
-
-
-
-
-
-
